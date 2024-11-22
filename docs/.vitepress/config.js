@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
 import generateSidebar from './utils/sidebar'
 import { resolve } from 'path'
+import fs from 'fs'
+import path from 'path'
 
 export default defineConfig({
   title: 'PrizOwO Blogs',
@@ -9,13 +11,6 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
   ],
   base: '/',
-  outDir: '.vitepress/dist',
-  buildEnd: async () => {
-    const fs = require('fs')
-    const path = require('path')
-    const cnamePath = path.resolve(__dirname, './dist/CNAME')
-    fs.writeFileSync(cnamePath, 'prizowo.net')
-  },
   themeConfig: {
     logo: '/logo.png',
     nav: [
