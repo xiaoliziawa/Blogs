@@ -95,53 +95,91 @@ onMounted(async () => {
         trigger: 'axis',
         formatter: function(params) {
           if (!params || !params[0]) return ''
-          
           const value = params[0].value
           if (!value || value.length < 2) return ''
-          
           const date = new Date(value[0])
           const commits = value[1]
-          
-          return `Week of ${formatChartDate(date)}, 2024<br/>Commits: ${commits}`
-        }
+          return `<div style="padding: 3px 6px;">
+            <div style="color: #8b949e; margin-bottom: 2px;">Week of ${formatChartDate(date)}, 2024</div>
+            <div style="color: #c9d1d9;"><span style="color: #58a6ff;">Commits:</span> ${commits}</div>
+          </div>`
+        },
+        backgroundColor: 'rgba(13,17,23,0.95)',
+        borderColor: '#30363d',
+        borderWidth: 1,
+        textStyle: {
+          color: '#c9d1d9'
+        },
+        extraCssText: 'border-radius: 6px; padding: 0;'
       },
       grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
+        left: '40px',
+        right: '20px',
+        top: '20px',
+        bottom: '40px'
       },
       xAxis: {
         type: 'time',
         boundaryGap: false,
         axisLine: {
           lineStyle: {
-            color: isDark.value ? '#666' : '#ccc'
+            color: isDark.value ? '#30363d' : '#d0d7de',
+            width: 2
           }
+        },
+        axisTick: {
+          show: false
         },
         axisLabel: {
           formatter: function(value) {
             return formatChartDate(new Date(value))
           },
-          color: isDark.value ? '#999' : '#666'
+          color: isDark.value ? '#8b949e' : '#57606a',
+          fontSize: 12,
+          margin: 16
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: isDark.value ? '#21262d' : '#eaeef2',
+            type: 'dashed'
+          }
         }
       },
       yAxis: {
         type: 'value',
         name: 'Contributions',
+        nameLocation: 'end',
+        nameGap: 15,
+        nameTextStyle: {
+          color: isDark.value ? '#8b949e' : '#57606a',
+          fontSize: 12,
+          align: 'left',
+          verticalAlign: 'top',
+          padding: [10, 0, 0, 0]
+        },
         axisLine: {
           show: true,
           lineStyle: {
-            color: isDark.value ? '#666' : '#ccc'
+            color: isDark.value ? '#30363d' : '#d0d7de',
+            width: 2
           }
         },
+        axisTick: {
+          show: false
+        },
         axisLabel: {
-          color: isDark.value ? '#999' : '#666'
+          color: isDark.value ? '#8b949e' : '#57606a',
+          fontSize: 12,
+          margin: 16,
+          formatter: function(value) {
+            return value.toFixed(0)
+          }
         },
         splitLine: {
           show: true,
           lineStyle: {
-            color: isDark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+            color: isDark.value ? '#21262d' : '#eaeef2',
             type: 'dashed'
           }
         }
@@ -149,20 +187,30 @@ onMounted(async () => {
       series: [{
         data: data,
         type: 'line',
-        smooth: false,
+        smooth: true,
+        smoothMonotone: 'x',
         showSymbol: false,
+        symbol: 'circle',
+        symbolSize: 6,
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            color: '#58a6ff',
+            borderColor: isDark.value ? '#0d1117' : '#ffffff',
+            borderWidth: 2
+          }
+        },
         lineStyle: {
           width: 2,
-          color: '#4169e1'
+          color: '#58a6ff'
         },
         areaStyle: {
-          opacity: 0.3,
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
             offset: 0,
-            color: '#4169e1'
+            color: isDark.value ? 'rgba(88,166,255,0.15)' : 'rgba(88,166,255,0.15)'
           }, {
             offset: 1,
-            color: 'rgba(65,105,225,0.1)'
+            color: isDark.value ? 'rgba(88,166,255,0.01)' : 'rgba(88,166,255,0.01)'
           }])
         }
       }]
