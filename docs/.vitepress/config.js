@@ -69,7 +69,8 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '代码示例', link: '/code/' },
       { text: '软件列表', link: '/software/' },
-      { text: '网址导航', link: '/websites/' }
+      { text: '网址导航', link: '/websites/' },
+      { text: '卡片', link: '/cards/' }
     ],
     
     sidebar: {

@@ -5,7 +5,7 @@ hero:
   text: Welcome !
   tagline: 收录各种网站、Code！
   image:
-    src: /home.png
+    src: /page-icon.png
     alt: Logo
   actions:
     - theme: brand
