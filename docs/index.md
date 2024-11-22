@@ -31,13 +31,20 @@ features:
 
 <div class="github-activity">
   <div class="activity-stats">
-    <img src="https://github-readme-activity-graph.vercel.app/graph?username=xiaoliziawa&repo=Blogs&bg_color=121212&color=4169e1&line=8B00FF&point=4169e1&area=true&hide_border=true" alt="Blogs Activity Graph">
+    <div class="contribution-graph" :class="{ 'dark-theme': isDark }">
+      <img :src="`https://github-readme-activity-graph.vercel.app/graph?username=xiaoliziawa&repo=Blogs&bg_color=${isDark ? '121212' : 'ffffff'}&color=${isDark ? '4169e1' : '000000'}&line=${isDark ? '8B00FF' : '4169e1'}&point=${isDark ? '4169e1' : '4169e1'}&area=true&hide_border=true`" alt="Blogs Activity Graph">
+    </div>
     <div class="commit-info">
       <span>仓库活动</span>
       <span class="commit-count">COMMIT ACTIVITY 6/MONTH</span>
     </div>
   </div>
 </div>
+
+<script setup>
+import { useData } from 'vitepress'
+const { isDark } = useData()
+</script>
 
 <style>
 .github-activity {
@@ -47,38 +54,33 @@ features:
   text-align: center;
 }
 
-.github-activity h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #888;
-}
-
-.activity-stats {
-  background: #121212;
+.contribution-graph {
+  background: var(--vp-c-bg);
   border-radius: 8px;
   padding: 1rem;
+  transition: background-color 0.3s;
 }
 
-.activity-stats img {
+.contribution-graph img {
   width: 100%;
   height: auto;
-  margin-bottom: 1rem;
+  border-radius: 6px;
 }
 
 .commit-info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
   margin-top: 1rem;
-  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--vp-c-text-2);
 }
 
 .commit-count {
-  background: #8B00FF;
-  padding: 0.3rem 0.8rem;
-  border-radius: 4px;
+  background: var(--vp-c-brand);
   color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
   font-size: 0.9rem;
 }
 </style> 
