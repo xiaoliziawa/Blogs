@@ -13,7 +13,40 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.ico' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/logo.png' }],
-    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/logo.png' }]
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/logo.png' }],
+    ['script', {}, `
+      (() => {
+        const addViewTransition = () => {
+          const toggle = document.querySelector('.VPSwitch.VPSwitchAppearance');
+          if (!toggle) {
+            setTimeout(addViewTransition, 100);
+            return;
+          }
+          
+          toggle.replaceWith(toggle.cloneNode(true));
+          const newToggle = document.querySelector('.VPSwitch.VPSwitchAppearance');
+          
+          newToggle.addEventListener('click', (e) => {
+            if (!document.startViewTransition) return;
+            
+            e.preventDefault();
+            
+            const isCurrentlyDark = document.documentElement.classList.contains('dark');
+            
+            document.startViewTransition(() => {
+              document.documentElement.classList.toggle('dark', !isCurrentlyDark);
+              localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
+            });
+          });
+        };
+        
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', addViewTransition);
+        } else {
+          addViewTransition();
+        }
+      })();
+    `]
   ],
 
   vite: {
