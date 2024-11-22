@@ -5,6 +5,8 @@ import { resolve } from 'path'
 
 const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 
+const sidebar = generateSidebar()
+
 export default defineConfig({
   title: 'PrizOwO Blogs',
   description: '收录！收录！',
@@ -70,7 +72,15 @@ export default defineConfig({
       { text: '网址导航', link: '/websites/' }
     ],
     
-    sidebar: generateSidebar(resolve(__dirname, '../')),
+    sidebar: {
+      '/cards/': [
+        {
+          text: '卡片列表',
+          link: '/cards/'
+        }
+      ],
+      ...sidebar
+    },
 
     search: {
       provider: 'local',

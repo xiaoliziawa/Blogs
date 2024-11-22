@@ -17,6 +17,9 @@ hero:
     - theme: alt
       text: Github
       link: https://github.com/xiaoliziawa
+    - theme: alt
+      text: Cards
+      link: /cards/
 
 features:
   - icon: 💻
