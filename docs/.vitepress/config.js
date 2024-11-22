@@ -19,6 +19,12 @@ export default defineConfig({
   vite: {
     define: {
       __FILE_STATS__: JSON.stringify(fileStats)
+    },
+    optimizeDeps: {
+      include: ['echarts']
+    },
+    ssr: {
+      noExternal: ['echarts']
     }
   },
 
