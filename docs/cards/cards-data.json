@@ -8,7 +8,7 @@
 					"id": "sw-1",
 					"title": "列表",
 					"description": "测试列表",
-					"image": "/public/cards-img/home.png",
+					"image": "/cards-img/home.png",
 					"link": "/software/",
 					"tags": ["工具", "软件"]
 				}
@@ -22,7 +22,7 @@
 					"id": "dev-1",
 					"title": "111示例",
 					"description": "我是测试字符串",
-					"image": "/public/cards-img/logo.png",
+					"image": "/cards-img/logo.png",
 					"link": "/code/",
 					"tags": ["开发", "示例"]
 				},
@@ -30,7 +30,7 @@
 					"id": "code-1",
 					"title": "代码示例",
 					"description": "我是测试字符串二号😭",
-					"image": "/public/cards-img/home.png",
+					"image": "/cards-img/home.png",
 					"link": "/code/",
 					"tags": ["开发", "代码", "示例"]
 				}
