@@ -6,6 +6,44 @@ import * as echarts from 'echarts'
 const { isDark } = useData()
 let chart = null
 const chartContainer = ref(null)
+const commitData = ref([])
+const dateRange = ref({ start: '', end: '' })
+const dates = ref([])
+
+// 获取GitHub提交数据
+const fetchGitHubData = async () => {
+  try {
+    const response = await fetch('https://api.github.com/repos/xiaoliziawa/Blogs/stats/commit_activity')
+    if (!response.ok) throw new Error('Failed to fetch data')
+    const data = await response.json()
+    
+    if (!data || data.length === 0) throw new Error('No data available')
+
+    // 处理最近一周的数据
+    const lastWeek = data[data.length - 1]
+    if (!lastWeek || !lastWeek.days) throw new Error('Invalid data structure')
+
+    const commits = lastWeek.days
+    const weekStart = new Date(lastWeek.week * 1000)
+    
+    // 格式化日期
+    dates.value = commits.map((_, index) => {
+      const date = new Date(weekStart)
+      date.setDate(date.getDate() + index)
+      return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
+    })
+    
+    dateRange.value = {
+      start: dates.value[0],
+      end: dates.value[dates.value.length - 1]
+    }
+    
+    commitData.value = commits
+    createChart()
+  } catch (error) {
+    console.error('Error fetching GitHub data:', error)
+  }
+}
 
 const createChart = () => {
   if (!chartContainer.value) return
@@ -40,7 +78,7 @@ const createChart = () => {
         fontWeight: 'bold',
         fontFamily: 'var(--vp-font-family-base)'
       },
-      subtext: 'Weekly from 2024年11月22日 to 2024年11月22日',
+      subtext: `Weekly from ${dateRange.value.start} to ${dateRange.value.end}`,
       subtextStyle: {
         color: colors.subText,
         fontSize: 14,
@@ -58,7 +96,7 @@ const createChart = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['11-21', '11-21', '11-21', '11-21', '11-22', '11-22', '11-22', '11-22'],
+      data: dates.value,
       axisLine: {
         show: true,
         lineStyle: {
@@ -98,7 +136,7 @@ const createChart = () => {
     },
     series: [
       {
-        data: [0, 0, 0, 0, 11, 0, 0, 0],
+        data: commitData.value,
         type: 'line',
         smooth: true,
         showSymbol: true,
@@ -132,7 +170,7 @@ const createChart = () => {
 
 onMounted(() => {
   nextTick(() => {
-    createChart()
+    fetchGitHubData()
   })
   
   window.addEventListener('resize', () => chart?.resize())
