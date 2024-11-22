@@ -1,8 +1,6 @@
 import { defineConfig } from 'vitepress'
 import generateSidebar from './utils/sidebar'
 import { resolve } from 'path'
-import fs from 'fs'
-import path from 'path'
 
 export default defineConfig({
   title: 'PrizOwO Blogs',
@@ -10,7 +8,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
   ],
-  base: '/',
+  base: '/Blogs/',
   themeConfig: {
     logo: '/logo.png',
     nav: [

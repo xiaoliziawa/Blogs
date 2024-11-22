@@ -40,9 +40,6 @@ jobs:
             - name: Build
               run: npm run docs:build
 
-            - name: Generate CNAME
-              run: echo "prizowo.net" > docs/.vitepress/dist/CNAME
-
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:
