@@ -21,7 +21,7 @@ const fetchGitHubData = async () => {
 
     // 处理最近一周的数据
     const lastWeek = data[data.length - 1]
-    if (!lastWeek || !lastWeek.days) throw new Error('Invalid data structure')
+    if (!lastWeek || !Array.isArray(lastWeek.days)) throw new Error('Invalid data structure')
 
     const commits = lastWeek.days
     const weekStart = new Date(lastWeek.week * 1000)
@@ -114,6 +114,7 @@ const createChart = () => {
     },
     yAxis: {
       type: 'value',
+      minInterval: 1,
       axisLine: {
         show: true,
         lineStyle: {
