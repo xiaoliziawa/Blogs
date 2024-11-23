@@ -213,4 +213,40 @@ html:not(.dark)::view-transition-old(root) {
 /* 添加 View Transitions API 支持 */
 html {
   view-transition-name: root;
+}
+
+/* 响应式布局调整 */
+@media (max-width: 768px) {
+  .VPHero .image-container {
+    margin-top: 32px !important;
+    margin-bottom: 32px !important;
+  }
+
+  .VPHero .image {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  .VPHero .image-bg {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  .VPHero .image::before {
+    width: 240px !important;
+    height: 240px !important;
+  }
+
+  .VPHero .image::after {
+    width: 320px !important;
+    height: 320px !important;
+  }
+}
+
+/* 确保图标在所有设备上居中显示 */
+.VPHero .image-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 0 auto !important;
 } 
