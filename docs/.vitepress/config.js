@@ -88,7 +88,7 @@ export default defineConfig({
     sidebar: {
       '/cards/': [
         {
-          text: '卡片列表',
+          text: '网站卡片收藏',
           link: '/cards/'
         }
       ],
