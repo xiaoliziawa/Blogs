@@ -84,6 +84,9 @@ onMounted(() => {
   max-width: 1152px;
   position: relative;
   border-top: 1px solid var(--vp-c-divider);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .giscus-placeholder {
@@ -94,12 +97,16 @@ onMounted(() => {
 
 #giscus-container {
   min-height: 200px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .giscus-frame {
   margin: 0 auto;
   width: 100% !important;
   background-color: var(--vp-c-bg);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* 深色模式下的样式 */
@@ -110,6 +117,7 @@ onMounted(() => {
 @media (max-width: 768px) {
   .giscus-container {
     padding: 1rem 0.5rem;
+    margin: 2rem 0;
   }
 }
 </style> 

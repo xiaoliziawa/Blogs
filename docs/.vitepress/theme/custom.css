@@ -52,13 +52,29 @@
 
 /* 右侧大纲样式 */
 .VPDocAside .content {
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-left: none !important;
+  margin-left: 0 !important;
   padding-left: 16px !important;
+}
+
+.VPDocAside .content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--vp-c-divider);
 }
 
 .VPDocAside .outline-title {
   font-weight: 600 !important;
   margin-bottom: 8px !important;
+  padding-left: 0 !important;
+}
+
+.VPDocAside .outline-link {
+  padding-left: 0 !important;
 }
 
 .VPDocAside .outline-link {
@@ -74,6 +90,7 @@
 /* 当前页面标题样式 */
 .VPDocAside .outline-marker {
   width: 2px !important;
+  left: 0 !important;
   background-color: var(--vp-c-brand) !important;
 }
 

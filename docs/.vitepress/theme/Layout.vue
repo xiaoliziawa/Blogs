@@ -5,31 +5,11 @@ import { computed } from 'vue'
 import Comments from './components/Comments.vue'
 
 const { Layout } = DefaultTheme
-const { page, frontmatter } = useData()
-
-// 是否显示文档信息（排除首页）
-const showMeta = computed(() => {
-  return !frontmatter.value.home
-})
-
-// 格式化日期
-const lastUpdated = computed(() => {
-  if (!page.value.lastUpdated) return ''
-  const date = new Date(page.value.lastUpdated)
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
-})
+const { frontmatter } = useData()
 </script>
 
 <template>
   <Layout>
-    <template #doc-top>
-      <div class="doc-meta" v-if="showMeta">
-        <div class="meta-item">
-          <span class="meta-label">最后更新: </span>
-          <span class="meta-value">{{ lastUpdated }}</span>
-        </div>
-      </div>
-    </template>
     <template #doc-after>
       <Comments v-if="!frontmatter.home" />
     </template>
@@ -37,22 +17,23 @@ const lastUpdated = computed(() => {
 </template>
 
 <style>
-.doc-meta {
-  padding: 8px 24px;
-  border-bottom: 1px solid var(--vp-c-divider);
-  display: flex;
-  font-size: 0.9rem;
-  color: var(--vp-c-text-2);
-  background: var(--vp-c-bg);
+/* 确保内容区域不会溢出 */
+:deep(.VPDoc) {
+  max-width: var(--vp-layout-max-width);
+  margin: 0 auto;
 }
 
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+:deep(.VPDoc .container) {
+  max-width: calc(var(--vp-layout-max-width) - var(--vp-sidebar-width) - var(--vp-aside-width));
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
-.meta-label {
-  opacity: 0.8;
+@media (max-width: 960px) {
+  :deep(.VPDoc .container) {
+    max-width: 100%;
+    padding: 0 16px;
+  }
 }
 </style> 
