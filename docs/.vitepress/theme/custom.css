@@ -28,12 +28,12 @@
 /* 主题切换动画 */
 html.dark::view-transition-new(root),
 html:not(.dark)::view-transition-new(root) {
-  animation: ripple-effect 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: ripple-effect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 html.dark::view-transition-old(root),
 html:not(.dark)::view-transition-old(root) {
-  animation: fade-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fade-out 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes ripple-effect {
@@ -63,7 +63,7 @@ html:not(.dark)::view-transition-old(root) {
 *,
 *::before,
 *::after {
-  transition: none !important;
+  transition: background-color 0s, border-color 0s, color 0s !important;
 }
 
 /* 添加硬件加速 */
@@ -286,4 +286,125 @@ html {
 /* 确保评论区在深色模式下正常显示 */
 .dark .giscus-frame {
   background-color: var(--vp-c-bg);
+}
+
+/* 添加卡片悬浮动画样式 */
+.VPFeature {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.VPFeature:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 优化卡片图标样式 */
+.VPFeature .icon {
+  transition: transform 0.3s ease !important;
+}
+
+.VPFeature:hover .icon {
+  transform: scale(1.1) !important;
+}
+
+/* 卡片内文字动画 */
+.VPFeature .title,
+.VPFeature .details {
+  transition: color 0.3s ease !important;
+}
+
+.VPFeature:hover .title {
+  color: var(--vp-c-brand) !important;
+}
+
+/* 确保卡片在暗色模式下也有好看的效果 */
+.dark .VPFeature {
+  background: rgba(30, 30, 30, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .VPFeature:hover {
+  background: rgba(40, 40, 40, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 添加导航按钮的悬浮动画 */
+.VPButton {
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.VPButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 主按钮特殊效果 */
+.VPButton.brand {
+  background: linear-gradient(90deg, var(--vp-c-brand) 0%, var(--vp-c-brand-light) 100%) !important;
+  border: none !important;
+}
+
+.VPButton.brand:hover {
+  background: linear-gradient(90deg, var(--vp-c-brand-light) 0%, var(--vp-c-brand) 100%) !important;
+}
+
+/* 次要按钮效果 */
+.VPButton.alt {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.dark .VPButton.alt {
+  background: rgba(30, 30, 30, 0.5) !important;
+}
+
+.VPButton.alt:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark .VPButton.alt:hover {
+  background: rgba(40, 40, 40, 0.7) !important;
+}
+
+/* 确保按钮文字在动画过程中保持清晰 */
+.VPButton span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 为卡片添加特定的过渡效果 */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark .card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 卡片图片的过渡效果 */
+.card-image img {
+  transition: transform 0.3s ease !important;
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05) !important;
+}
+
+/* 卡片内容的过渡效果 */
+.card-content h3,
+.card-content p {
+  transition: color 0.3s ease !important;
+}
+
+.card:hover .card-content h3 {
+  color: var(--vp-c-brand) !important;
 } 
