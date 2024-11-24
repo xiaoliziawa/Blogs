@@ -9,6 +9,12 @@ const isLoaded = ref(false)
 function loadGiscus() {
   console.log('Loading Giscus for:', page.value.relativePath)
   
+  // 清除现有的 giscus 实例
+  const existingGiscus = document.querySelector('.giscus-frame')
+  if (existingGiscus) {
+    existingGiscus.remove()
+  }
+  
   const giscus = document.createElement('script')
   giscus.src = 'https://giscus.app/client.js'
   giscus.setAttribute('data-repo', 'xiaoliziawa/Blogs')
@@ -20,7 +26,7 @@ function loadGiscus() {
   giscus.setAttribute('data-reactions-enabled', '1')
   giscus.setAttribute('data-emit-metadata', '0')
   giscus.setAttribute('data-input-position', 'bottom')
-  giscus.setAttribute('data-theme', isDark.value ? 'dark' : 'light')
+  giscus.setAttribute('data-theme', isDark.value ? 'dark' : 'light') // 初始化时设置正确的主题
   giscus.setAttribute('data-lang', 'zh-CN')
   giscus.setAttribute('crossorigin', 'anonymous')
   giscus.async = true
@@ -37,19 +43,29 @@ function loadGiscus() {
 }
 
 // 更新 Giscus 主题
-function updateGiscusTheme(theme) {
+function updateGiscusTheme(newIsDark) {
   const iframe = document.querySelector('.giscus-frame')
-  if (iframe) {
+  if (!iframe) {
+    // 如果 iframe 不存在，重新加载 Giscus
+    loadGiscus()
+    return
+  }
+
+  try {
     iframe.contentWindow.postMessage(
       {
         giscus: {
           setConfig: {
-            theme: theme ? 'dark' : 'light'
+            theme: newIsDark ? 'dark' : 'light'
           }
         }
       },
       'https://giscus.app'
     )
+  } catch (e) {
+    console.error('Failed to update Giscus theme:', e)
+    // 如果更新失败，尝试重新加载
+    loadGiscus()
   }
 }
 
@@ -59,14 +75,27 @@ watch(isDark, (newIsDark) => {
   if (isLoaded.value) {
     updateGiscusTheme(newIsDark)
   }
-}, { immediate: true })
+}, { immediate: false })
 
 onMounted(() => {
   console.log('Comments component mounted')
-  // 增加延迟确保 DOM 完全加载
-  setTimeout(() => {
-    loadGiscus()
-  }, 1000)
+  // 初始加载
+  loadGiscus()
+  
+  // 监听主题变化的 DOM 事件
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class' && mutation.target === document.documentElement) {
+        const isDarkMode = document.documentElement.classList.contains('dark')
+        updateGiscusTheme(isDarkMode)
+      }
+    })
+  })
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
 })
 </script>
 
@@ -104,14 +133,9 @@ onMounted(() => {
 .giscus-frame {
   margin: 0 auto;
   width: 100% !important;
-  background-color: var(--vp-c-bg);
+  background-color: transparent !important;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-/* 深色模式下的样式 */
-:root.dark .giscus-frame {
-  background-color: var(--vp-c-bg);
 }
 
 @media (max-width: 768px) {
