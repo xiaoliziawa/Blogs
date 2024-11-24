@@ -28,52 +28,24 @@ export default defineConfig({
           toggle.replaceWith(toggle.cloneNode(true));
           const newToggle = document.querySelector('.VPSwitch.VPSwitchAppearance');
           
-          newToggle.addEventListener('click', async (e) => {
+          newToggle.addEventListener('click', (e) => {
             if (!document.startViewTransition) return;
             
             e.preventDefault();
-            e.stopPropagation();
             
             const isCurrentlyDark = document.documentElement.classList.contains('dark');
             
-            try {
-              const transition = document.startViewTransition(async () => {
-                // 延迟执行主题切换，等待动画开始
-                await new Promise(resolve => setTimeout(resolve, 50));
-                
-                document.documentElement.classList.toggle('dark', !isCurrentlyDark);
-                localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
-              });
-
-              // 等待动画完成
-              await transition.finished;
-            } catch (err) {
-              console.error('View Transition failed:', err);
-              // 如果动画失败，仍然执行主题切换
+            document.startViewTransition(() => {
               document.documentElement.classList.toggle('dark', !isCurrentlyDark);
               localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
-            }
+            });
           });
         };
         
-        // 确保在 DOM 完全加载后执行
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', addViewTransition);
         } else {
           addViewTransition();
-        }
-
-        // 添加初始化主题的逻辑
-        const initTheme = () => {
-          const isDark = localStorage.getItem('vitepress-theme-appearance') === 'dark';
-          document.documentElement.classList.toggle('dark', isDark);
-        };
-        
-        // 在页面加载时初始化主题
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initTheme);
-        } else {
-          initTheme();
         }
       })();
     `]

@@ -2,22 +2,70 @@
   --vp-c-brand: #4169e1;
   --vp-c-brand-light: #5a7de9;
   --vp-c-brand-dark: #3154c4;
-  color-scheme: light dark;
-  transition: background-color 0.6s ease;
 }
 
 .dark {
   --vp-c-bg: #121212;
   --vp-c-bg-soft: #1a1a1a;
-  color-scheme: dark;
-  transition: background-color 0.6s ease;
+}
+
+/* View Transitions 相关样式 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 999;
+}
+
+/* 主题切换动画 */
+html.dark::view-transition-new(root) {
+  animation: ripple-effect 0.4s ease-out forwards;
+}
+
+html:not(.dark)::view-transition-new(root) {
+  animation: ripple-effect 0.4s ease-out forwards;
+}
+
+html.dark::view-transition-old(root),
+html:not(.dark)::view-transition-old(root) {
+  animation: fade-out 0.4s ease-in forwards;
+}
+
+@keyframes ripple-effect {
+  from {
+    clip-path: circle(0% at 90% 10%);
+  }
+  to {
+    clip-path: circle(150% at 90% 10%);
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* 移除所有的 transition 属性 */
+:root,
+.dark,
+.VPSidebar,
+.VPNavBar,
+.VPFooter {
+  transition: none;
 }
 
 /* 左侧边栏样式 */
 .VPSidebar {
   background: var(--vp-c-bg) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  transition: background-color 0.6s ease;
 }
 
 /* 调整侧边栏字体大小和间距 */
@@ -184,85 +232,6 @@ html {
   background: rgba(30, 30, 30, 0.8);
 }
 
-/* 修改主题切换动画 */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 999;
-}
-
-/* 暗色到亮色的动画 */
-html:not(.dark)::view-transition-new(root) {
-  animation: ripple-effect 0.6s ease-out forwards;
-  view-transition-name: root;
-}
-
-html:not(.dark)::view-transition-old(root) {
-  animation: fade-out 0.6s ease-in forwards;
-  view-transition-name: root;
-}
-
-/* 亮色到暗色的动画 */
-.dark::view-transition-new(root) {
-  animation: ripple-effect 0.6s ease-out forwards;
-  view-transition-name: root;
-}
-
-.dark::view-transition-old(root) {
-  animation: fade-out 0.6s ease-in forwards;
-  view-transition-name: root;
-}
-
-/* 确保动画期间背景色过渡平滑 */
-::view-transition-group(root) {
-  animation: none;
-}
-
-/* 添加背景色过渡 */
-:root {
-  color-scheme: light dark;
-  transition: background-color 0.6s ease;
-}
-
-.dark {
-  --vp-c-bg: #121212;
-  --vp-c-bg-soft: #1a1a1a;
-  transition: background-color 0.6s ease;
-}
-
-@keyframes ripple-effect {
-  0% {
-    clip-path: circle(0% at 90% 10%);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  50% {
-    clip-path: circle(60% at 90% 10%);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  100% {
-    clip-path: circle(140% at 90% 10%);
-  }
-}
-
-@keyframes fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-/* 添加 View Transitions API 支持 */
-html {
-  view-transition-name: root;
-}
-
 /* 响应式布局调整 */
 @media (max-width: 768px) {
   .VPHero .image-container {
@@ -291,7 +260,7 @@ html {
   }
 }
 
-/* 确保图标在所有设备上居中显示 */
+/* 确保图标在所有设备上���中显示 */
 .VPHero .image-container {
   display: flex !important;
   justify-content: center !important;
@@ -308,52 +277,4 @@ html {
 /* 确保评论区在深色模式下正常显示 */
 .dark .giscus-frame {
   background-color: var(--vp-c-bg);
-}
-
-/* 确保根元素有过渡效果 */
-:root {
-  color-scheme: light dark;
-  transition: background-color 0.6s ease;
-}
-
-/* 只给需要过渡效果的元素添加过渡 */
-.VPSidebar,
-.VPNavBar,
-.VPFooter {
-  transition: background-color 0.6s ease;
-}
-
-/* View Transitions 相关样式 */
-::view-transition-old(root),
-::view-transition-new(root) {
-  mix-blend-mode: normal;
-  animation: none;
-}
-
-/* 确保动画期间的层级正确 */
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 999;
-}
-
-/* 主题切换动画 */
-@keyframes ripple-effect {
-  0% {
-    clip-path: circle(0% at 90% 10%);
-  }
-  100% {
-    clip-path: circle(150% at 90% 10%);
-  }
-}
-
-/* 应用动画到新旧视图 */
-::view-transition-new(root) {
-  animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) both ripple-effect;
-}
-
-::view-transition-old(root) {
-  animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
 } 
