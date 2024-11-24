@@ -28,17 +28,21 @@ export default defineConfig({
           toggle.replaceWith(toggle.cloneNode(true));
           const newToggle = document.querySelector('.VPSwitch.VPSwitchAppearance');
           
-          newToggle.addEventListener('click', (e) => {
+          newToggle.addEventListener('click', async (e) => {
             if (!document.startViewTransition) return;
             
             e.preventDefault();
             
             const isCurrentlyDark = document.documentElement.classList.contains('dark');
             
-            document.startViewTransition(() => {
-              document.documentElement.classList.toggle('dark', !isCurrentlyDark);
-              localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
-            });
+            try {
+              await document.startViewTransition(() => {
+                document.documentElement.classList.toggle('dark', !isCurrentlyDark);
+                localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
+              }).finished;
+            } catch (err) {
+              console.error('View Transition failed:', err);
+            }
           });
         };
         

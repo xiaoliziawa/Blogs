@@ -1,4 +1,4 @@
-:root {
+ :root {
   --vp-c-brand: #4169e1;
   --vp-c-brand-light: #5a7de9;
   --vp-c-brand-dark: #3154c4;
@@ -197,19 +197,37 @@ html {
 /* 暗色到亮色的动画 */
 html:not(.dark)::view-transition-new(root) {
   animation: ripple-effect 0.6s ease-out forwards;
+  view-transition-name: root;
 }
 
 html:not(.dark)::view-transition-old(root) {
   animation: fade-out 0.6s ease-in forwards;
+  view-transition-name: root;
 }
 
 /* 亮色到暗色的动画 */
 .dark::view-transition-new(root) {
   animation: ripple-effect 0.6s ease-out forwards;
+  view-transition-name: root;
 }
 
 .dark::view-transition-old(root) {
   animation: fade-out 0.6s ease-in forwards;
+  view-transition-name: root;
+}
+
+/* 确保动画期间背景色过渡平滑 */
+::view-transition-group(root) {
+  animation: none;
+}
+
+/* 添加背景色过渡 */
+:root {
+  transition: background-color 0.6s ease;
+}
+
+.dark {
+  transition: background-color 0.6s ease;
 }
 
 @keyframes ripple-effect {
