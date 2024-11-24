@@ -1,209 +1,162 @@
 <script setup>
-import { onMounted, watch, ref, nextTick, onUnmounted } from 'vue'
-import { useData } from 'vitepress'
+import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
 
-const { isDark } = useData()
-let chart = null
 const chartContainer = ref(null)
-const commitData = ref([])
-const dateRange = ref({ start: '', end: '' })
-const dates = ref([])
+let chart = null
 
-// 获取GitHub提交数据
-const fetchGitHubData = async () => {
+async function fetchGitHubData() {
   try {
-    const response = await fetch('https://api.github.com/repos/xiaoliziawa/Blogs/stats/commit_activity')
-    if (!response.ok) throw new Error('Failed to fetch data')
+    const username = 'xiaoliziawa'
+    const repoName = 'Blogs'
+    const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/stats/punch_card`)
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch data')
+    }
+
     const data = await response.json()
     
-    if (!data || data.length === 0) throw new Error('No data available')
-
-    // 处理最近一周的数据
-    const lastWeek = data[data.length - 1]
-    if (!lastWeek || !Array.isArray(lastWeek.days)) throw new Error('Invalid data structure')
-
-    const commits = lastWeek.days
-    const weekStart = new Date(lastWeek.week * 1000)
-    
-    // 格式化日期
-    dates.value = commits.map((_, index) => {
-      const date = new Date(weekStart)
-      date.setDate(date.getDate() + index)
-      return date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })
+    // 按星期几统计提交次数
+    const dailyCommits = new Array(7).fill(0)
+    data.forEach(([day, , count]) => {
+      dailyCommits[day] += count
     })
-    
-    dateRange.value = {
-      start: dates.value[0],
-      end: dates.value[dates.value.length - 1]
-    }
-    
-    commitData.value = commits
-    createChart()
+
+    // 计算最大提交数，用于设置 y 轴范围
+    const maxCommits = Math.max(...dailyCommits)
+    const yAxisMax = Math.ceil(maxCommits / 5) * 5 // 向上取整到最近的5的倍数
+
+    createChart({
+      data: dailyCommits,
+      yAxisMax
+    })
   } catch (error) {
-    console.error('Error fetching GitHub data:', error)
+    // 如果获取失败，显示空图表
+    createChart({
+      data: Array(7).fill(0),
+      yAxisMax: 15
+    })
   }
 }
 
-const createChart = () => {
+function createChart({ data, yAxisMax }) {
   if (!chartContainer.value) return
   
   if (chart) {
     chart.dispose()
   }
 
-  const currentTheme = document.documentElement.classList.contains('dark')
+  const isDark = document.documentElement.classList.contains('dark')
   chart = echarts.init(chartContainer.value)
-
-  const colors = {
-    text: currentTheme ? '#ffffff' : '#000000',
-    subText: currentTheme ? '#cccccc' : '#666666',
-    axis: currentTheme ? '#ffffff' : '#000000',
-    splitLine: currentTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
-    mainLine: currentTheme ? '#ffcc00' : '#8B4513',
-    areaGradient: [
-      currentTheme ? 'rgba(255, 204, 0, 0.3)' : 'rgba(139, 69, 19, 0.2)',
-      'rgba(139, 69, 19, 0)'
-    ]
-  }
-
+  
   const option = {
-    backgroundColor: 'transparent',
-    title: {
-      text: 'Commits over time',
-      left: 'center',
-      textStyle: {
-        color: colors.text,
-        fontSize: 24,
-        fontWeight: 'bold',
-        fontFamily: 'var(--vp-font-family-base)'
-      },
-      subtext: `Weekly from ${dateRange.value.start} to ${dateRange.value.end}`,
-      subtextStyle: {
-        color: colors.subText,
-        fontSize: 14,
-        fontFamily: 'var(--vp-font-family-base)'
-      },
-      padding: [0, 0, 30, 0]
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b}: {c} 次提交'
     },
     grid: {
-      left: '5%',
-      right: '5%',
-      bottom: '8%',
-      top: '15%',
+      top: '10%',
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
       containLabel: true
     },
     xAxis: {
       type: 'category',
-      boundaryGap: false,
-      data: dates.value,
+      data: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
       axisLine: {
-        show: true,
         lineStyle: {
-          color: colors.axis,
-          width: 1
+          color: isDark ? '#666' : '#ccc'
         }
       },
       axisLabel: {
-        color: colors.axis,
-        fontSize: 12
-      },
-      splitLine: {
-        show: false
+        color: isDark ? '#999' : '#666'
       }
     },
     yAxis: {
       type: 'value',
-      minInterval: 1,
+      min: 0,
+      max: yAxisMax,
+      interval: 5,
       axisLine: {
         show: true,
         lineStyle: {
-          color: colors.axis,
-          width: 1
-        }
-      },
-      splitLine: {
-        show: true,
-        lineStyle: {
-          color: colors.splitLine,
-          width: 1,
-          type: 'solid'
+          color: isDark ? '#666' : '#ccc'
         }
       },
       axisLabel: {
-        color: colors.axis,
-        fontSize: 12
+        color: isDark ? '#999' : '#666'
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? '#333' : '#eee'
+        }
       }
     },
     series: [
       {
-        data: commitData.value,
+        data: data,
         type: 'line',
         smooth: true,
-        showSymbol: true,
-        symbolSize: 6,
+        symbolSize: 8,
         lineStyle: {
-          color: colors.mainLine,
-          width: 2
+          width: 2,
+          color: '#4169e1'
         },
         itemStyle: {
-          color: colors.mainLine,
-          borderWidth: 2
+          color: '#4169e1'
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
               offset: 0,
-              color: colors.areaGradient[0]
+              color: isDark ? 'rgba(65, 105, 225, 0.3)' : 'rgba(65, 105, 225, 0.1)'
             },
             {
               offset: 1,
-              color: colors.areaGradient[1]
+              color: isDark ? 'rgba(65, 105, 225, 0.1)' : 'rgba(65, 105, 225, 0.02)'
             }
           ])
         }
       }
     ]
   }
-
+  
   chart.setOption(option)
 }
 
-onMounted(() => {
-  nextTick(() => {
-    fetchGitHubData()
-  })
-  
-  window.addEventListener('resize', () => chart?.resize())
-})
-
-watch(isDark, () => {
-  setTimeout(() => {
-    createChart()
-  }, 0)
-})
-
-onUnmounted(() => {
-  if (chart) {
-    chart.dispose()
-    chart = null
+onMounted(async () => {
+  try {
+    await fetchGitHubData()
+    window.addEventListener('resize', () => {
+      chart?.resize()
+    })
+    
+    const observer = new MutationObserver(() => {
+      if (chart) {
+        fetchGitHubData()
+      }
+    })
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+  } catch (error) {
+    // 错误处理
   }
-  window.removeEventListener('resize', () => chart?.resize())
 })
 </script>
 
 <template>
-  <div class="github-chart-wrapper">
-    <div ref="chartContainer" style="width: 100%; height: 100%;"></div>
-  </div>
+  <div ref="chartContainer" class="github-chart"></div>
 </template>
 
 <style scoped>
-.github-chart-wrapper {
+.github-chart {
   width: 100%;
   height: 100%;
-  padding: 20px;
-  border-radius: 8px;
-  background: var(--vp-c-bg-soft);
+  min-height: 300px;
 }
 </style> 

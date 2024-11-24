@@ -36,6 +36,10 @@ features:
     link: /websites/
 ---
 
+<script setup>
+import GitHubChart from './.vitepress/theme/components/GitHubChart.vue'
+</script>
+
 <div class="github-activity-section">
   <div class="github-chart-container">
     <GitHubChart />
