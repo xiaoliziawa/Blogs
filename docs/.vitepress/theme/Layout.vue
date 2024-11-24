@@ -2,6 +2,7 @@
 import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
 import { computed } from 'vue'
+import Comments from './components/Comments.vue'
 
 const { Layout } = DefaultTheme
 const { page, frontmatter } = useData()
@@ -28,6 +29,9 @@ const lastUpdated = computed(() => {
           <span class="meta-value">{{ lastUpdated }}</span>
         </div>
       </div>
+    </template>
+    <template #doc-after>
+      <Comments v-if="!frontmatter.home" />
     </template>
   </Layout>
 </template>

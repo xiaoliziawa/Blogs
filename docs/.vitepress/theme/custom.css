@@ -249,4 +249,15 @@ html {
   justify-content: center !important;
   align-items: center !important;
   margin: 0 auto !important;
+}
+
+/* 评论区样式 */
+.giscus, .giscus-frame {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+/* 确保评论区在深色模式下正常显示 */
+.dark .giscus-frame {
+  background-color: var(--vp-c-bg);
 } 

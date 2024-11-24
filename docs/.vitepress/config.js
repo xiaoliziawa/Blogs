@@ -127,6 +127,15 @@ export default defineConfig({
     },
     lastUpdated: {
       text: '最后更新时间'
+    },
+    giscus: {
+      repo: 'xiaoliziawa/Blogs',
+      repoId: 'R_kgDONTHVNA',
+      category: 'Announcements',
+      categoryId: 'DIC_kwDONTHVNM4CkhHT',
+      mapping: 'pathname',
+      inputPosition: 'bottom',
+      lang: 'zh-CN'
     }
   }
 }) 
