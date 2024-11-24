@@ -85,10 +85,14 @@ export default defineConfig({
       }
     ],
     
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/xiaoliziawa' }
+    ],
+
     sidebar: {
       '/cards/': [
         {
-          text: '网站卡片收藏',
+          text: '网站导航',
           link: '/cards/'
         }
       ],
