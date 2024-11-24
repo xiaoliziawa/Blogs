@@ -9,7 +9,6 @@
   --vp-c-bg-soft: #1a1a1a;
 }
 
-/* View Transitions 相关样式 */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;
@@ -25,7 +24,6 @@
   z-index: 999;
 }
 
-/* 主题切换动画 */
 html.dark::view-transition-new(root),
 html:not(.dark)::view-transition-new(root) {
   animation: ripple-effect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -54,36 +52,30 @@ html:not(.dark)::view-transition-old(root) {
   }
 }
 
-/* 确保根元素有正确的堆叠上下文 */
 :root {
   isolation: isolate;
 }
 
-/* 移除所有可能影响动画的过渡效果 */
 *,
 *::before,
 *::after {
   transition: background-color 0s, border-color 0s, color 0s !important;
 }
 
-/* 添加硬件加速 */
 ::view-transition-group(root) {
   transform: translateZ(0);
 }
 
-/* 左侧边栏样式 */
 .VPSidebar {
   background: var(--vp-c-bg) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-/* 调整侧边栏字体大小和间距 */
 .VPSidebarItem .text {
-  font-size: 0.875rem !important; /* 缩小字体 */
-  line-height: 1.4 !important; /* 调整行高 */
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
 }
 
-/* 调整各级菜单的缩进和间距 */
 .VPSidebarItem.level-0 > .item {
   padding: 4px 0 !important;
 }
@@ -104,7 +96,6 @@ html:not(.dark)::view-transition-old(root) {
   padding-left: 48px !important;
 }
 
-/* 当文本过长时的处理 */
 .VPSidebarItem .text {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -112,7 +103,6 @@ html:not(.dark)::view-transition-old(root) {
   max-width: 100% !important;
 }
 
-/* 右侧大纲样式 */
 .VPDocAside .content {
   border-left: none !important;
   margin-left: 0 !important;
@@ -149,21 +139,18 @@ html:not(.dark)::view-transition-old(root) {
   color: var(--vp-c-brand) !important;
 }
 
-/* 当前页面标题样式 */
 .VPDocAside .outline-marker {
   width: 2px !important;
   left: 0 !important;
   background-color: var(--vp-c-brand) !important;
 }
 
-/* 链接激活状态 */
 .VPSidebarItem .item.is-active {
   color: var(--vp-c-brand) !important;
   border-left: 2px solid var(--vp-c-brand) !important;
   background: rgba(65, 105, 225, 0.1) !important;
 }
 
-/* 分组标题样式 */
 .VPSidebarItem .text {
   font-size: 0.95rem !important;
   transition: color 0.2s !important;
@@ -173,7 +160,6 @@ html:not(.dark)::view-transition-old(root) {
   color: var(--vp-c-brand) !important;
 }
 
-/* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -192,12 +178,10 @@ html:not(.dark)::view-transition-old(root) {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* 平滑滚动 */
 html {
   scroll-behavior: smooth;
 }
 
-/* GitHub活动图表容器样式 */
 .github-activity {
   width: 100%;
   height: 100%;
@@ -231,17 +215,15 @@ html {
 
 .commit-graph {
   width: 100%;
-  height: calc(100% - 80px); /* 减去标题和副标题的高度 */
+  height: calc(100% - 80px);
   border-radius: 8px;
   overflow: hidden;
 }
 
-/* 暗色主题适配 */
 .dark .contribution-graph {
   background: rgba(30, 30, 30, 0.8);
 }
 
-/* 响应式布局调整 */
 @media (max-width: 768px) {
   .VPHero .image-container {
     margin-top: 32px !important;
@@ -269,7 +251,6 @@ html {
   }
 }
 
-/* 确保图标在所有设备上中显示 */
 .VPHero .image-container {
   display: flex !important;
   justify-content: center !important;
@@ -277,18 +258,15 @@ html {
   margin: 0 auto !important;
 }
 
-/* 评论区样式 */
 .giscus, .giscus-frame {
   width: 100%;
   margin-top: 2rem;
 }
 
-/* 确保评论区在深色模式下正常显示 */
 .dark .giscus-frame {
   background-color: var(--vp-c-bg);
 }
 
-/* 添加卡片悬浮动画样式 */
 .VPFeature {
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -301,7 +279,6 @@ html {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* 优化卡片图标样式 */
 .VPFeature .icon {
   transition: transform 0.3s ease !important;
 }
@@ -310,7 +287,6 @@ html {
   transform: scale(1.1) !important;
 }
 
-/* 卡片内文字动画 */
 .VPFeature .title,
 .VPFeature .details {
   transition: color 0.3s ease !important;
@@ -320,7 +296,6 @@ html {
   color: var(--vp-c-brand) !important;
 }
 
-/* 确保卡片在暗色模式下也有好看的效果 */
 .dark .VPFeature {
   background: rgba(30, 30, 30, 0.5) !important;
   border-color: rgba(255, 255, 255, 0.05) !important;
@@ -331,7 +306,6 @@ html {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* 添加导航按钮的悬浮动画 */
 .VPButton {
   transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -342,7 +316,6 @@ html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* 主按钮特殊效果 */
 .VPButton.brand {
   background: linear-gradient(90deg, var(--vp-c-brand) 0%, var(--vp-c-brand-light) 100%) !important;
   border: none !important;
@@ -352,7 +325,6 @@ html {
   background: linear-gradient(90deg, var(--vp-c-brand-light) 0%, var(--vp-c-brand) 100%) !important;
 }
 
-/* 次要按钮效果 */
 .VPButton.alt {
   background: rgba(255, 255, 255, 0.1) !important;
   backdrop-filter: blur(10px) !important;
@@ -370,13 +342,11 @@ html {
   background: rgba(40, 40, 40, 0.7) !important;
 }
 
-/* 确保按钮文字在动画过程中保持清晰 */
 .VPButton span {
   position: relative;
   z-index: 1;
 }
 
-/* 为卡片添加特定的过渡效果 */
 .card {
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
 }
@@ -390,7 +360,6 @@ html {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* 卡片图片的过渡效果 */
 .card-image img {
   transition: transform 0.3s ease !important;
 }
@@ -399,7 +368,6 @@ html {
   transform: scale(1.05) !important;
 }
 
-/* 卡片内容的过渡效果 */
 .card-content h3,
 .card-content p {
   transition: color 0.3s ease !important;

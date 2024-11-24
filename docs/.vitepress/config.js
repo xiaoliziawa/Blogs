@@ -4,7 +4,6 @@ import generateSidebar from './utils/sidebar'
 import { resolve } from 'path'
 
 const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
-
 const sidebar = generateSidebar()
 
 export default defineConfig({
@@ -36,26 +35,18 @@ export default defineConfig({
             const isCurrentlyDark = document.documentElement.classList.contains('dark');
             
             try {
-              // 先创建 transition 对象
               const transition = document.startViewTransition(async () => {
-                // 延迟执行主题切换
                 await new Promise(resolve => setTimeout(resolve, 0));
                 document.documentElement.classList.toggle('dark', !isCurrentlyDark);
                 localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
               });
 
-              // 等待动画开始
               await transition.ready;
-              
-              // 等待动画完成
               await transition.finished;
-            } catch (err) {
-              console.error('View Transition failed:', err);
-            }
+            } catch (err) {}
           });
         };
         
-        // 确保在 DOM 和样式完全加载后执行
         const init = () => {
           if (document.readyState === 'complete') {
             addViewTransition();
