@@ -28,25 +28,43 @@ export default defineConfig({
           toggle.replaceWith(toggle.cloneNode(true));
           const newToggle = document.querySelector('.VPSwitch.VPSwitchAppearance');
           
-          newToggle.addEventListener('click', (e) => {
+          newToggle.addEventListener('click', async (e) => {
             if (!document.startViewTransition) return;
             
             e.preventDefault();
             
             const isCurrentlyDark = document.documentElement.classList.contains('dark');
             
-            document.startViewTransition(() => {
-              document.documentElement.classList.toggle('dark', !isCurrentlyDark);
-              localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
-            });
+            try {
+              // 先创建 transition 对象
+              const transition = document.startViewTransition(async () => {
+                // 延迟执行主题切换
+                await new Promise(resolve => setTimeout(resolve, 0));
+                document.documentElement.classList.toggle('dark', !isCurrentlyDark);
+                localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
+              });
+
+              // 等待动画开始
+              await transition.ready;
+              
+              // 等待动画完成
+              await transition.finished;
+            } catch (err) {
+              console.error('View Transition failed:', err);
+            }
           });
         };
         
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', addViewTransition);
-        } else {
-          addViewTransition();
-        }
+        // 确保在 DOM 和样式完全加载后执行
+        const init = () => {
+          if (document.readyState === 'complete') {
+            addViewTransition();
+          } else {
+            window.addEventListener('load', addViewTransition);
+          }
+        };
+
+        init();
       })();
     `]
   ],

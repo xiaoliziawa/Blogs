@@ -14,6 +14,7 @@
 ::view-transition-new(root) {
   mix-blend-mode: normal;
   animation: none;
+  will-change: transform;
 }
 
 ::view-transition-old(root) {
@@ -25,17 +26,14 @@
 }
 
 /* 主题切换动画 */
-html.dark::view-transition-new(root) {
-  animation: ripple-effect 0.4s ease-out forwards;
-}
-
+html.dark::view-transition-new(root),
 html:not(.dark)::view-transition-new(root) {
-  animation: ripple-effect 0.4s ease-out forwards;
+  animation: ripple-effect 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 html.dark::view-transition-old(root),
 html:not(.dark)::view-transition-old(root) {
-  animation: fade-out 0.4s ease-in forwards;
+  animation: fade-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes ripple-effect {
@@ -48,18 +46,29 @@ html:not(.dark)::view-transition-old(root) {
 }
 
 @keyframes fade-out {
+  from {
+    opacity: 1;
+  }
   to {
     opacity: 0;
   }
 }
 
-/* 移除所有的 transition 属性 */
-:root,
-.dark,
-.VPSidebar,
-.VPNavBar,
-.VPFooter {
-  transition: none;
+/* 确保根元素有正确的堆叠上下文 */
+:root {
+  isolation: isolate;
+}
+
+/* 移除所有可能影响动画的过渡效果 */
+*,
+*::before,
+*::after {
+  transition: none !important;
+}
+
+/* 添加硬件加速 */
+::view-transition-group(root) {
+  transform: translateZ(0);
 }
 
 /* 左侧边栏样式 */
@@ -260,7 +269,7 @@ html {
   }
 }
 
-/* 确保图标在所有设备上���中显示 */
+/* 确保图标在所有设备上中显示 */
 .VPHero .image-container {
   display: flex !important;
   justify-content: center !important;
