@@ -1,6 +1,6 @@
 <script setup>
 import { useData } from 'vitepress'
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, nextTick } from 'vue'
 
 const { frontmatter, page, isDark } = useData()
 const isLoaded = ref(false)
@@ -15,31 +15,34 @@ function loadGiscus() {
     existingGiscus.remove()
   }
   
-  const giscus = document.createElement('script')
-  giscus.src = 'https://giscus.app/client.js'
-  giscus.setAttribute('data-repo', 'xiaoliziawa/Blogs')
-  giscus.setAttribute('data-repo-id', 'R_kgDONTHVNA')
-  giscus.setAttribute('data-category', 'Announcements')
-  giscus.setAttribute('data-category-id', 'DIC_kwDONTHVNM4CkhHT')
-  giscus.setAttribute('data-mapping', 'pathname')
-  giscus.setAttribute('data-strict', '0')
-  giscus.setAttribute('data-reactions-enabled', '1')
-  giscus.setAttribute('data-emit-metadata', '0')
-  giscus.setAttribute('data-input-position', 'bottom')
-  giscus.setAttribute('data-theme', isDark.value ? 'dark' : 'light') // 初始化时设置正确的主题
-  giscus.setAttribute('data-lang', 'zh-CN')
-  giscus.setAttribute('crossorigin', 'anonymous')
-  giscus.async = true
+  // 确保在DOM更新后再加载Giscus
+  nextTick(() => {
+    const giscus = document.createElement('script')
+    giscus.src = 'https://giscus.app/client.js'
+    giscus.setAttribute('data-repo', 'xiaoliziawa/Blogs')
+    giscus.setAttribute('data-repo-id', 'R_kgDONTHVNA')
+    giscus.setAttribute('data-category', 'Announcements')
+    giscus.setAttribute('data-category-id', 'DIC_kwDONTHVNM4CkhHT')
+    giscus.setAttribute('data-mapping', 'pathname')
+    giscus.setAttribute('data-strict', '0')
+    giscus.setAttribute('data-reactions-enabled', '1')
+    giscus.setAttribute('data-emit-metadata', '0')
+    giscus.setAttribute('data-input-position', 'bottom')
+    giscus.setAttribute('data-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')
+    giscus.setAttribute('data-lang', 'zh-CN')
+    giscus.setAttribute('crossorigin', 'anonymous')
+    giscus.async = true
 
-  const container = document.getElementById('giscus-container')
-  if (container) {
-    container.innerHTML = ''
-    container.appendChild(giscus)
-    isLoaded.value = true
-    console.log('Giscus script added successfully')
-  } else {
-    console.warn('Giscus container not found!')
-  }
+    const container = document.getElementById('giscus-container')
+    if (container) {
+      container.innerHTML = ''
+      container.appendChild(giscus)
+      isLoaded.value = true
+      console.log('Giscus script added successfully')
+    } else {
+      console.warn('Giscus container not found!')
+    }
+  })
 }
 
 // 更新 Giscus 主题
@@ -79,8 +82,10 @@ watch(isDark, (newIsDark) => {
 
 onMounted(() => {
   console.log('Comments component mounted')
-  // 初始加载
-  loadGiscus()
+  // 等待一小段时间确保主题状态已经稳定
+  setTimeout(() => {
+    loadGiscus()
+  }, 100)
   
   // 监听主题变化的 DOM 事件
   const observer = new MutationObserver((mutations) => {
