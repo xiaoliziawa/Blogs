@@ -141,7 +141,6 @@ function initializeImages() {
           class="preview-image no-preview"
           :style="{
             transform: `scale(${scale}) rotate(${rotation}deg)`,
-            transition: 'transform 0.3s ease'
           }"
         />
       </div>
@@ -282,6 +281,8 @@ function initializeImages() {
   border-radius: 4px;
   cursor: default !important;
   transform-origin: center center;
+  will-change: transform;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes modalIn {
