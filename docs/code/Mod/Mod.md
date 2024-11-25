@@ -29,3 +29,9 @@ print("Hello, World!")
 print("NMSL!")
 ```
 :::
+
+>使用`<img>`标签插入图片
+<img src="/cards-img/home.png" alt="Python Version">
+
+>使用`Markdown`语法插入图片
+![home](/page-icon.png)

@@ -3,6 +3,7 @@ import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
 import { computed } from 'vue'
 import Comments from './components/Comments.vue'
+import ImagePreview from './components/ImagePreview.vue'
 
 const { Layout } = DefaultTheme
 const { frontmatter } = useData()
@@ -12,6 +13,7 @@ const { frontmatter } = useData()
   <Layout>
     <template #doc-after>
       <Comments v-if="!frontmatter.home" />
+      <ImagePreview />
     </template>
   </Layout>
 </template>
