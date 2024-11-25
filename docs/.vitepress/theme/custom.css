@@ -252,10 +252,10 @@ html {
 }
 
 .VPHero .image-container {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin: 0 auto !important;
+  transform: none !important;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
 }
 
 .giscus, .giscus-frame {
@@ -433,5 +433,120 @@ html {
   
   .github-chart-container {
     height: 250px;
+  }
+}
+
+.VPHero .image-container {
+  transform: none !important;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero 图片的光晕效果 */
+.dark .VPHero .image {
+  position: relative !important;
+  z-index: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 只在暗色模式下显示光晕 */
+.dark .VPHero .image::before {
+  content: '' !important;
+  position: absolute !important;
+  z-index: -1 !important;
+  width: 110% !important;
+  height: 110% !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: radial-gradient(
+    circle at center,
+    rgba(66, 184, 255, 0.6) 0%,
+    rgba(91, 120, 255, 0.4) 15%,
+    rgba(99, 59, 255, 0.2) 30%,
+    transparent 50%
+  ) !important;
+  filter: blur(25px) !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 !important;
+}
+
+/* 响应式布局下保持光晕居中 */
+@media (max-width: 959px) {
+  .VPHero .image {
+    margin: 32px auto !important;
+    width: 280px !important;
+    height: 280px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .VPHero .image {
+    width: 240px !important;
+    height: 240px !important;
+  }
+}
+
+/* 响应式布局 */
+@media (min-width: 960px) {
+  .VPHero .container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 48px !important;
+  }
+
+  .VPHero .image {
+    order: 2 !important;
+    margin: 0 !important;
+    width: 320px !important;
+    height: 320px !important;
+  }
+
+  .VPHero .main {
+    max-width: 592px !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  .VPHero .actions {
+    justify-content: flex-start !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .VPHero .main {
+    padding: 0 48px !important;
+  }
+}
+
+@media (max-width: 959px) {
+  .VPHero .name,
+  .VPHero .text {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .VPHero .image-container {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+@media (max-width: 639px) {
+  .VPHero .name,
+  .VPHero .text {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .VPHero .image-container {
+    width: 240px;
+    height: 240px;
   }
 } 

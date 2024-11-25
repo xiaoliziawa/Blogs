@@ -78,20 +78,17 @@ function generateSidebarItems(dirPath, baseDir, parentPath = '') {
   return items
 }
 
+// 获取目录标题
 function getDirectoryTitle(dir) {
-  // 可以在这里定义目录的显示名称映射
-  const titleMap = {
-    code: '代码示例',
-    software: '软件列表',
-    websites: '网址导航'
-  }
-  return titleMap[dir] || dir
+  // 可以根据需要自定义目录标题
+  return dir.charAt(0).toUpperCase() + dir.slice(1)
 }
 
+// 从 markdown 文件中获取标题
 function getFileTitle(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf-8')
-    const titleMatch = content.match(/^#\s+(.*)$/m) || content.match(/^---\s*\ntitle:\s*(.*)\s*\n---/m)
+    const titleMatch = content.match(/^#\s+(.*)$/m)
     return titleMatch ? titleMatch[1] : null
   } catch {
     return null
