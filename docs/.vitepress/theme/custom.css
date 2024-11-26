@@ -1,12 +1,28 @@
 :root {
-  --vp-c-brand: #4169e1;
-  --vp-c-brand-light: #5a7de9;
-  --vp-c-brand-dark: #3154c4;
+  --vp-c-brand: #7e57c2;
+  --vp-c-brand-light: #9575cd;
+  --vp-c-brand-dark: #673ab7;
+  --vp-c-bg: #fafafa;
+  --vp-c-bg-soft: #f5f5f5;
+  --vp-c-bg-mute: #eeeeee;
+  --vp-c-text-1: #2c3e50;
+  --vp-c-text-2: #476582;
+  --vp-c-text-3: #90a4b7;
+  --vp-c-divider: rgba(60, 60, 60, 0.12);
+  --vp-c-divider-light: rgba(60, 60, 60, 0.06);
+  --vp-code-block-bg: #f8f9fc;
 }
 
 .dark {
-  --vp-c-bg: #121212;
-  --vp-c-bg-soft: #1a1a1a;
+  --vp-c-bg: #1a1a1a;
+  --vp-c-bg-soft: #242424;
+  --vp-c-bg-mute: #2f2f2f;
+  --vp-c-text-1: #ffffff;
+  --vp-c-text-2: #adbac7;
+  --vp-c-text-3: #768390;
+  --vp-c-divider: rgba(255, 255, 255, 0.1);
+  --vp-c-divider-light: rgba(255, 255, 255, 0.06);
+  --vp-code-block-bg: #1e1e1e;
 }
 
 ::view-transition-old(root),
@@ -161,8 +177,7 @@ html:not(.dark)::view-transition-old(root) {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -170,16 +185,18 @@ html:not(.dark)::view-transition-old(root) {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
+  background: var(--vp-c-brand-light);
+  border-radius: 4px;
+  opacity: 0.8;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--vp-c-brand);
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 .github-activity {
@@ -269,8 +286,8 @@ html {
 
 .VPFeature {
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(126, 87, 194, 0.1) !important;
+  background: rgba(126, 87, 194, 0.05) !important;
   backdrop-filter: blur(10px) !important;
 }
 
@@ -297,13 +314,13 @@ html {
 }
 
 .dark .VPFeature {
-  background: rgba(30, 30, 30, 0.5) !important;
-  border-color: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(126, 87, 194, 0.1) !important;
+  border: 1px solid rgba(126, 87, 194, 0.2) !important;
 }
 
 .dark .VPFeature:hover {
-  background: rgba(40, 40, 40, 0.7) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(126, 87, 194, 0.2) !important;
+  border-color: rgba(126, 87, 194, 0.3) !important;
 }
 
 .VPButton {
@@ -464,9 +481,9 @@ html {
   transform: translate(-50%, -50%) !important;
   background: radial-gradient(
     circle at center,
-    rgba(66, 184, 255, 0.6) 0%,
-    rgba(91, 120, 255, 0.4) 15%,
-    rgba(99, 59, 255, 0.2) 30%,
+    rgba(126, 87, 194, 0.6) 0%,
+    rgba(103, 58, 183, 0.4) 15%,
+    rgba(156, 39, 176, 0.2) 30%,
     transparent 50%
   ) !important;
   filter: blur(25px) !important;
@@ -549,4 +566,138 @@ html {
     width: 240px;
     height: 240px;
   }
+}
+
+/* 主页标题渐变效果 */
+.VPHero .name,
+.VPHero .text,
+.VPHero .tagline,
+.VPHero h1 {
+  background-image: linear-gradient(
+    120deg,
+    #ff6b6b 0%,
+    #7e57c2 25%,
+    #4a90e2 50%,
+    #66bb6a 75%,
+    #ffa726 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  animation: gradient 8s linear infinite;
+  background-size: 200% auto;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+/* 确保所有标题元都应用渐变效果 */
+.VPHero .container h1,
+.VPHero .container .name,
+.VPHero .container .text,
+.VPHero .container .tagline {
+  background-image: linear-gradient(
+    120deg,
+    #ff6b6b 0%,
+    #7e57c2 25%,
+    #4a90e2 50%,
+    #66bb6a 75%,
+    #ffa726 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+/* 暗色模式下的亮度调整 */
+.dark .VPHero .container h1,
+.dark .VPHero .container .name,
+.dark .VPHero .container .text,
+.dark .VPHero .container .tagline {
+  filter: brightness(1.2);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 添加这个新的样式规则 */
+.clip {
+  background-image: linear-gradient(
+    120deg,
+    #ff6b6b 0%,
+    #7e57c2 25%,
+    #4a90e2 50%,
+    #66bb6a 75%,
+    #ffa726 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  animation: gradient 8s linear infinite;
+  background-size: 200% auto;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+/* 暗色模式下的亮度调整 */
+.dark .clip {
+  filter: brightness(1.2);
+}
+
+/* 防止搜索框打开时隐藏滚动条导致的页面抖动 */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand-light);
+  border-radius: 4px;
+  opacity: 0.8;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-brand);
+}
+
+/* 暗色模式下的滚动条样式 */
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand);
+  opacity: 0.8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-brand-light);
+}
+
+/* 确保搜索框打开时内容不会移动 */
+.VPLocalNav {
+  padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
+}
+
+.VPNavBar.has-sidebar .content {
+  padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
 } 

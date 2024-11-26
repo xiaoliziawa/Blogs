@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 
 const chartContainer = ref(null)
 let chart = null
+let debounceTimer = null
 
 async function fetchGitHubData() {
   try {
@@ -17,22 +18,19 @@ async function fetchGitHubData() {
 
     const data = await response.json()
     
-    // 按星期几统计提交次数
     const dailyCommits = new Array(7).fill(0)
     data.forEach(([day, , count]) => {
       dailyCommits[day] += count
     })
 
-    // 计算最大提交数，用于设置 y 轴范围
     const maxCommits = Math.max(...dailyCommits)
-    const yAxisMax = Math.ceil(maxCommits / 5) * 5 // 向上取整到最近的5的倍数
+    const yAxisMax = Math.ceil(maxCommits / 5) * 5
 
     createChart({
       data: dailyCommits,
       yAxisMax
     })
   } catch (error) {
-    // 如果获取失败，显示空图表
     createChart({
       data: Array(7).fill(0),
       yAxisMax: 15
@@ -48,12 +46,40 @@ function createChart({ data, yAxisMax }) {
   }
 
   const isDark = document.documentElement.classList.contains('dark')
-  chart = echarts.init(chartContainer.value)
+  
+  chart = echarts.init(chartContainer.value, null, {
+    renderer: 'canvas',
+    devicePixelRatio: window.devicePixelRatio,
+    useDirtyRect: true
+  })
   
   const option = {
+    animation: false,
     tooltip: {
+      show: true,
       trigger: 'axis',
-      formatter: '{b}: {c} 次提交'
+      formatter: '{b}: {c} 次提交',
+      backgroundColor: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+      borderColor: isDark ? '#666' : '#ddd',
+      textStyle: {
+        color: isDark ? '#eee' : '#333',
+        fontSize: 13
+      },
+      extraCssText: 'box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); pointer-events: none;',
+      position: 'top',
+      enterable: false,
+      confine: true,
+      appendToBody: false,
+      showDelay: 0,
+      hideDelay: 0,
+      transitionDuration: 0,
+      axisPointer: {
+        type: 'line',
+        animation: false,
+        lineStyle: {
+          color: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+        }
+      }
     },
     grid: {
       top: '10%',
@@ -67,11 +93,11 @@ function createChart({ data, yAxisMax }) {
       data: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
       axisLine: {
         lineStyle: {
-          color: isDark ? '#666' : '#ccc'
+          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         }
       },
       axisLabel: {
-        color: isDark ? '#999' : '#666'
+        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
       }
     },
     yAxis: {
@@ -82,15 +108,15 @@ function createChart({ data, yAxisMax }) {
       axisLine: {
         show: true,
         lineStyle: {
-          color: isDark ? '#666' : '#ccc'
+          color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
         }
       },
       axisLabel: {
-        color: isDark ? '#999' : '#666'
+        color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
       },
       splitLine: {
         lineStyle: {
-          color: isDark ? '#333' : '#eee'
+          color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
         }
       }
     },
@@ -102,20 +128,20 @@ function createChart({ data, yAxisMax }) {
         symbolSize: 8,
         lineStyle: {
           width: 2,
-          color: '#4169e1'
+          color: isDark ? '#9575cd' : '#7e57c2'
         },
         itemStyle: {
-          color: '#4169e1'
+          color: isDark ? '#9575cd' : '#7e57c2'
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
               offset: 0,
-              color: isDark ? 'rgba(65, 105, 225, 0.3)' : 'rgba(65, 105, 225, 0.1)'
+              color: isDark ? 'rgba(149, 117, 205, 0.3)' : 'rgba(126, 87, 194, 0.2)'
             },
             {
               offset: 1,
-              color: isDark ? 'rgba(65, 105, 225, 0.1)' : 'rgba(65, 105, 225, 0.02)'
+              color: isDark ? 'rgba(149, 117, 205, 0.05)' : 'rgba(126, 87, 194, 0.05)'
             }
           ])
         }
@@ -123,15 +149,48 @@ function createChart({ data, yAxisMax }) {
     ]
   }
   
+  const debounce = (fn, delay) => {
+    return (...args) => {
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => fn(...args), delay)
+    }
+  }
+
+  const handleMouseMove = debounce((params) => {
+    chart.dispatchAction({
+      type: 'showTip',
+      seriesIndex: 0,
+      dataIndex: params.dataIndex
+    })
+  }, 16)
+
+  chart.on('mousemove', 'series', handleMouseMove)
+  
+  chart.on('globalout', () => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer)
+      debounceTimer = null
+    }
+  })
+  
   chart.setOption(option)
 }
 
 onMounted(async () => {
   try {
     await fetchGitHubData()
-    window.addEventListener('resize', () => {
-      chart?.resize()
-    })
+    
+    const resizeObserver = new ResizeObserver(
+      debounce(() => {
+        if (chart) {
+          chart.resize({ animation: { duration: 0 } })
+        }
+      }, 100)
+    )
+    
+    if (chartContainer.value) {
+      resizeObserver.observe(chartContainer.value)
+    }
     
     const observer = new MutationObserver(() => {
       if (chart) {
@@ -143,10 +202,30 @@ onMounted(async () => {
       attributes: true,
       attributeFilter: ['class']
     })
+
+    onUnmounted(() => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
+      resizeObserver.disconnect()
+      observer.disconnect()
+      chart?.dispose()
+    })
   } catch (error) {
-    // 错误处理
+    console.error('Failed to initialize chart:', error)
   }
 })
+
+function debounce(fn, delay) {
+  let timer = null
+  return function(...args) {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+      timer = null
+    }, delay)
+  }
+}
 </script>
 
 <template>
@@ -158,5 +237,9 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   min-height: 300px;
+  will-change: transform;
+  transform: translateZ(0);
+  contain: content;
+  isolation: isolate;
 }
 </style> 

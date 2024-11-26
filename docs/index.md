@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: PrizOwO Blogs
+  name: PrizOwO's Blog
   text: Welcome !
   tagline: 收录各种网站、Code！
   image:
