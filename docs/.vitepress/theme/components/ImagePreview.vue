@@ -108,36 +108,46 @@ function initializeImages() {
           <span class="dot yellow"></span>
           <span class="dot green"></span>
         </div>
-        <div class="toolbar-title">Images Preview</div>
+        <div class="toolbar-title">图片预览</div>
         <div class="toolbar-actions">
-          <button class="action-btn" @click="zoomOut" title="缩小">
+          <button class="action-btn tooltip" @click="zoomOut" title="缩小">
             <i class="icon">-</i>
+            <span class="tooltip-text">缩小</span>
           </button>
-          <button class="action-btn" @click="zoomIn" title="放大">
+          <button class="action-btn tooltip" @click="zoomIn" title="放大">
             <i class="icon">+</i>
+            <span class="tooltip-text">放大</span>
           </button>
-          <button class="action-btn" @click="rotateLeft" title="向左旋转">
+          <button class="action-btn tooltip" @click="rotateLeft" title="向左旋转">
             <i class="icon">↺</i>
+            <span class="tooltip-text">向左旋转</span>
           </button>
-          <button class="action-btn" @click="rotateRight" title="向右旋转">
+          <button class="action-btn tooltip" @click="rotateRight" title="向右旋转">
             <i class="icon">↻</i>
+            <span class="tooltip-text">向右旋转</span>
           </button>
-          <button class="action-btn" @click="resetImage" title="重置">
+          <button class="action-btn tooltip" @click="resetImage" title="重置">
             <i class="icon">⟲</i>
+            <span class="tooltip-text">重置</span>
           </button>
-          <button class="action-btn" @click="downloadImage" title="下载">
+          <button class="action-btn tooltip" @click="downloadImage" title="下载">
             <i class="icon">↓</i>
+            <span class="tooltip-text">下载</span>
           </button>
-          <button class="action-btn" @click="copyImage" title="复制">
+          <button class="action-btn tooltip" @click="copyImage" title="复制">
             <i class="icon">⎘</i>
+            <span class="tooltip-text">复制</span>
           </button>
-          <button class="close-btn" @click.stop="hidePreview" title="关闭">×</button>
+          <button class="close-btn tooltip" @click.stop="hidePreview" title="关闭">
+            <i class="icon">×</i>
+            <span class="tooltip-text">关闭</span>
+          </button>
         </div>
       </div>
       <div class="image-preview-container">
         <img 
           :src="currentImage" 
-          alt="Images Preview" 
+          alt="图片预览" 
           class="preview-image no-preview"
           :style="{
             transform: `scale(${scale}) rotate(${rotation}deg)`,
@@ -158,7 +168,8 @@ function initializeImages() {
 }
 
 .vp-doc img:not(.card-image img):not(.no-preview):hover {
-  transform: scale(1.02);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>
 
@@ -171,6 +182,7 @@ function initializeImages() {
   height: 100vh;
   z-index: 999999;
   pointer-events: none;
+  backdrop-filter: blur(10px);
 }
 
 .image-preview-overlay {
@@ -181,11 +193,11 @@ function initializeImages() {
   width: 90vw;
   height: 90vh;
   background: var(--vp-c-bg);
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: modalIn 0.3s ease;
+  animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
 }
 
@@ -196,8 +208,9 @@ function initializeImages() {
   padding: 0 16px;
   height: 48px;
   background: var(--vp-c-bg-soft);
-  border-radius: 10px 10px 0 0;
+  border-radius: 12px 12px 0 0;
   user-select: none;
+  border-bottom: 1px solid var(--vp-c-divider);
 }
 
 .toolbar-left {
@@ -232,8 +245,8 @@ function initializeImages() {
   color: var(--vp-c-text-2);
   font-size: 16px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -241,8 +254,13 @@ function initializeImages() {
 }
 
 .action-btn:hover {
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg);
+  color: var(--vp-c-brand);
+  background: var(--vp-c-bg-soft);
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
 }
 
 .action-btn .icon {
@@ -278,51 +296,45 @@ function initializeImages() {
   max-width: 90%;
   max-height: 90%;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: default !important;
   transform-origin: center center;
   will-change: transform;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes modalIn {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%);
+    transform: translate(-50%, -48%) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 /* 暗色模式优化 */
 :root.dark .image-preview-overlay {
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  background: rgba(30, 30, 30, 0.95);
 }
 
-/* 添加遮罩层 */
-.image-preview-wrapper::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  pointer-events: auto;
+:root.dark .image-preview-toolbar {
+  background: rgba(40, 40, 40, 0.95);
 }
 
-/* 暗色模式优化 */
-:root.dark .preview-image {
-  filter: brightness(1.1) contrast(1.1);
-}
-
-/* 暗色模式优化 */
 :root.dark .action-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
+:root.dark .preview-image {
+  filter: brightness(1.1) contrast(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 复制提示优化 */
 .copy-tip {
   position: fixed;
   top: 20px;
@@ -331,12 +343,13 @@ function initializeImages() {
   background: var(--vp-c-brand);
   color: white;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000000;
   pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .copy-tip.show {
@@ -344,9 +357,52 @@ function initializeImages() {
   opacity: 1;
 }
 
-/* 暗色模式优化 */
-:root.dark .copy-tip {
-  background: var(--vp-c-brand-dark);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+/* 工具提示样式 */
+.tooltip {
+  position: relative;
+}
+
+.tooltip-text {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip:hover .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+  bottom: -35px;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .image-preview-overlay {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  
+  .image-preview-toolbar {
+    border-radius: 0;
+  }
+  
+  .toolbar-title {
+    display: none;
+  }
+  
+  .action-btn {
+    padding: 4px 8px;
+  }
 }
 </style> 
