@@ -91,6 +91,7 @@ export default defineConfig({
         items: [
           { text: '软件列表', link: '/software/' },
           { text: '网址导航', link: '/websites/' },
+          { text: '模组推荐', link: '/模组推荐/' },
           { text: '卡片', link: '/cards/' }
         ]
       },

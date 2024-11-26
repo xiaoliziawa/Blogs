@@ -34,6 +34,10 @@ features:
     title: 网址导航
     details: 导航常用网站。
     link: /websites/
+  - icon: 📚
+    title: 模组推荐
+    details: 推荐一些常用模组。
+    link: /模组推荐/
 ---
 
 <HomeContent />

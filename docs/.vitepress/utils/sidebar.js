@@ -36,8 +36,9 @@ function generateSidebarItems(dirPath, baseDir, parentPath = '') {
   // 处理 index.md
   const indexFile = files.find(file => file === 'index.md')
   if (indexFile) {
+    const indexTitle = getFileTitle(path.join(dirPath, indexFile)) || '介绍'
     items.push({
-      text: '介绍',
+      text: indexTitle,
       link: `/${baseDir}${parentPath}/`
     })
   }
