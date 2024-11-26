@@ -1,32 +1,64 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const isAnimating = ref(false)
 const isPreviewVisible = ref(false)
 const currentImage = ref(null)
 const scale = ref(1)
 const rotation = ref(0)
 const showCopyTip = ref(false)
 
-// 图片操作函数
+function animateTransform(startScale, endScale, startRotation, endRotation, duration = 400) {
+  if (isAnimating.value) return
+  isAnimating.value = true
+  
+  const startTime = performance.now()
+
+  function animate(currentTime) {
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    
+    const easeProgress = progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2
+
+    scale.value = startScale + (endScale - startScale) * easeProgress
+    rotation.value = startRotation + (endRotation - startRotation) * easeProgress
+
+    if (progress < 1) {
+      requestAnimationFrame(animate)
+    } else {
+      scale.value = endScale
+      rotation.value = endRotation
+      isAnimating.value = false
+    }
+  }
+
+  requestAnimationFrame(animate)
+}
+
 function zoomIn() {
-  scale.value *= 1.2
+  if (scale.value >= 5) return
+  animateTransform(scale.value, scale.value * 1.2, rotation.value, rotation.value)
 }
 
 function zoomOut() {
-  scale.value /= 1.2
+  if (scale.value <= 0.2) return
+  animateTransform(scale.value, scale.value / 1.2, rotation.value, rotation.value)
 }
 
 function rotateLeft() {
-  rotation.value -= 90
+  const targetRotation = rotation.value - 90
+  animateTransform(scale.value, scale.value, rotation.value, targetRotation, 600)
 }
 
 function rotateRight() {
-  rotation.value += 90
+  const targetRotation = rotation.value + 90
+  animateTransform(scale.value, scale.value, rotation.value, targetRotation, 600)
 }
 
 function resetImage() {
-  scale.value = 1
-  rotation.value = 0
+  animateTransform(scale.value, 1, rotation.value, 0, 600)
 }
 
 function downloadImage() {
@@ -164,7 +196,7 @@ function initializeImages() {
 <style>
 .vp-doc img:not(.card-image img):not(.no-preview) {
   cursor: zoom-in;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .vp-doc img:not(.card-image img):not(.no-preview):hover {
@@ -247,7 +279,7 @@ function initializeImages() {
   cursor: pointer;
   padding: 6px 10px;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,6 +307,7 @@ function initializeImages() {
   font-size: 20px;
   cursor: pointer;
   padding: 0 8px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .close-btn:hover {
@@ -300,7 +333,7 @@ function initializeImages() {
   cursor: default !important;
   transform-origin: center center;
   will-change: transform;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -346,7 +379,7 @@ function initializeImages() {
   border-radius: 6px;
   font-size: 14px;
   opacity: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 1000000;
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -375,7 +408,7 @@ function initializeImages() {
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -405,4 +438,4 @@ function initializeImages() {
     padding: 4px 8px;
   }
 }
-</style> 
+</style>
