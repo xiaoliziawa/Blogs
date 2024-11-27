@@ -489,6 +489,23 @@ html {
   filter: blur(25px) !important;
   border-radius: 50% !important;
   aspect-ratio: 1 !important;
+  animation: glow 3s ease-in-out infinite !important;
+}
+
+/* 添加光晕动画关键帧 */
+@keyframes glow {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
 }
 
 /* 响应式布局下保持光晕居中 */
