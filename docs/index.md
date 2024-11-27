@@ -1,9 +1,9 @@
 ---
 layout: home
 hero:
-  name: PrizOwO's Blog
-  text: Welcome !
-  tagline: 收录各种网站、Code！
+  name: " "
+  text: " "
+  tagline: " "
   image:
     src: /page-icon.png
     alt: Logo
@@ -40,5 +40,6 @@ features:
     link: /模组推荐/
 ---
 
+<TypewriterHero />
 <HomeContent />
 
