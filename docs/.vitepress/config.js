@@ -91,7 +91,7 @@ export default defineConfig({
         items: [
           { text: '软件列表', link: '/software/' },
           { text: '网址导航', link: '/websites/' },
-          { text: '模组推荐', link: '/模组推荐/' },
+          { text: '模组推荐', link: '/modrec/' },
           { text: '卡片', link: '/cards/' }
         ]
       },
@@ -160,5 +160,11 @@ export default defineConfig({
       inputPosition: 'bottom',
       lang: 'zh-CN'
     }
+  },
+
+  cleanUrls: true,
+  rewrites: {
+    ':path/:file.html': ':path/:file',
+    '/模组推荐/:path*': '/mods/:path*'
   }
 }) 

@@ -1,97 +1,91 @@
-import fs from 'fs'
-import path from 'path'
+import { readdirSync, statSync } from 'fs'
+import { join, relative } from 'path'
+import matter from 'gray-matter'
 
-export default function generateSidebar(rootDir = 'docs') {
+function getFirstHeading(content) {
+  const match = content.match(/^#\s+(.*)$/m)
+  return match ? match[1] : null
+}
+
+export default function generateSidebar(root = 'docs') {
   const sidebar = {}
-  const docsPath = path.resolve(process.cwd(), rootDir)
   
-  // 获取所有目录
-  const dirs = fs.readdirSync(docsPath).filter(file => {
-    const stat = fs.statSync(path.join(docsPath, file))
-    return stat.isDirectory() && !file.startsWith('.') && file !== 'public'
-  })
+  function getIndexSidebar(dir) {
+    const indexPath = join(dir, 'index.md')
+    try {
+      const indexContent = matter.read(indexPath)
+      if (indexContent.data.sidebar) {
+        return JSON.parse(JSON.stringify(indexContent.data.sidebar))
+      }
+      return null
+    } catch (e) {
+      return null
+    }
+  }
 
-  // 为每个目录生成侧边栏配置
-  dirs.forEach(dir => {
-    if (dir === 'cards') return // 跳过 cards 目录，使用自定义配置
-
-    const items = generateSidebarItems(path.join(docsPath, dir), dir)
-    if (items.length) {
-      sidebar[`/${dir}/`] = [
-        {
-          text: getDirectoryTitle(dir),
-          items: items
+  function processDirectory(dir) {
+    const customSidebar = getIndexSidebar(dir)
+    if (customSidebar) {
+      const dirPath = '/' + relative(root, dir).replace(/\\/g, '/') + '/'
+      
+      const processedSidebar = customSidebar.map(section => {
+        if (section.items) {
+          return {
+            ...section,
+            items: section.items.map(item => {
+              if (item.link && !item.link.startsWith('http')) {
+                const link = item.link.startsWith('/') ? item.link : '/' + item.link
+                console.log('Processing link:', item.link, '→', link)
+                return { ...item, link }
+              }
+              return item
+            })
+          }
         }
-      ]
+        return section
+      })
+
+      console.log('Processed sidebar for:', dirPath, JSON.stringify(processedSidebar, null, 2))
+      sidebar[dirPath] = processedSidebar
+      return []
+    }
+
+    const items = []
+    const files = readdirSync(dir)
+    
+    files.forEach(file => {
+      const fullPath = join(dir, file)
+      const stat = statSync(fullPath)
+      
+      if (stat.isDirectory()) {
+        processDirectory(fullPath)
+      } else if (file.endsWith('.md') && file !== 'index.md') {
+        const content = matter.read(fullPath)
+        const title = content.data.title || getFirstHeading(content.content) || file.replace('.md', '')
+        
+        items.push({
+          text: title,
+          link: `/${relative(root, fullPath).replace(/\.md$/, '').replace(/\\/g, '/')}`
+        })
+      }
+    })
+    
+    if (items.length > 0) {
+      const dirPath = '/' + relative(root, dir).replace(/\\/g, '/') + '/'
+      if (!sidebar[dirPath]) {
+        sidebar[dirPath] = items
+      }
+    }
+    
+    return items
+  }
+
+  readdirSync(root).forEach(dir => {
+    const fullPath = join(root, dir)
+    if (statSync(fullPath).isDirectory()) {
+      processDirectory(fullPath)
     }
   })
 
   return sidebar
-}
-
-function generateSidebarItems(dirPath, baseDir, parentPath = '') {
-  const items = []
-  const files = fs.readdirSync(dirPath)
-
-  // 处理 index.md
-  const indexFile = files.find(file => file === 'index.md')
-  if (indexFile) {
-    const indexTitle = getFileTitle(path.join(dirPath, indexFile)) || '介绍'
-    items.push({
-      text: indexTitle,
-      link: `/${baseDir}${parentPath}/`
-    })
-  }
-
-  // 处理其他 .md 文件
-  files
-    .filter(file => file.endsWith('.md') && file !== 'index.md')
-    .sort()
-    .forEach(file => {
-      const name = path.basename(file, '.md')
-      items.push({
-        text: getFileTitle(path.join(dirPath, file)) || name,
-        link: `/${baseDir}${parentPath}/${name}`
-      })
-    })
-
-  // 处理子目录
-  files
-    .filter(file => {
-      const filePath = path.join(dirPath, file)
-      return fs.statSync(filePath).isDirectory() && !file.startsWith('.')
-    })
-    .forEach(dir => {
-      const subItems = generateSidebarItems(
-        path.join(dirPath, dir),
-        baseDir,
-        `${parentPath}/${dir}`
-      )
-      if (subItems.length) {
-        items.push({
-          text: getDirectoryTitle(dir),
-          collapsed: true,
-          items: subItems
-        })
-      }
-    })
-
-  return items
-}
-
-// 获取目录标题
-function getDirectoryTitle(dir) {
-  // 可以根据需要自定义目录标题
-  return dir.charAt(0).toUpperCase() + dir.slice(1)
-}
-
-// 从 markdown 文件中获取标题
-function getFileTitle(filePath) {
-  try {
-    const content = fs.readFileSync(filePath, 'utf-8')
-    const titleMatch = content.match(/^#\s+(.*)$/m)
-    return titleMatch ? titleMatch[1] : null
-  } catch {
-    return null
-  }
 } 

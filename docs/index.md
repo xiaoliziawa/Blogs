@@ -37,7 +37,7 @@ features:
   - icon: 📚
     title: 模组推荐
     details: 推荐一些常用模组。
-    link: /模组推荐/
+    link: /modrec/
 ---
 
 <TypewriterHero />

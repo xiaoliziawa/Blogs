@@ -757,3 +757,31 @@ html {
   from, to { opacity: 1; }
   50% { opacity: 0; }
 } 
+
+/* 调整侧边栏项目的宽度和对齐 */
+.VPSidebarItem .items {
+  width: fit-content !important;
+  margin-left: 0 !important;
+}
+
+.VPSidebarItem .item {
+  width: fit-content !important;
+  min-width: 120px !important;
+  max-width: 200px !important;
+  padding-right: 8px !important;
+}
+
+/* 调整子项的缩进和对齐 */
+.VPSidebarItem.level-1,
+.VPSidebarItem.level-2,
+.VPSidebarItem.level-3,
+.VPSidebarItem.level-4 {
+  margin-left: 12px !important;
+  padding-left: 0 !important;
+}
+
+.VPSidebarItem .text {
+  width: fit-content !important;
+  white-space: nowrap !important;
+  margin-right: auto !important;
+} 
