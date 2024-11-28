@@ -10,8 +10,8 @@ const categories = ref([])
 const expandedCategories = ref({})
 
 onMounted(() => {
-  // 合并相同name的分类
-  const mergedCategories = cardsData.categories.reduce((acc, curr) => {
+  // 合并同类相
+    const mergedCategories = cardsData.categories.reduce((acc, curr) => {
     const existingCategory = acc.find(cat => cat.name === curr.name)
     if (existingCategory) {
       existingCategory.cards = [...existingCategory.cards, ...curr.cards]
@@ -74,10 +74,7 @@ const toggleCategory = (categoryName) => {
 </div>
 
 <style>
-.cards-page {
-  padding: 20px;
-}
-
+/* 添加在现有样式的最前面 */
 html {
   overflow-y: scroll;
   margin-right: 0;
@@ -104,6 +101,7 @@ html::-webkit-scrollbar-thumb:hover {
   background: var(--vp-c-brand);
 }
 
+/* 暗色模式下的滚动条样式 */
 .dark html::-webkit-scrollbar-track {
   background: rgba(30, 30, 30, 0.6);
 }
@@ -116,38 +114,36 @@ html::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 100, 100, 0.6);
 }
 
-.category-section {
-  margin-bottom: 40px;
+/* 整体页面样式 */
+.cards-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+/* 分类标题样式 */
 .category-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 14px 24px;
+  border-radius: 12px;
   background: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-divider);
   transition: all 0.3s ease;
-  max-width: 25%;
+  max-width: 300px;
   margin: 0;
-}
-
-.category-header:hover {
-  background: var(--vp-c-bg-mute);
-}
-
-.category-header.expanded {
-  background: var(--vp-c-brand-dimm);
 }
 
 .category-title {
   margin: 0;
-  font-size: 1.2em;
-  font-weight: 500;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--vp-c-brand);
 }
 
+/* 箭头图标 */
 .toggle-icon {
   transition: transform 0.3s ease;
 }
@@ -156,6 +152,106 @@ html::-webkit-scrollbar-thumb:hover {
   transform: rotate(180deg);
 }
 
+/* 悬浮和展开状态 */
+.category-header:hover {
+  background: var(--vp-c-bg-mute);
+  transform: translateY(-2px);
+}
+
+.category-header.expanded {
+  background: var(--vp-c-brand-dimm);
+  border-color: var(--vp-c-brand-light);
+}
+
+/* 卡片容器 */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 16px 0;
+}
+
+/* 卡片样式 */
+.card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: var(--vp-c-bg-mute);
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 16px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.2em;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+.card p {
+  margin: 0 0 16px 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.95em;
+  flex: 1;
+}
+
+/* 标签样式 */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.tag {
+  padding: 4px 10px;
+  background: var(--vp-c-brand-dimm);
+  color: var(--vp-c-text-1);
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: transform 0.3s ease;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+}
+
+/* 展开动画 */
 .cards-wrapper {
   height: 0;
   opacity: 0;
@@ -167,21 +263,16 @@ html::-webkit-scrollbar-thumb:hover {
 .cards-wrapper.expanded {
   height: auto;
   opacity: 1;
-  margin-top: 16px;
+  margin-top: 24px;
   overflow: visible;
-  width: 100%;
   transform: translateY(0);
 }
 
-.cards-wrapper.expanded .card {
-  animation: cardFadeIn 0.4s ease forwards;
-  opacity: 0;
-}
-
+/* 添加卡片渐入动画 */
 @keyframes cardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -189,108 +280,51 @@ html::-webkit-scrollbar-thumb:hover {
   }
 }
 
+.cards-wrapper.expanded .card {
+  animation: cardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+/* 添加错落的动画延迟 */
 .cards-wrapper.expanded .card:nth-child(1) { animation-delay: 0.1s; }
 .cards-wrapper.expanded .card:nth-child(2) { animation-delay: 0.2s; }
 .cards-wrapper.expanded .card:nth-child(3) { animation-delay: 0.3s; }
 .cards-wrapper.expanded .card:nth-child(n+4) { animation-delay: 0.4s; }
 
-.cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: var(--vp-c-bg-soft);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: block;
-  height: 100%;
-}
-
-.card-image {
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-  position: relative;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 10px;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
+/* 暗色模式 */
 .dark .card {
-  background: rgba(30, 30, 30, 0.8);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark .card:hover {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.card-content {
-  padding: 16px;
-}
-
-.card h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.1em;
-  color: var(--vp-c-text-1);
-}
-
-.card p {
-  margin: 0 0 12px 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.9em;
-}
-
-.card-tags {
-  margin-bottom: 0;
-}
-
-.tag {
-  display: inline-block;
-  padding: 2px 6px;
-  margin-right: 6px;
-  margin-bottom: 6px;
-  background: var(--vp-c-brand-dimm);
-  color: var(--vp-c-text-1);
-  border-radius: 4px;
-  font-size: 0.8em;
-}
-
-@media (max-width: 960px) {
-  .category-header {
-    max-width: 50%;
-  }
-}
-
-@media (max-width: 640px) {
-  .category-header {
-    max-width: 80%;
-  }
+  background: rgba(30, 30, 30, 0.6);
 }
 
 .dark .category-header {
   background: rgba(30, 30, 30, 0.6);
 }
 
-.dark .category-header:hover {
-  background: rgba(40, 40, 40, 0.8);
+/* 响应式布局 */
+@media (max-width: 960px) {
+  .category-header {
+    max-width: 280px;
+  }
+  
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
 }
 
-.dark .category-header.expanded {
-  background: var(--vp-c-brand-darker);
+@media (max-width: 640px) {
+  .category-header {
+    max-width: 100%;
+    padding: 12px 20px;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .card-image {
+    height: 140px;
+  }
 }
-</style> 
+</style>

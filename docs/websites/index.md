@@ -5,7 +5,7 @@ sidebar:
     collapsed: false
     items:
       - text: 开发工具
-        link: /websites/dev-tools
+        link: /websites/tools
       - text: 设计资源
         link: /websites/design
       - text: 学习资源

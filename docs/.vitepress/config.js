@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { scanMarkdownFiles } from './utils/markdown'
 import generateSidebar from './utils/sidebar'
 import { resolve } from 'path'
+import attrs from 'markdown-it-attrs'
 
 const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 
@@ -9,7 +10,7 @@ const sidebar = generateSidebar()
 
 export default defineConfig({
   title: 'PrizOwO Blogs',
-  description: '收录！收录！',
+  description: '收录！收录！还是***收录！',
   lastUpdated: true,
 
   head: [
@@ -163,9 +164,70 @@ export default defineConfig({
   },
 
   cleanUrls: true,
-  rewrites: {
-    ':path/:file.html': ':path/:file',
-    '/模组推荐/:path*': '/mods/:path*'
-  },
-  ignoreDeadLinks: true
+
+  ignoreDeadLinks: true,
+
+  markdown: {
+    container: true,
+    linkify: true,
+    html: true,
+    anchor: true,
+    attrs: true,
+    toc: { level: [1, 2, 3] },
+    theme: {
+      light: 'solarized-light',
+      dark: 'dracula'
+    },
+    config: (md) => {
+      md.use(attrs, {
+        allowedAttributes: [
+          'size', 'width', 'height',
+          'class', 'id', 'style',
+          'align', 'margin', 'padding',
+          'border-radius', 'opacity', 'filter',
+          'transform', 'box-shadow', 'animation',
+          'transition',
+          'font-size',
+          'font-weight',
+          'font-style',
+          'font-family',
+          'color',
+          'text-align',
+          'text-decoration',
+          'line-height',
+          'letter-spacing'
+        ]
+      })
+
+      const defaultImageRender = md.renderer.rules.image || md.renderer.rules.default
+      
+      md.renderer.rules.image = (tokens, idx, options, env, self) => {
+        const token = tokens[idx]
+        const attrs = token.attrs || []
+
+        const sizeAttr = attrs.find(([key]) => key === 'size')
+        const widthAttr = attrs.find(([key]) => key === 'width')
+        const heightAttr = attrs.find(([key]) => key === 'height')
+
+        if (sizeAttr || widthAttr || heightAttr) {
+          const styles = []
+          
+          if (sizeAttr) {
+            styles.push(`width: ${sizeAttr[1]}`)
+            styles.push(`height: ${sizeAttr[1]}`)
+          }
+          if (widthAttr) {
+            styles.push(`width: ${widthAttr[1]}`)
+          }
+          if (heightAttr) {
+            styles.push(`height: ${heightAttr[1]}`)
+          }
+
+          attrs.push(['style', styles.join('; ')])
+        }
+
+        return defaultImageRender(tokens, idx, options, env, self)
+      }
+    }
+  }
 }) 
