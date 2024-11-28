@@ -166,5 +166,6 @@ export default defineConfig({
   rewrites: {
     ':path/:file.html': ':path/:file',
     '/模组推荐/:path*': '/mods/:path*'
-  }
+  },
+  ignoreDeadLinks: true
 }) 
