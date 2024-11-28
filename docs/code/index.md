@@ -17,21 +17,21 @@ sidebar:
                   collapsed: false
                   items:
                       - text: 1.21.1
-                        link: /code/Mod/NeoForge/1.21.1/mods
+                        collapsed: true
                         items:
                             - text: 模组列表
                               link: /code/Mod/NeoForge/1.21.1/mods
                             - text: 开发文档
                               link: /code/Mod/NeoForge/1.21.1/docs
                       - text: 1.20.4
-                        link: /code/Mod/NeoForge/1.20.4/mods
+                        collapsed: true
                         items:
                             - text: 模组列表
                               link: /code/Mod/NeoForge/1.20.4/mods
                             - text: 开发文档
                               link: /code/Mod/NeoForge/1.20.4/docs
                       - text: 1.20.2
-                        link: /code/Mod/NeoForge/1.20.2/mods
+                        collapsed: true
                         items:
                             - text: 模组列表
                               link: /code/Mod/NeoForge/1.20.2/mods
