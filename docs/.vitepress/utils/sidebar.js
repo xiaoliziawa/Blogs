@@ -35,7 +35,6 @@ export default function generateSidebar(root = 'docs') {
             items: section.items.map(item => {
               if (item.link && !item.link.startsWith('http')) {
                 const link = item.link.startsWith('/') ? item.link : '/' + item.link
-                console.log('Processing link:', item.link, '→', link)
                 return { ...item, link }
               }
               return item
@@ -45,7 +44,6 @@ export default function generateSidebar(root = 'docs') {
         return section
       })
 
-      console.log('Processed sidebar for:', dirPath, JSON.stringify(processedSidebar, null, 2))
       sidebar[dirPath] = processedSidebar
       return []
     }
