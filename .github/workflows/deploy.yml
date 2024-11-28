@@ -48,6 +48,9 @@ jobs:
               with:
                   path: docs/.vitepress/dist
 
+            - name: Create .nojekyll file
+              run: touch .nojekyll
+
     deploy:
         environment:
             name: github-pages
