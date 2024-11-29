@@ -62,9 +62,13 @@ function resetImage() {
 }
 
 function downloadImage() {
+  const uuid = crypto.randomUUID()
+  
+  const extension = currentImage.value.split('.').pop()
+  
   const link = document.createElement('a')
   link.href = currentImage.value
-  link.download = currentImage.value.split('/').pop()
+  link.download = `${uuid}.${extension}`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
@@ -74,17 +78,48 @@ async function copyImage() {
   try {
     const response = await fetch(currentImage.value)
     const blob = await response.blob()
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        [blob.type]: blob
+    
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob
+        })
+      ])
+    } catch (e) {
+      const img = new Image()
+      img.src = currentImage.value
+      await new Promise((resolve) => {
+        img.onload = resolve
       })
-    ])
+      
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0)
+      
+      canvas.toBlob(async (blob) => {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              [blob.type]: blob
+            })
+          ])
+          showCopyTip.value = true
+        } catch (err) {
+          console.error('Both copy methods failed:', err)
+          alert('复制失败，请重试')
+        }
+      })
+    }
+    
     showCopyTip.value = true
     setTimeout(() => {
       showCopyTip.value = false
     }, 2000)
   } catch (err) {
     console.error('Failed to copy image:', err)
+    alert('复制失败，请重试')
   }
 }
 
@@ -143,35 +178,35 @@ function initializeImages() {
         <div class="toolbar-title">图片预览</div>
         <div class="toolbar-actions">
           <button class="action-btn tooltip" @click="zoomOut" title="缩小">
-            <i class="icon">-</i>
+            <i class="icon">➖</i>
             <span class="tooltip-text">缩小</span>
           </button>
           <button class="action-btn tooltip" @click="zoomIn" title="放大">
-            <i class="icon">+</i>
+            <i class="icon">➕</i>
             <span class="tooltip-text">放大</span>
           </button>
           <button class="action-btn tooltip" @click="rotateLeft" title="向左旋转">
-            <i class="icon">↺</i>
+            <i class="icon">🔄</i>
             <span class="tooltip-text">向左旋转</span>
           </button>
           <button class="action-btn tooltip" @click="rotateRight" title="向右旋转">
-            <i class="icon">↻</i>
+            <i class="icon">🔁</i>
             <span class="tooltip-text">向右旋转</span>
           </button>
           <button class="action-btn tooltip" @click="resetImage" title="重置">
-            <i class="icon">⟲</i>
+            <i class="icon">🔃</i>
             <span class="tooltip-text">重置</span>
           </button>
           <button class="action-btn tooltip" @click="downloadImage" title="下载">
-            <i class="icon">↓</i>
+            <i class="icon">⬇️</i>
             <span class="tooltip-text">下载</span>
           </button>
           <button class="action-btn tooltip" @click="copyImage" title="复制">
-            <i class="icon">⎘</i>
+            <i class="icon">📋</i>
             <span class="tooltip-text">复制</span>
           </button>
           <button class="close-btn tooltip" @click.stop="hidePreview" title="关闭">
-            <i class="icon">×</i>
+            <i class="icon">❌</i>
             <span class="tooltip-text">关闭</span>
           </button>
         </div>
@@ -297,7 +332,11 @@ function initializeImages() {
 
 .action-btn .icon {
   font-style: normal;
-  font-size: 18px;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn {
