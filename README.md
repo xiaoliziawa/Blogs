@@ -38,7 +38,7 @@ This is a Vue.js documentation project built with VitePress, featuring a modern 
 ```bash
 # Clone the repository
 # 克隆仓库
-git clone <your-repo-url>
+git clone https://github.com/xiaoliziawa/Blogs.git
 
 # Install dependencies
 # 安装依赖
@@ -76,7 +76,7 @@ npm run docs:preview
 
 - `/docs/` - Documentation source files | 文档源文件
 - `/docs/.vitepress/` - VitePress configuration | VitePress 配置
-- `/docs/.vitepress/utils/` - Utility functions | 工具函数
+- `/docs/.vitepress/utils/` - Utility functions | 工具
 - `/tests/` - Unit tests | 单元测试
 
 ## 🛠️ Tech Stack
