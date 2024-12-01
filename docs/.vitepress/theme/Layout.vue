@@ -4,6 +4,8 @@ import { useData } from 'vitepress'
 import { computed } from 'vue'
 import Comments from './components/Comments.vue'
 import ImagePreview from './components/ImagePreview.vue'
+import Contributors from './components/Contributors.vue'
+import PageHistory from './components/PageHistory.vue'
 
 const { Layout } = DefaultTheme
 const { frontmatter } = useData()
@@ -12,6 +14,8 @@ const { frontmatter } = useData()
 <template>
   <Layout>
     <template #doc-after>
+      <PageHistory />
+      <Contributors />
       <Comments v-if="!frontmatter.home" />
       <ImagePreview />
     </template>

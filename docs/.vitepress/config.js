@@ -116,7 +116,7 @@ export default defineConfig({
           link: '/cards/'
         }
       ],
-      ...sidebar
+      ...sidebar  // 使用从 index.md 自动生成的侧边栏配置
     },
 
     search: {

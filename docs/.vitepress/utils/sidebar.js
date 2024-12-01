@@ -29,6 +29,10 @@ export default function generateSidebar(root = 'docs') {
       const dirPath = '/' + relative(root, dir).replace(/\\/g, '/') + '/'
       
       const processedSidebar = customSidebar.map(section => {
+        if (!section.link) {
+          section.link = dirPath
+        }
+        
         if (section.items) {
           return {
             ...section,

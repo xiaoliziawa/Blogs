@@ -4,6 +4,8 @@ import GitHubChart from './components/GitHubChart.vue'
 import Comments from './components/Comments.vue'
 import TypewriterHero from './components/TypewriterHero.vue'
 import Layout from './Layout.vue'
+import { h } from 'vue'
+import Contributors from './components/Contributors.vue'
 import './custom.css'
 
 export default {
@@ -14,5 +16,9 @@ export default {
     app.component('Comments', Comments)
     app.component('HomeContent', HomeContent)
     app.component('TypewriterHero', TypewriterHero)
+    app.component('Contributors', Contributors)
+  },
+  layout: {
+    'doc-after': () => h(Contributors)
   }
 } 
