@@ -387,7 +387,6 @@ function initializeImages() {
   }
 }
 
-/* 暗色模式优化 */
 :root.dark .image-preview-overlay {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   background: rgba(30, 30, 30, 0.95);

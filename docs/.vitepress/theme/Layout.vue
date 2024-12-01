@@ -14,8 +14,8 @@ const { frontmatter } = useData()
 <template>
   <Layout>
     <template #doc-after>
-      <PageHistory />
       <Contributors />
+      <PageHistory />
       <Comments v-if="!frontmatter.home" />
       <ImagePreview />
     </template>

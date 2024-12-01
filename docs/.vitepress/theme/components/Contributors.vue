@@ -109,7 +109,7 @@ onMounted(async () => {
 
 <style scoped>
 .contributors-section {
-  margin-top: 4rem;
+  margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid var(--vp-c-divider);
 }
@@ -129,7 +129,6 @@ onMounted(async () => {
   padding-left: 1.5rem;
 }
 
-/* 添加图标 */
 .contributors-header h3::before {
   content: "👥";
   position: absolute;
@@ -161,21 +160,19 @@ onMounted(async () => {
   background: var(--vp-c-bg-soft);
   border-radius: 2rem;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   position: relative;
   overflow: hidden;
 }
 
-/* 鼠标悬停效果 */
 .contributor:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
   background: var(--vp-c-bg-mute);
   border-color: var(--vp-c-brand);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* 添加波纹效果 */
 .contributor::after {
   content: '';
   position: absolute;
@@ -183,14 +180,15 @@ onMounted(async () => {
   left: 50%;
   width: 300%;
   height: 300%;
-  background: radial-gradient(circle, var(--vp-c-brand-dimm) 0%, transparent 60%);
+  background: radial-gradient(circle, var(--vp-c-brand-dimm) 0%, transparent 70%);
   opacity: 0;
   transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.6s ease-out, opacity 0.4s ease-out;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.6s ease-out;
 }
 
 .contributor:hover::after {
-  opacity: 0.1;
+  opacity: 0.15;
   transform: translate(-50%, -50%) scale(1);
 }
 
@@ -198,17 +196,16 @@ onMounted(async () => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 2px solid transparent;
   transform-origin: center center;
-  backface-visibility: hidden;
   will-change: transform;
 }
 
 .contributor:hover .contributor-avatar {
-  transform: scale(1.15) rotate(8deg);
+  transform: scale(1.2) rotate(12deg);
   border-color: var(--vp-c-brand);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .contributor-name {
@@ -221,7 +218,6 @@ onMounted(async () => {
   color: var(--vp-c-brand);
 }
 
-/* 加载和错误状态样式 */
 .contributors-loading,
 .contributors-error,
 .contributors-empty {
@@ -244,7 +240,6 @@ onMounted(async () => {
   100% { opacity: 1; }
 }
 
-/* 响应式调整 */
 @media (max-width: 640px) {
   .contributors-list {
     gap: 0.75rem;
@@ -264,7 +259,6 @@ onMounted(async () => {
   }
 }
 
-/* 深色模式优化 */
 :root.dark .contributor {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -273,7 +267,6 @@ onMounted(async () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* 添加头像的进入动画 */
 @keyframes avatarEnter {
   from {
     opacity: 0;
@@ -288,4 +281,31 @@ onMounted(async () => {
 .contributor-avatar {
   animation: avatarEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.contributors-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.contributor {
+  animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contributor:nth-child(1) { animation-delay: 0.1s; }
+.contributor:nth-child(2) { animation-delay: 0.2s; }
+.contributor:nth-child(3) { animation-delay: 0.3s; }
+.contributor:nth-child(4) { animation-delay: 0.4s; }
 </style> 

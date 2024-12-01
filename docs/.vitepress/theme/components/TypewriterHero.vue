@@ -80,7 +80,6 @@ async function startTyping() {
     
     title.dataset.typing = 'true'
     
-    // 删除完成后等待3秒
     await new Promise(resolve => setTimeout(resolve, 3000))
     
     title.dataset.typing = 'false'

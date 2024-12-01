@@ -5,17 +5,14 @@ import { onMounted, watch, ref, nextTick } from 'vue'
 const { frontmatter, page, isDark } = useData()
 const isLoaded = ref(false)
 
-// 加载 Giscus
 function loadGiscus() {
   console.log('Loading Giscus for:', page.value.relativePath)
   
-  // 清除现有的 giscus 实例
   const existingGiscus = document.querySelector('.giscus-frame')
   if (existingGiscus) {
     existingGiscus.remove()
   }
   
-  // 确保在DOM更新后再加载Giscus
   nextTick(() => {
     const giscus = document.createElement('script')
     giscus.src = 'https://giscus.app/client.js'
@@ -45,11 +42,9 @@ function loadGiscus() {
   })
 }
 
-// 更新 Giscus 主题
 function updateGiscusTheme(newIsDark) {
   const iframe = document.querySelector('.giscus-frame')
   if (!iframe) {
-    // 如果 iframe 不存在，重新加载 Giscus
     loadGiscus()
     return
   }
@@ -67,12 +62,10 @@ function updateGiscusTheme(newIsDark) {
     )
   } catch (e) {
     console.error('Failed to update Giscus theme:', e)
-    // 如果更新失败，尝试重新加载
     loadGiscus()
   }
 }
 
-// 监听主题变化
 watch(isDark, (newIsDark) => {
   console.log('Theme changed:', newIsDark ? 'dark' : 'light')
   if (isLoaded.value) {
@@ -82,12 +75,10 @@ watch(isDark, (newIsDark) => {
 
 onMounted(() => {
   console.log('Comments component mounted')
-  // 等待一小段时间确保主题状态已经稳定
   setTimeout(() => {
     loadGiscus()
   }, 100)
   
-  // 监听主题变化的 DOM 事件
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.attributeName === 'class' && mutation.target === document.documentElement) {

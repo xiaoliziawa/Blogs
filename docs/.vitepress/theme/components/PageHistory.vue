@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { useData } from 'vitepress'
 
 const { page } = useData()
@@ -11,6 +11,21 @@ const isExpanded = ref(false)
 // GitHub API 配置
 const owner = 'xiaoliziawa'
 const repo = 'Blogs'
+
+const contentHeight = ref(0)
+const contentRef = ref(null)
+
+watch([isExpanded, commits], ([newExpanded, newCommits]) => {
+  if (newExpanded) {
+    nextTick(() => {
+      if (contentRef.value) {
+        contentHeight.value = `${contentRef.value.scrollHeight}px`
+      }
+    })
+  } else {
+    contentHeight.value = '0px'
+  }
+}, { immediate: true })
 
 onMounted(async () => {
   try {
@@ -89,7 +104,15 @@ function formatDate(date) {
       </div>
     </div>
 
-    <div class="history-content" :class="{ 'expanded': isExpanded }">
+    <div 
+      ref="contentRef"
+      class="history-content" 
+      :class="{ expanded: isExpanded }"
+      :style="{
+        height: contentHeight,
+        visibility: contentHeight === '0px' ? 'hidden' : 'visible'
+      }"
+    >
       <div v-if="loading" class="history-loading">
         加载历史记录中...
       </div>
@@ -137,7 +160,7 @@ function formatDate(date) {
 
 <style scoped>
 .page-history {
-  margin-top: 2rem;
+  margin-top: 3rem;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
   overflow: hidden;
@@ -187,7 +210,7 @@ function formatDate(date) {
   width: 16px;
   height: 16px;
   color: var(--vp-c-text-2);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .history-header.expanded .arrow-icon {
@@ -198,29 +221,68 @@ function formatDate(date) {
   height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: height, opacity;
 }
 
 .history-content.expanded {
-  height: auto;
   opacity: 1;
 }
 
 .commits-list {
   padding: 1rem;
-  transform-origin: top;
-  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.history-content.expanded .commits-list {
+  animation: slideDown 0.4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 @keyframes slideDown {
   from {
-    transform: translateY(-10px);
     opacity: 0;
+    transform: translateY(-10px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.commit-item {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  text-decoration: none;
+  color: var(--vp-c-text-1);
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.commit-item:nth-child(1) { animation-delay: 0.1s; }
+.commit-item:nth-child(2) { animation-delay: 0.15s; }
+.commit-item:nth-child(3) { animation-delay: 0.2s; }
+.commit-item:nth-child(4) { animation-delay: 0.25s; }
+.commit-item:nth-child(5) { animation-delay: 0.3s; }
+
+.commit-item:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -230,18 +292,36 @@ function formatDate(date) {
   padding: 0.75rem;
   text-decoration: none;
   color: var(--vp-c-text-1);
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
-  margin-bottom: 0.5rem;
-  background: var(--vp-c-bg);
+  position: relative;
+  overflow: hidden;
 }
 
 .commit-item:hover {
+  transform: translateX(4px) scale(1.01);
   background: var(--vp-c-bg-mute);
-  transform: translateX(4px);
-  border-color: var(--vp-c-divider);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-color: var(--vp-c-brand-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.commit-item::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--vp-c-brand-dimm) 0%, transparent 60%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s ease-out, opacity 0.4s ease-out;
+}
+
+.commit-item:hover::after {
+  opacity: 0.1;
+  transform: translate(-50%, -50%) scale(2);
 }
 
 .commit-avatar {
@@ -249,12 +329,11 @@ function formatDate(date) {
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.commit-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.commit-item:hover .commit-avatar {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .avatar-placeholder {
@@ -291,7 +370,7 @@ function formatDate(date) {
 .history-loading,
 .history-error,
 .history-empty {
-  padding: 1rem;
+  padding: 2rem 1rem;
   text-align: center;
   color: var(--vp-c-text-2);
 }
