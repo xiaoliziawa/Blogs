@@ -23,7 +23,6 @@ const { frontmatter } = useData()
 </template>
 
 <style>
-/* 确保内容区域不会溢出 */
 :deep(.VPDoc) {
   max-width: var(--vp-layout-max-width);
   margin: 0 auto;
