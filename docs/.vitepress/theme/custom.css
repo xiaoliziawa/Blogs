@@ -608,7 +608,6 @@ html {
   letter-spacing: -0.4px;
 }
 
-/* 确保所有标题元都应用渐变效果 */
 .VPHero .container h1,
 .VPHero .container .name,
 .VPHero .container .text,
@@ -647,7 +646,6 @@ html {
   }
 }
 
-/* 修改 .clip 类的样式 */
 .clip {
   background-image: linear-gradient(
     120deg,
@@ -667,17 +665,14 @@ html {
   letter-spacing: -0.4px;
 }
 
-/* 暗色模式下的亮度调整 */
 .dark .clip {
   filter: brightness(1.2);
 }
 
-/* 防止搜索框打开时隐藏滚动条导致的页面抖动 */
 html {
   scrollbar-gutter: stable;
 }
 
-/* 自定义滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -696,7 +691,6 @@ html {
   background: var(--vp-c-brand);
 }
 
-/* 暗色模式下的滚动条样式 */
 .dark ::-webkit-scrollbar-track {
   background: transparent;
 }
@@ -710,7 +704,6 @@ html {
   background: var(--vp-c-brand-light);
 }
 
-/* 确保搜索框打开时内容不会移动 */
 .VPLocalNav {
   padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
 }
@@ -719,7 +712,6 @@ html {
   padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
 }
 
-/* TypewriterText 组件样式 */
 .typewriter-container {
   display: inline-block;
 }
@@ -758,7 +750,6 @@ html {
   50% { opacity: 0; }
 } 
 
-/* 调整侧边栏项目的宽度和对齐 */
 .VPSidebarItem .items {
   width: fit-content !important;
   margin-left: 0 !important;
@@ -771,7 +762,6 @@ html {
   padding-right: 8px !important;
 }
 
-/* 调整子项的缩进和对齐 */
 .VPSidebarItem.level-1,
 .VPSidebarItem.level-2,
 .VPSidebarItem.level-3,
@@ -784,4 +774,4 @@ html {
   width: fit-content !important;
   white-space: nowrap !important;
   margin-right: auto !important;
-} 
+}

@@ -6,6 +6,7 @@ import TypewriterHero from './components/TypewriterHero.vue'
 import Layout from './Layout.vue'
 import { h } from 'vue'
 import Contributors from './components/Contributors.vue'
+import CursorHighlight from './components/CursorHighlight.vue'
 import './custom.css'
 
 export default {
@@ -17,6 +18,7 @@ export default {
     app.component('HomeContent', HomeContent)
     app.component('TypewriterHero', TypewriterHero)
     app.component('Contributors', Contributors)
+    app.component('CursorHighlight', CursorHighlight)
   },
   layout: {
     'doc-after': () => h(Contributors)

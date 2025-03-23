@@ -6,6 +6,7 @@ import Comments from './components/Comments.vue'
 import ImagePreview from './components/ImagePreview.vue'
 import Contributors from './components/Contributors.vue'
 import PageHistory from './components/PageHistory.vue'
+import CursorHighlight from './components/CursorHighlight.vue'
 
 const { Layout } = DefaultTheme
 const { frontmatter } = useData()
@@ -18,6 +19,7 @@ const { frontmatter } = useData()
       <PageHistory />
       <Comments v-if="!frontmatter.home" />
       <ImagePreview />
+      <CursorHighlight />
     </template>
   </Layout>
 </template>
