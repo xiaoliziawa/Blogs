@@ -1,7 +1,6 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
-import { computed } from 'vue'
 import Comments from './components/Comments.vue'
 import ImagePreview from './components/ImagePreview.vue'
 import Contributors from './components/Contributors.vue'
@@ -19,9 +18,9 @@ const { frontmatter } = useData()
       <PageHistory />
       <Comments v-if="!frontmatter.home" />
       <ImagePreview />
-      <CursorHighlight />
     </template>
   </Layout>
+  <CursorHighlight />
 </template>
 
 <style>

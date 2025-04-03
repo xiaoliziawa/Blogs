@@ -4,221 +4,191 @@ import { onMounted, onUnmounted, ref, nextTick } from 'vue'
 const highlightElement = ref(null)
 const overlayContainer = ref(null)
 let isInitialized = false
-let lastHighlightedElement = null
-const DEBOUNCE_TIME = 30
+const HIGHLIGHT_SIZE = 80
+const HIGHLIGHT_COLOR = 'rgba(255, 255, 0, 0.15)'
+const HIGHLIGHT_BORDER = 'rgba(255, 255, 0, 0.1)'
+let animationFrameId = null
+let lastMousePosition = { x: 0, y: 0 }
+let isInSpecialArea = false
 
 function checkBrowserCompatibility() {
   if (typeof document === 'undefined') return false
-  
-  const hasGetElementsAtPoint = 'elementsFromPoint' in document || 'msElementsFromPoint' in document
-  const hasGetBoundingClientRect = Element.prototype.getBoundingClientRect
-  
-  return hasGetElementsAtPoint && hasGetBoundingClientRect
+  return true
 }
 
 function createOverlayContainer() {
   if (overlayContainer.value) return
   
-  try {
-    const container = document.createElement('div')
-    container.className = 'cursor-highlight-container'
-    container.style.position = 'absolute'
-    container.style.top = '0'
-    container.style.left = '0'
-    container.style.width = '100%'
-    container.style.height = '100%'
-    container.style.pointerEvents = 'none'
-    container.style.zIndex = '100'
-    document.body.appendChild(container)
-    overlayContainer.value = container
-  } catch (error) {
-  }
+  const container = document.createElement('div')
+  container.className = 'cursor-highlight-container'
+  container.style.position = 'fixed'
+  container.style.top = '0'
+  container.style.left = '0'
+  container.style.width = '100%'
+  container.style.height = '100%'
+  container.style.pointerEvents = 'none'
+  container.style.zIndex = '100000'
+  document.body.appendChild(container)
+  overlayContainer.value = container
 }
 
 function createHighlightElement() {
   if (highlightElement.value) return
   
-  try {
-    const el = document.createElement('div')
-    el.className = 'cursor-text-highlight'
-    el.style.position = 'absolute'
-    el.style.pointerEvents = 'none'
-    el.style.backgroundColor = 'rgba(255, 255, 0, 0.15)'
-    el.style.borderRadius = '6px'
-    el.style.boxShadow = '0 0 0 1px rgba(255, 255, 0, 0.1)'
-    el.style.transition = 'all 0.25s cubic-bezier(0.215, 0.61, 0.355, 1)'
-    el.style.display = 'none'
-    
-    if (overlayContainer.value) {
-      overlayContainer.value.appendChild(el)
-      highlightElement.value = el
-    }
-  } catch (error) {
-  }
-}
-
-function getHighlightableElementAtPoint(x, y) {
-  try {
-    const elements = document.elementsFromPoint 
-      ? document.elementsFromPoint(x, y) 
-      : document.msElementsFromPoint(x, y)
-    
-    if (!elements || elements.length === 0) return null
-    
-    const docElement = document.querySelector('.vp-doc')
-    if (!docElement) return null
-    
-    const highlightableSelectors = [
-      'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'li', 'blockquote', 'td', 'th', 'pre', 'code',
-      '.vp-doc > div', '.custom-block > p'
-    ].join(',')
-    
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i]
-      
-      if (element === overlayContainer.value || 
-          element === highlightElement.value ||
-          element.classList.contains('cursor-text-highlight')) {
-        continue
-      }
-      
-      if (docElement.contains(element) && element.matches(highlightableSelectors)) {
-        return element
-      }
-      
-      if (docElement.contains(element) && 
-          element.childNodes && 
-          Array.from(element.childNodes).some(node => 
-            node.nodeType === Node.TEXT_NODE && 
-            node.textContent && 
-            node.textContent.trim()
-          )) {
-        return element
-      }
-    }
-  } catch (error) {
-  }
+  const el = document.createElement('div')
+  el.className = 'cursor-circle-highlight'
+  el.style.position = 'absolute'
+  el.style.pointerEvents = 'none'
+  el.style.backgroundColor = HIGHLIGHT_COLOR
+  el.style.borderRadius = '50%'
+  el.style.width = `${HIGHLIGHT_SIZE}px`
+  el.style.height = `${HIGHLIGHT_SIZE}px`
+  el.style.left = '0px'
+  el.style.top = '0px'
+  el.style.marginLeft = `-${HIGHLIGHT_SIZE/2}px`
+  el.style.marginTop = `-${HIGHLIGHT_SIZE/2}px`
+  el.style.boxShadow = `0 0 0 1px ${HIGHLIGHT_BORDER}`
+  el.style.opacity = '0'
+  el.style.willChange = 'left, top'
+  el.style.backfaceVisibility = 'hidden'
+  el.style.webkitBackfaceVisibility = 'hidden'
   
-  return null
-}
-
-function calculateElementBounds(element) {
-  try {
-    if (!element) return null
-    
-    const rect = element.getBoundingClientRect()
-    if (!rect) return null
-    
-    const padding = 4
-    
-    const scrollX = window.scrollX || window.pageXOffset || 0
-    const scrollY = window.scrollY || window.pageYOffset || 0
-    
-    return {
-      left: rect.left + scrollX - padding,
-      top: rect.top + scrollY - padding,
-      width: rect.width + (padding * 2),
-      height: rect.height + (padding * 2)
-    }
-  } catch (error) {
-    return null
+  if (overlayContainer.value) {
+    overlayContainer.value.appendChild(el)
+    highlightElement.value = el
   }
 }
 
-function applyHighlightToElement(element) {
-  if (!element || !highlightElement.value) return
+function updateHighlightPosition(x, y) {
+  if (!highlightElement.value) return
   
-  try {
-    if (lastHighlightedElement === element) return
-    
-    const bounds = calculateElementBounds(element)
-    if (!bounds) {
-      hideHighlight()
-      return
-    }
-    
-    highlightElement.value.style.display = 'block'
-    highlightElement.value.style.left = `${bounds.left}px`
-    highlightElement.value.style.top = `${bounds.top}px`
-    highlightElement.value.style.width = `${bounds.width}px`
-    highlightElement.value.style.height = `${bounds.height}px`
-    
-    lastHighlightedElement = element
-  } catch (error) {
-    hideHighlight()
+  lastMousePosition = { x, y }
+  
+  highlightElement.value.style.left = `${x}px`
+  highlightElement.value.style.top = `${y}px`
+  
+  if (highlightElement.value.style.opacity === '0') {
+    highlightElement.value.style.opacity = '1'
   }
 }
 
 function hideHighlight() {
   if (highlightElement.value) {
-    highlightElement.value.style.display = 'none'
+    highlightElement.value.style.opacity = '0'
   }
-  lastHighlightedElement = null
+}
+
+function isSpecialArea(element) {
+  if (!element) return false
+  
+  let current = element
+  while (current && current !== document.body) {
+    if (current.classList.contains('github-chart') || 
+        current.classList.contains('echarts') ||
+        current.tagName === 'CANVAS') {
+      return true
+    }
+    current = current.parentElement
+  }
+  
+  return false
 }
 
 function handleMouseMove(e) {
-  if (!isInitialized || !highlightElement.value) return
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+  }
   
-  try {
-    const element = getHighlightableElementAtPoint(e.clientX, e.clientY)
+  animationFrameId = requestAnimationFrame(() => {
+    if (!isInitialized || !highlightElement.value) return
     
-    if (element) {
-      applyHighlightToElement(element)
-    } else {
-      hideHighlight()
-    }
-  } catch (error) {
-    hideHighlight()
+    const { clientX, clientY, target } = e
+    const specialArea = isSpecialArea(target)
+    isInSpecialArea = specialArea
+    updateHighlightPosition(clientX, clientY)
+  })
+}
+
+function handleSpecialAreaMouseMove() {
+  if (!isInitialized || !isInSpecialArea) return
+  
+  const mouseX = typeof window.mouseX !== 'undefined' ? window.mouseX : 
+               (typeof window.event !== 'undefined' && window.event.clientX ? window.event.clientX : lastMousePosition.x)
+  
+  const mouseY = typeof window.mouseY !== 'undefined' ? window.mouseY : 
+               (typeof window.event !== 'undefined' && window.event.clientY ? window.event.clientY : lastMousePosition.y)
+  
+  if (mouseX !== lastMousePosition.x || mouseY !== lastMousePosition.y) {
+    updateHighlightPosition(mouseX, mouseY)
   }
 }
 
-function debounce(func, wait) {
-  let timeout
-  return function(...args) {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func.apply(this, args), wait)
+function handleMouseLeave() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = null
   }
+  isInSpecialArea = false
+  hideHighlight()
 }
-
-const debouncedHighlight = debounce(handleMouseMove, DEBOUNCE_TIME)
 
 onMounted(() => {
   const isCompatible = checkBrowserCompatibility()
   if (!isCompatible) return
   
-  try {
-    createOverlayContainer()
-    createHighlightElement()
-    
-    nextTick(() => {
-      setTimeout(() => {
-        isInitialized = true
-        document.addEventListener('mousemove', debouncedHighlight)
-      }, 300)
-    })
-  } catch (error) {
-  }
+  createOverlayContainer()
+  createHighlightElement()
+  
+  nextTick(() => {
+    setTimeout(() => {
+      isInitialized = true
+      
+      document.addEventListener('mousemove', handleMouseMove, { passive: true, capture: true })
+      document.addEventListener('mouseleave', handleMouseLeave)
+      
+      if (typeof document.querySelector('.github-chart') !== 'undefined') {
+        const chartElements = document.querySelectorAll('.github-chart')
+        chartElements.forEach(chart => {
+          chart.addEventListener('mouseover', () => { isInSpecialArea = true })
+          chart.addEventListener('mouseout', () => { isInSpecialArea = false })
+        })
+      }
+      
+      const specialAreaInterval = setInterval(() => {
+        handleSpecialAreaMouseMove()
+      }, 16)
+      
+      onUnmounted(() => {
+        clearInterval(specialAreaInterval)
+      })
+      
+      if (typeof document.defaultView.mouseX !== 'undefined' && typeof document.defaultView.mouseY !== 'undefined') {
+        updateHighlightPosition(document.defaultView.mouseX, document.defaultView.mouseY)
+      }
+    }, 300)
+  })
 })
 
 onUnmounted(() => {
-  try {
-    document.removeEventListener('mousemove', debouncedHighlight)
-    
-    if (highlightElement.value && overlayContainer.value) {
-      overlayContainer.value.removeChild(highlightElement.value)
-      highlightElement.value = null
-    }
-    
-    if (overlayContainer.value && document.body.contains(overlayContainer.value)) {
-      document.body.removeChild(overlayContainer.value)
-      overlayContainer.value = null
-    }
-    
-    isInitialized = false
-    lastHighlightedElement = null
-  } catch (error) {
+  document.removeEventListener('mousemove', handleMouseMove, { capture: true })
+  document.removeEventListener('mouseleave', handleMouseLeave)
+  
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = null
   }
+  
+  if (highlightElement.value && overlayContainer.value) {
+    overlayContainer.value.removeChild(highlightElement.value)
+    highlightElement.value = null
+  }
+  
+  if (overlayContainer.value && document.body.contains(overlayContainer.value)) {
+    document.body.removeChild(overlayContainer.value)
+    overlayContainer.value = null
+  }
+  
+  isInitialized = false
 })
 </script>
 
@@ -242,24 +212,22 @@ onUnmounted(() => {
   background-color: transparent !important;
 }
 
-.cursor-text-highlight {
+.cursor-circle-highlight {
   pointer-events: none !important;
-  z-index: 9 !important;
+  z-index: 100000 !important;
   position: absolute !important;
-  background-color: rgba(255, 255, 0, 0.15) !important;
-  box-shadow: 0 0 0 1px rgba(255, 255, 0, 0.1) !important;
-  border-radius: 6px !important;
-  transition: all 0.25s cubic-bezier(0.215, 0.61, 0.355, 1) !important;
+  border-radius: 50% !important;
+  transition: opacity 0.15s linear !important;
 }
 
 .cursor-highlight-container {
-  position: absolute !important;
+  position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
   pointer-events: none !important;
-  z-index: 100 !important;
+  z-index: 100000 !important;
   contain: strict !important;
 }
 </style>
