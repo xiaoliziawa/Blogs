@@ -6,6 +6,7 @@ import ImagePreview from './components/ImagePreview.vue'
 import Contributors from './components/Contributors.vue'
 import PageHistory from './components/PageHistory.vue'
 import CursorHighlight from './components/CursorHighlight.vue'
+import ThemeColorPicker from './components/ThemeColorPicker.vue'
 
 const { Layout } = DefaultTheme
 const { frontmatter } = useData()
@@ -18,6 +19,11 @@ const { frontmatter } = useData()
       <PageHistory />
       <Comments v-if="!frontmatter.home" />
       <ImagePreview />
+    </template>
+    <template #nav-bar-content-after>
+      <div class="nav-theme-color-picker">
+        <ThemeColorPicker />
+      </div>
     </template>
   </Layout>
   <CursorHighlight />
@@ -36,10 +42,20 @@ const { frontmatter } = useData()
   box-sizing: border-box;
 }
 
+.nav-theme-color-picker {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
 @media (max-width: 960px) {
   :deep(.VPDoc .container) {
     max-width: 100%;
     padding: 0 16px;
+  }
+  
+  .nav-theme-color-picker {
+    margin-right: 8px;
   }
 }
 </style> 

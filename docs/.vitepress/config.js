@@ -10,7 +10,7 @@ const sidebar = generateSidebar()
 
 export default defineConfig({
   title: 'PrizOwO Blogs',
-  description: '收录！收录！还是***收录！',
+  description: 'PrizOwO Blogs',
   lastUpdated: true,
 
   head: [
@@ -75,10 +75,10 @@ export default defineConfig({
       __FILE_STATS__: JSON.stringify(fileStats)
     },
     optimizeDeps: {
-      include: ['echarts']
+      include: ['echarts', 'mermaid']
     },
     ssr: {
-      noExternal: ['echarts']
+      noExternal: ['echarts', 'mermaid']
     }
   },
 
@@ -96,6 +96,7 @@ export default defineConfig({
           { text: '卡片', link: '/cards/' }
         ]
       },
+      { text: '插件展示', link: '/plugins-showcase' },
       {
         text: '更多',
         items: [

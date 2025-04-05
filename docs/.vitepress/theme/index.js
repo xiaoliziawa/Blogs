@@ -6,6 +6,13 @@ import TypewriterHero from './components/TypewriterHero.vue'
 import Layout from './Layout.vue'
 import Contributors from './components/Contributors.vue'
 import CursorHighlight from './components/CursorHighlight.vue'
+import CollapsibleCodeBlock from './components/CollapsibleCodeBlock.vue'
+import TimeLine from './components/TimeLine.vue'
+import EnhancedImageViewer from './components/EnhancedImageViewer.vue'
+import MermaidChart from './components/MermaidChart.vue'
+import EChartsComponent from './components/EChartsComponent.vue'
+import FeatureBox from './components/FeatureBox.vue'
+import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import './custom.css'
 
 export default {
@@ -18,6 +25,13 @@ export default {
     app.component('TypewriterHero', TypewriterHero)
     app.component('Contributors', Contributors)
     app.component('CursorHighlight', CursorHighlight)
+    app.component('CollapsibleCodeBlock', CollapsibleCodeBlock)
+    app.component('TimeLine', TimeLine)
+    app.component('EnhancedImageViewer', EnhancedImageViewer)
+    app.component('MermaidChart', MermaidChart)
+    app.component('EChartsComponent', EChartsComponent)
+    app.component('FeatureBox', FeatureBox)
+    app.component('ThemeColorPicker', ThemeColorPicker)
   },
   layout: {
     'doc-after': () => h(Contributors)
