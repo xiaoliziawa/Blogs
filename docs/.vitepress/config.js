@@ -175,8 +175,8 @@ export default defineConfig({
     attrs: true,
     toc: { level: [1, 2, 3] },
     theme: {
-      light: 'solarized-light',
-      dark: 'dracula'
+      light: 'github-light',
+      dark: 'dark-plus'
     },
     config: (md) => {
       md.use(attrs, {

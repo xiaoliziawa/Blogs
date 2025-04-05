@@ -1,7 +1,7 @@
 :root {
-  --vp-c-brand: #7e57c2;
-  --vp-c-brand-light: #9575cd;
-  --vp-c-brand-dark: #673ab7;
+  --vp-c-brand: #009688;
+  --vp-c-brand-light: #4DB6AC;
+  --vp-c-brand-dark: #00796B;
   --vp-c-bg: #fafafa;
   --vp-c-bg-soft: #f5f5f5;
   --vp-c-bg-mute: #eeeeee;
@@ -164,7 +164,7 @@ html:not(.dark)::view-transition-old(root) {
 .VPSidebarItem .item.is-active {
   color: var(--vp-c-brand) !important;
   border-left: 2px solid var(--vp-c-brand) !important;
-  background: rgba(65, 105, 225, 0.1) !important;
+  background: rgba(0, 150, 136, 0.1) !important;
 }
 
 .VPSidebarItem .text {
@@ -286,8 +286,8 @@ html {
 
 .VPFeature {
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-  border: 1px solid rgba(126, 87, 194, 0.1) !important;
-  background: rgba(126, 87, 194, 0.05) !important;
+  border: 1px solid rgba(0, 150, 136, 0.1) !important;
+  background: rgba(0, 150, 136, 0.05) !important;
   backdrop-filter: blur(10px) !important;
 }
 
@@ -314,13 +314,13 @@ html {
 }
 
 .dark .VPFeature {
-  background: rgba(126, 87, 194, 0.1) !important;
-  border: 1px solid rgba(126, 87, 194, 0.2) !important;
+  background: rgba(0, 150, 136, 0.1) !important;
+  border: 1px solid rgba(0, 150, 136, 0.2) !important;
 }
 
 .dark .VPFeature:hover {
-  background: rgba(126, 87, 194, 0.2) !important;
-  border-color: rgba(126, 87, 194, 0.3) !important;
+  background: rgba(0, 150, 136, 0.2) !important;
+  border-color: rgba(0, 150, 136, 0.3) !important;
 }
 
 .VPButton {
@@ -481,9 +481,9 @@ html {
   transform: translate(-50%, -50%) !important;
   background: radial-gradient(
     circle at center,
-    rgba(126, 87, 194, 0.6) 0%,
-    rgba(103, 58, 183, 0.4) 15%,
-    rgba(156, 39, 176, 0.2) 30%,
+    rgba(0, 150, 136, 0.6) 0%,
+    rgba(0, 121, 107, 0.4) 15%,
+    rgba(0, 150, 136, 0.2) 30%,
     transparent 50%
   ) !important;
   filter: blur(25px) !important;
@@ -593,9 +593,9 @@ html {
   background-image: linear-gradient(
     120deg,
     #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
+    #009688 25%,
+    #4DB6AC 50%,
+    #00796B 75%,
     #ffa726 100%
   ) !important;
   -webkit-background-clip: text !important;
@@ -615,9 +615,9 @@ html {
   background-image: linear-gradient(
     120deg,
     #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
+    #009688 25%,
+    #4DB6AC 50%,
+    #00796B 75%,
     #ffa726 100%
   ) !important;
   -webkit-background-clip: text !important;
@@ -650,9 +650,9 @@ html {
   background-image: linear-gradient(
     120deg,
     #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
+    #009688 25%,
+    #4DB6AC 50%,
+    #00796B 75%,
     #ffa726 100%
   ) !important;
   -webkit-background-clip: text !important;
@@ -721,9 +721,9 @@ html {
   background-image: linear-gradient(
     120deg,
     #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
+    #009688 25%,
+    #4DB6AC 50%,
+    #00796B 75%,
     #ffa726 100%
   ) !important;
   -webkit-background-clip: text !important;
