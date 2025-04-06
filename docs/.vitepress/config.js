@@ -93,10 +93,10 @@ export default defineConfig({
           { text: '软件列表', link: '/software/' },
           { text: '网址导航', link: '/websites/' },
           { text: '模组推荐', link: '/modrec/' },
-          { text: '卡片', link: '/cards/' }
+          { text: '卡片', link: '/cards/' },
+          { text: '插件展示', link: '/code/Vite/plugins-showcase' }
         ]
       },
-      { text: '插件展示', link: '/plugins-showcase' },
       {
         text: '更多',
         items: [

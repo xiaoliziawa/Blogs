@@ -8,6 +8,8 @@ sidebar:
             link: /code/Introduction
           - text: KubeJS
             link: /code/KubeJS/KubeJS
+          - text: Vitepress Example Code
+            link: /code/Vite/plugins-showcase
           - text: Modding
             collapsed: false
             items:
