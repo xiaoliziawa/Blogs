@@ -221,6 +221,10 @@ function initializeImages() {
           }"
         />
       </div>
+      
+      <button class="mobile-close-btn" @click.stop="hidePreview">
+        <span>关闭</span>
+      </button>
     </div>
     <div class="copy-tip" :class="{ show: showCopyTip }">
       复制成功 ✓
@@ -405,7 +409,6 @@ function initializeImages() {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* 复制提示优化 */
 .copy-tip {
   position: fixed;
   top: 20px;
@@ -428,7 +431,6 @@ function initializeImages() {
   opacity: 1;
 }
 
-/* 工具提示样式 */
 .tooltip {
   position: relative;
 }
@@ -456,7 +458,7 @@ function initializeImages() {
   bottom: -35px;
 }
 
-/* 响应式优化 */
+/* 响应式 */
 @media (max-width: 768px) {
   .image-preview-overlay {
     width: 100vw;
@@ -466,14 +468,102 @@ function initializeImages() {
   
   .image-preview-toolbar {
     border-radius: 0;
+    height: 56px;
+    padding: 0 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--vp-c-bg-soft);
   }
   
   .toolbar-title {
     display: none;
   }
   
+  .toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-right: 8px;
+  }
+  
   .action-btn {
-    padding: 4px 8px;
+    padding: 4px 6px;
+    margin: 2px;
+  }
+  
+  .action-btn .icon {
+    font-size: 14px;
+  }
+  
+  .close-btn {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    background-color: var(--vp-c-bg);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+  }
+  
+  .close-btn:hover {
+    background-color: var(--vp-c-bg-soft);
+  }
+  
+  .image-preview-container {
+    padding-top: 56px;
+  }
+  
+  .tooltip-text {
+    display: none;
+  }
+  
+  /* 移动端底部关闭按钮 */
+  .mobile-close-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    background-color: var(--vp-c-brand);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .mobile-close-btn:hover, .mobile-close-btn:active {
+    transform: translateX(-50%) scale(1.05);
+    background-color: var(--vp-c-brand-dark);
+  }
+}
+
+/* 极小屏幕适配（比如iPhone SE） */
+@media (max-width: 375px) {
+  .action-btn {
+    padding: 4px;
+    margin: 1px;
+  }
+  
+  .toolbar-left {
+    display: none;
+  }
+  
+  .toolbar-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>
