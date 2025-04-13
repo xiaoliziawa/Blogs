@@ -57,11 +57,9 @@ const toggleCategory = (categoryName) => {
 const toggleAllCategories = () => {
   showAllCategories.value = !showAllCategories.value
   
-  if (showAllCategories.value) {
-    categories.value.forEach(category => {
-      expandedCategories.value[category.name] = true
-    })
-  }
+  categories.value.forEach(category => {
+    expandedCategories.value[category.name] = showAllCategories.value
+  })
 }
 
 const clearSearch = () => {
@@ -127,7 +125,7 @@ const clearSearch = () => {
         </div>
       </div>
       <div class="cards-wrapper"
-          :class="{ 'expanded': expandedCategories[category.name] || showAllCategories }">
+          :class="{ 'expanded': expandedCategories[category.name] }">
         <div class="cards-container">
           <a v-for="card in category.cards" 
             :key="card.id" 
