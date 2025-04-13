@@ -50,7 +50,6 @@ async function startTyping() {
   
   if (!title || !welcome || !tagline) return
   
-  // 初始化打字容器
   title.innerHTML = '<span class="typing-text"></span>'
   welcome.innerHTML = '<span class="typing-text"></span>'
   tagline.innerHTML = '<span class="typing-text"></span>'
@@ -125,19 +124,10 @@ onMounted(() => {
   display: inline-block;
   width: 3px;
   height: 1em;
-  background: linear-gradient(
-    120deg,
-    #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
-    #ffa726 100%
-  );
+  background: var(--vp-c-text-1); /* 使用 VitePress 的默认文本颜色变量 */
   margin-left: 2px;
   vertical-align: baseline;
-  animation: cursor-blink 1s infinite step-end,
-             gradient 8s linear infinite;
-  background-size: 200% auto;
+  animation: cursor-blink 1s infinite step-end;
 }
 
 @keyframes cursor-blink {
