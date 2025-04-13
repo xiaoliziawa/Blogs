@@ -13,6 +13,7 @@ import MermaidChart from './components/MermaidChart.vue'
 import EChartsComponent from './components/EChartsComponent.vue'
 import FeatureBox from './components/FeatureBox.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
+import AdBanner from './components/AdBanner.vue'
 import './custom.css'
 
 export default {
@@ -32,6 +33,7 @@ export default {
     app.component('EChartsComponent', EChartsComponent)
     app.component('FeatureBox', FeatureBox)
     app.component('ThemeColorPicker', ThemeColorPicker)
+    app.component('AdBanner', AdBanner)
   },
   layout: {
     'doc-after': () => h(Contributors)

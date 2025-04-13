@@ -7,6 +7,7 @@ import Contributors from './components/Contributors.vue'
 import PageHistory from './components/PageHistory.vue'
 import CursorHighlight from './components/CursorHighlight.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
+import AdBanner from './components/AdBanner.vue'
 
 const { Layout } = DefaultTheme
 const { frontmatter } = useData()
@@ -27,6 +28,7 @@ const { frontmatter } = useData()
     </template>
   </Layout>
   <CursorHighlight />
+  <AdBanner />
 </template>
 
 <style>
