@@ -50,7 +50,11 @@
               'retrowave-swatch': name === 'retrowave',
               'coffee-swatch': name === 'coffee',
               'mint-swatch': name === 'mint',
-              'synthwave-swatch': name === 'synthwave'
+              'synthwave-swatch': name === 'synthwave',
+              'sakura-swatch': name === 'sakura',
+              'forest-swatch': name === 'forest',
+              'autumn-swatch': name === 'autumn',
+              'glacier-swatch': name === 'glacier'
             }"
             @click="setTheme(name, color)"
             :title="getThemeTitle(name)"
@@ -688,6 +692,186 @@ const specialThemeColors = {
       }
     `
   },
+  sakura: {
+    primary: '#ff7eb6',
+    variables: {
+      '--vp-c-brand': '#ff7eb6',
+      '--vp-c-brand-light': '#ffa3c9',
+      '--vp-c-brand-lighter': '#ffc8dc',
+      '--vp-c-brand-dark': '#ff599d',
+      '--vp-c-brand-darker': '#ff3384'
+    },
+    customCSS: `
+      :root {
+        --sakura-gradient: linear-gradient(45deg, #ff7eb6, #ff9ebd);
+        --vp-c-bg-alt: #fff5f8;
+        --vp-c-bg: #fff9fb;
+        --vp-c-bg-soft: #ffeef3;
+        --vp-c-bg-mute: #ffe4ec;
+        --vp-c-text-1: #2c0014;
+        --vp-c-text-2: #4d0025;
+        --vp-c-text-3: #6e0035;
+      }
+      .dark {
+        --sakura-gradient: linear-gradient(45deg, #ff7eb6, #ff5c9d);
+        --vp-c-bg-alt: #2c0014;
+        --vp-c-bg: #3d001c;
+        --vp-c-bg-soft: #4e0024;
+        --vp-c-bg-mute: #5f002c;
+        --vp-c-text-1: #ffd9e9;
+        --vp-c-text-2: #ffb3d1;
+        --vp-c-text-3: #ff8cba;
+      }
+      .vp-doc a, .vp-doc a > code, .VPNavBarMenuLink.active, .VPNavBarMenuLink:hover {
+        background: var(--sakura-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .VPButton.brand {
+        background: var(--sakura-gradient);
+        border: none;
+        box-shadow: 0 4px 10px rgba(255, 126, 182, 0.3);
+      }
+      .dark .VPButton.brand {
+        box-shadow: 0 4px 10px rgba(255, 126, 182, 0.15);
+      }
+    `
+  },
+  forest: {
+    primary: '#2ecc71',
+    variables: {
+      '--vp-c-brand': '#2ecc71',
+      '--vp-c-brand-light': '#45d983',
+      '--vp-c-brand-lighter': '#5ce695',
+      '--vp-c-brand-dark': '#27ae60',
+      '--vp-c-brand-darker': '#219150'
+    },
+    customCSS: `
+      :root {
+        --forest-gradient: linear-gradient(45deg, #2ecc71, #27ae60);
+        --vp-c-bg-alt: #f0f8f3;
+        --vp-c-bg: #f5faf7;
+        --vp-c-bg-soft: #e8f5ec;
+        --vp-c-bg-mute: #dff2e4;
+        --vp-c-text-1: #0a2f1a;
+        --vp-c-text-2: #164a2c;
+        --vp-c-text-3: #22653d;
+      }
+      .dark {
+        --forest-gradient: linear-gradient(45deg, #2ecc71, #219150);
+        --vp-c-bg-alt: #0a2f1a;
+        --vp-c-bg: #0d3920;
+        --vp-c-bg-soft: #104426;
+        --vp-c-bg-mute: #134f2c;
+        --vp-c-text-1: #c8f0d5;
+        --vp-c-text-2: #9ee3b4;
+        --vp-c-text-3: #74d693;
+      }
+      .vp-doc a, .vp-doc a > code {
+        background: var(--forest-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .VPButton.brand {
+        background: var(--forest-gradient);
+        border: none;
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+      }
+      .dark .VPButton.brand {
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.15);
+      }
+    `
+  },
+  autumn: {
+    primary: '#e67e22',
+    variables: {
+      '--vp-c-brand': '#e67e22',
+      '--vp-c-brand-light': '#f39c12',
+      '--vp-c-brand-lighter': '#f1c40f',
+      '--vp-c-brand-dark': '#d35400',
+      '--vp-c-brand-darker': '#c0392b'
+    },
+    customCSS: `
+      :root {
+        --autumn-gradient: linear-gradient(45deg, #e67e22, #f39c12, #f1c40f);
+        --vp-c-bg-alt: #fdf6f0;
+        --vp-c-bg: #fef8f3;
+        --vp-c-bg-soft: #fceee2;
+        --vp-c-bg-mute: #fae5d3;
+        --vp-c-text-1: #2c1810;
+        --vp-c-text-2: #4d2a1c;
+        --vp-c-text-3: #6e3c28;
+      }
+      .dark {
+        --autumn-gradient: linear-gradient(45deg, #e67e22, #d35400, #c0392b);
+        --vp-c-bg-alt: #2c1810;
+        --vp-c-bg: #3d2115;
+        --vp-c-bg-soft: #4e2a1a;
+        --vp-c-bg-mute: #5f331f;
+        --vp-c-text-1: #ffe0cc;
+        --vp-c-text-2: #ffc299;
+        --vp-c-text-3: #ffa366;
+      }
+      .vp-doc a, .vp-doc a > code {
+        background: var(--autumn-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .VPButton.brand {
+        background: var(--autumn-gradient);
+        border: none;
+        box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3);
+      }
+      .dark .VPButton.brand {
+        box-shadow: 0 4px 10px rgba(230, 126, 34, 0.15);
+      }
+    `
+  },
+  glacier: {
+    primary: '#3498db',
+    variables: {
+      '--vp-c-brand': '#3498db',
+      '--vp-c-brand-light': '#5faee3',
+      '--vp-c-brand-lighter': '#89c4eb',
+      '--vp-c-brand-dark': '#2980b9',
+      '--vp-c-brand-darker': '#206694'
+    },
+    customCSS: `
+      :root {
+        --glacier-gradient: linear-gradient(45deg, #3498db, #2980b9);
+        --vp-c-bg-alt: #f0f6fb;
+        --vp-c-bg: #f5f9fc;
+        --vp-c-bg-soft: #e8f2f9;
+        --vp-c-bg-mute: #dfedf7;
+        --vp-c-text-1: #0a192f;
+        --vp-c-text-2: #16324d;
+        --vp-c-text-3: #224b6e;
+      }
+      .dark {
+        --glacier-gradient: linear-gradient(45deg, #3498db, #206694);
+        --vp-c-bg-alt: #0a192f;
+        --vp-c-bg: #0d2440;
+        --vp-c-bg-soft: #102f51;
+        --vp-c-bg-mute: #133a62;
+        --vp-c-text-1: #cce4f7;
+        --vp-c-text-2: #99c9ef;
+        --vp-c-text-3: #66afe7;
+      }
+      .vp-doc a, .vp-doc a > code {
+        background: var(--glacier-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .VPButton.brand {
+        background: var(--glacier-gradient);
+        border: none;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+      }
+      .dark .VPButton.brand {
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.15);
+      }
+    `
+  }
 }
 
 const themeColors = {
@@ -717,7 +901,11 @@ function getThemeTitle(name) {
     retrowave: '复古波浪主题',
     coffee: '咖啡风格主题',
     mint: '薄荷清新主题',
-    synthwave: '合成波风格主题'
+    synthwave: '合成波风格主题',
+    sakura: '樱花粉主题',
+    forest: '森林绿主题',
+    autumn: '秋季橙主题',
+    glacier: '冰川蓝主题'
   }
   return titles[name] || name
 }
@@ -968,6 +1156,30 @@ onUnmounted(() => {
   background: linear-gradient(45deg, #fc3b7d, #7303c0, #03a9f4);
   border: 2px solid #fd3777;
   box-shadow: 0 0 8px rgba(253, 55, 119, 0.8);
+}
+
+.sakura-swatch {
+  background: linear-gradient(45deg, #ff7eb6, #ff9ebd);
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(255, 126, 182, 0.8);
+}
+
+.forest-swatch {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.8);
+}
+
+.autumn-swatch {
+  background: linear-gradient(45deg, #e67e22, #f39c12, #f1c40f);
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(230, 126, 34, 0.8);
+}
+
+.glacier-swatch {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
 }
 
 @keyframes rainbow-bg { 
