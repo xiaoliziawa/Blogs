@@ -154,9 +154,6 @@ function handleEnterGiscus() {
 }
 
 function handleLeaveGiscus() {
-  // 离开giscus区域时，允许mousemove事件恢复高亮
-  // 不需要立即显示，mousemove会处理
-  // isInSpecialArea 会在下一次 document mousemove 时更新
 }
 
 onMounted(() => {
