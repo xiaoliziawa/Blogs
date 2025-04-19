@@ -10,6 +10,7 @@ const HIGHLIGHT_BORDER = 'rgba(255, 255, 0, 0.1)'
 let animationFrameId = null
 let lastMousePosition = { x: 0, y: 0 }
 let isInSpecialArea = false
+let giscusObserver = null
 
 function checkBrowserCompatibility() {
   if (typeof document === 'undefined') return false
@@ -60,7 +61,7 @@ function createHighlightElement() {
 }
 
 function updateHighlightPosition(x, y) {
-  if (!highlightElement.value) return
+  if (!highlightElement.value || isInSpecialArea) return
   
   lastMousePosition = { x, y }
   
@@ -78,19 +79,20 @@ function hideHighlight() {
   }
 }
 
-function isSpecialArea(element) {
-  if (!element) return false
-  
+function showHighlight() {
+  if (highlightElement.value) {
+    highlightElement.value.style.opacity = '1'
+  }
+}
+
+function isInsideGiscus(element) {
   let current = element
   while (current && current !== document.body) {
-    if (current.classList.contains('github-chart') || 
-        current.classList.contains('echarts') ||
-        current.tagName === 'CANVAS') {
+    if (current.classList.contains('giscus')) {
       return true
     }
     current = current.parentElement
   }
-  
   return false
 }
 
@@ -103,33 +105,58 @@ function handleMouseMove(e) {
     if (!isInitialized || !highlightElement.value) return
     
     const { clientX, clientY, target } = e
-    const specialArea = isSpecialArea(target)
-    isInSpecialArea = specialArea
-    updateHighlightPosition(clientX, clientY)
+    const insideGiscus = isInsideGiscus(target)
+    
+    if (insideGiscus) {
+      if (!isInSpecialArea) {
+        isInSpecialArea = true
+        hideHighlight()
+      }
+    } else {
+      if (isInSpecialArea) {
+        isInSpecialArea = false
+        updateHighlightPosition(clientX, clientY)
+        showHighlight()
+      } else {
+        updateHighlightPosition(clientX, clientY)
+      }
+    }
   })
 }
 
-function handleSpecialAreaMouseMove() {
-  if (!isInitialized || !isInSpecialArea) return
-  
-  const mouseX = typeof window.mouseX !== 'undefined' ? window.mouseX : 
-               (typeof window.event !== 'undefined' && window.event.clientX ? window.event.clientX : lastMousePosition.x)
-  
-  const mouseY = typeof window.mouseY !== 'undefined' ? window.mouseY : 
-               (typeof window.event !== 'undefined' && window.event.clientY ? window.event.clientY : lastMousePosition.y)
-  
-  if (mouseX !== lastMousePosition.x || mouseY !== lastMousePosition.y) {
-    updateHighlightPosition(mouseX, mouseY)
-  }
-}
-
-function handleMouseLeave() {
+function handleMouseLeaveDocument() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)
     animationFrameId = null
   }
   isInSpecialArea = false
   hideHighlight()
+}
+
+function setupGiscusListener() {
+  const giscusContainer = document.querySelector('.giscus')
+  if (giscusContainer) {
+    const giscusFrame = giscusContainer.querySelector('iframe')
+    if (giscusFrame) {
+      giscusContainer.addEventListener('mouseenter', handleEnterGiscus, { capture: true })
+      giscusContainer.addEventListener('mouseleave', handleLeaveGiscus, { capture: true })
+      return true
+    }
+  }
+  return false
+}
+
+function handleEnterGiscus() {
+  if (!isInSpecialArea) {
+    isInSpecialArea = true
+    hideHighlight()
+  }
+}
+
+function handleLeaveGiscus() {
+  // 离开giscus区域时，允许mousemove事件恢复高亮
+  // 不需要立即显示，mousemove会处理
+  // isInSpecialArea 会在下一次 document mousemove 时更新
 }
 
 onMounted(() => {
@@ -144,26 +171,31 @@ onMounted(() => {
       isInitialized = true
       
       document.addEventListener('mousemove', handleMouseMove, { passive: true, capture: true })
-      document.addEventListener('mouseleave', handleMouseLeave)
+      document.documentElement.addEventListener('mouseleave', handleMouseLeaveDocument)
       
-      if (typeof document.querySelector('.github-chart') !== 'undefined') {
-        const chartElements = document.querySelectorAll('.github-chart')
-        chartElements.forEach(chart => {
-          chart.addEventListener('mouseover', () => { isInSpecialArea = true })
-          chart.addEventListener('mouseout', () => { isInSpecialArea = false })
-        })
-      }
-      
-      const specialAreaInterval = setInterval(() => {
-        handleSpecialAreaMouseMove()
-      }, 16)
-      
-      onUnmounted(() => {
-        clearInterval(specialAreaInterval)
-      })
-      
-      if (typeof document.defaultView.mouseX !== 'undefined' && typeof document.defaultView.mouseY !== 'undefined') {
-        updateHighlightPosition(document.defaultView.mouseX, document.defaultView.mouseY)
+      if (!setupGiscusListener()) {
+        giscusObserver = new MutationObserver((mutations) => {
+          let giscusFound = false;
+          for (const mutation of mutations) {
+            if (mutation.addedNodes) {
+              for (const node of mutation.addedNodes) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                  const container = node.matches('.giscus') ? node : node.querySelector('.giscus');
+                  if (container) {
+                    if (setupGiscusListener()) {
+                      giscusObserver.disconnect();
+                      giscusFound = true;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            if (giscusFound) break;
+          }
+        });
+
+        giscusObserver.observe(document.body, { childList: true, subtree: true });
       }
     }, 300)
   })
@@ -171,11 +203,22 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleMouseMove, { capture: true })
-  document.removeEventListener('mouseleave', handleMouseLeave)
+  document.documentElement.removeEventListener('mouseleave', handleMouseLeaveDocument)
   
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId)
     animationFrameId = null
+  }
+  
+  const giscusContainer = document.querySelector('.giscus')
+  if (giscusContainer) {
+    giscusContainer.removeEventListener('mouseenter', handleEnterGiscus, { capture: true })
+    giscusContainer.removeEventListener('mouseleave', handleLeaveGiscus, { capture: true })
+  }
+
+  if (giscusObserver) {
+    giscusObserver.disconnect()
+    giscusObserver = null
   }
   
   if (highlightElement.value && overlayContainer.value) {
