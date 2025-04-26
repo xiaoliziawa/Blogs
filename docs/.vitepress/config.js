@@ -3,6 +3,8 @@ import { scanMarkdownFiles } from './utils/markdown'
 import generateSidebar from './utils/sidebar'
 import { resolve } from 'path'
 import attrs from 'markdown-it-attrs'
+import { SitemapStream, streamToPromise } from 'sitemap'
+import { createWriteStream } from 'fs'
 
 const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 
@@ -12,6 +14,7 @@ export default defineConfig({
   title: 'PrizOwO Blogs',
   description: 'PrizOwO Blogs',
   lastUpdated: true,
+  metaChunk: true,
 
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.ico' }],
@@ -37,18 +40,14 @@ export default defineConfig({
             const isCurrentlyDark = document.documentElement.classList.contains('dark');
             
             try {
-              // 先创建 transition 对象
               const transition = document.startViewTransition(async () => {
-                // 延迟执行主题切换
                 await new Promise(resolve => setTimeout(resolve, 0));
                 document.documentElement.classList.toggle('dark', !isCurrentlyDark);
                 localStorage.setItem('vitepress-theme-appearance', isCurrentlyDark ? 'light' : 'dark');
               });
 
-              // 等待动画开始
               await transition.ready;
               
-              // 等待动画完成
               await transition.finished;
             } catch (err) {
               console.error('View Transition failed:', err);
@@ -56,7 +55,6 @@ export default defineConfig({
           });
         };
         
-        // 确保在 DOM 和样式完全加载后执行
         const init = () => {
           if (document.readyState === 'complete') {
             addViewTransition();
@@ -110,6 +108,8 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/xiaoliziawa' }
     ],
 
+    externalLinkIcon: true,
+
     sidebar: {
       '/cards/': [
         {
@@ -117,7 +117,7 @@ export default defineConfig({
           link: '/cards/'
         }
       ],
-      ...sidebar  // 使用从 index.md 自动生成的侧边栏配置
+      ...sidebar 
     },
 
     search: {
@@ -161,7 +161,12 @@ export default defineConfig({
       mapping: 'pathname',
       inputPosition: 'bottom',
       lang: 'zh-CN'
-    }
+    },
+    
+    // 添加移动端优化配置
+    returnToTopLabel: '返回顶部',
+    sidebarMenuLabel: '菜单',
+    darkModeSwitchLabel: '外观'
   },
 
   cleanUrls: true,
@@ -178,6 +183,13 @@ export default defineConfig({
     theme: {
       light: 'github-light',
       dark: 'dark-plus'
+    },
+    container: {
+      tipLabel: '提示',
+      warningLabel: '警告',
+      dangerLabel: '危险',
+      infoLabel: '信息',
+      detailsLabel: '详细信息'
     },
     config: (md) => {
       md.use(attrs, {
@@ -230,5 +242,21 @@ export default defineConfig({
         return defaultImageRender(tokens, idx, options, env, self)
       }
     }
+  },
+
+  async buildEnd(siteConfig) {
+    const sitemap = new SitemapStream({ hostname: 'https://www.prizowo.com' }) // 请替换为你的实际网站域名
+    const writeStream = createWriteStream(resolve(siteConfig.outDir, 'sitemap.xml'))
+    sitemap.pipe(writeStream)
+    
+    sitemap.write({ url: '/', changefreq: 'daily', priority: 1.0 })
+    sitemap.write({ url: '/code/', changefreq: 'weekly', priority: 0.8 })
+    sitemap.write({ url: '/software/', changefreq: 'monthly', priority: 0.7 })
+    sitemap.write({ url: '/websites/', changefreq: 'monthly', priority: 0.7 })
+    sitemap.write({ url: '/modrec/', changefreq: 'monthly', priority: 0.7 })
+    sitemap.write({ url: '/cards/', changefreq: 'monthly', priority: 0.7 })
+    
+    sitemap.end()
+    
   }
 }) 
