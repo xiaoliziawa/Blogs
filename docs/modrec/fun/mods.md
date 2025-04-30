@@ -2,7 +2,7 @@
 
 ## [COE] 搬运：拓展 (Carry On Extend)
 
-![模组图标](https://www.mcmod.cn/images/class/19/19417-1.png)
+![模组图标](https://i.mcmod.cn/class/cover/20250420/1745079698_2_mnas.jpg@480x300.jpg)
 
 ### 基本信息
 
