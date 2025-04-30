@@ -13,7 +13,7 @@
   - **NeoForge**: 1.21.1
   - **Forge**: 1.20.1
 - **前置模组**:
-  - [搬运 (Carry On)](https://www.mcmod.cn/class/808.html)
+  - [搬运 (Carry On)](https://www.mcmod.cn/class/1081.html)
 
 ### 模组介绍
 
@@ -34,7 +34,7 @@
 
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/carry-on-extend)
 - [Modrinth](https://modrinth.com/mod/carry-on-extend)
-- [GitHub](https://github.com/LirxOwO/carry-on-extend)
+- [GitHub](https://github.com/xiaoliziawa/CarryOnExtend)
 
 ### 模组作者/开发团队
 
