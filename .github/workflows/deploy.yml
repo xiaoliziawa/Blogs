@@ -4,12 +4,14 @@ on:
     # 在推送到 main 分支时触发
     push:
         branches: [main]
+        tags:
+            - 'v*' # 当推送v开头的标签时也触发，例如v1.0.0
     # 允许手动触发部署
     workflow_dispatch:
 
 # 设置 GITHUB_TOKEN 的权限
 permissions:
-    contents: read
+    contents: write # 修改为write以允许创建release
     pages: write
     id-token: write
 
@@ -50,6 +52,27 @@ jobs:
 
             - name: Create .nojekyll file
               run: touch .nojekyll
+              
+            # 添加Release相关步骤，仅在推送标签时执行
+            - name: Create ZIP archive
+              if: startsWith(github.ref, 'refs/tags/')
+              run: |
+                cd docs/.vitepress/dist
+                zip -r ../../../site.zip .
+                cd ../../../
+                
+            - name: Create Release
+              if: startsWith(github.ref, 'refs/tags/')
+              uses: softprops/action-gh-release@v1
+              with:
+                files: |
+                  site.zip
+                name: Release ${{ github.ref_name }}
+                draft: false
+                prerelease: false
+                generate_release_notes: true
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     deploy:
         environment:
