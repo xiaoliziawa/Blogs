@@ -2,67 +2,96 @@
 	"categories": [
 		{
 			"id": 1,
-			"name": "111",
+			"name": "Code",
 			"cards": [
 				{
 					"id": "sw-1",
-					"title": "列表",
-					"description": "测试列表",
-					"image": "/cards-img/home.png",
-					"link": "/software/",
-					"tags": ["工具", "软件"]
+					"title": "芒果的KubeJS文章",
+					"description": "與 KubeJS 有關的全在這！",
+					"image": "https://article.mango-kubejs.pages.dev/logo.png",
+					"link": "https://article.mango-kubejs.pages.dev/zh-tw/",
+					"tags": ["Code", "kubeJS"]
+				},
+				{
+					"id": "sw-2",
+					"title": "CrychicDoc-1",
+					"description": "一个由Crychic团队维护的我的世界文档.",
+					"image": "https://docs.mihono.cn/logodark.png",
+					"link": "https://docs.mihono.cn/zh/",
+					"tags": ["Code", "kubeJS","Docs"]
+				},{
+					"id": "sw-3",
+					"title": "CrychicDoc-2",
+					"description": "一个由Crychic团队维护的我的世界文档(备用链接).",
+					"image": "https://docs2.mihono.cn/logodark.png",
+					"link": "https://docs2.mihono.cn/zh/",
+					"tags": ["Code", "kubeJS","Docs"]
+				},
+				{
+					"id": "sw-4",
+					"title": "KubeJS Tutorials",
+					"description": "KubeJS的官方Wiki(新版本).",
+					"image": "https://kubejs.com/img/logo/title.png",
+					"link": "https://kubejs.com/wiki/tutorials/",
+					"tags": ["Code", "kubeJS","Docs"]
+				},
+				{
+					"id": "sw-5",
+					"title": "CraftTweaker API Wiki",
+					"description": "CraftTweaker的API文档.",
+					"image": "https://camo.githubusercontent.com/f49c84f86a84a4aa66ac488b9715b347c31653de932d09c7511fb7c9db3fe01c/68747470733a2f2f692e626c616d656a617265642e636f6d2f6372616674747765616b65722e737667",
+					"link": "https://docs.blamejared.com/",
+					"tags": ["Code", "CraftTweaker","Docs"]
 				}
 			]
 		},
 		{
 			"id": 2,
-			"name": "2222",
+			"name": "Mod",
 			"cards": [
 				{
-					"id": "dev-1",
-					"title": "111示例",
-					"description": "我是测试字符串",
-					"image": "/cards-img/logo.png",
-					"link": "/code/",
-					"tags": ["开发", "示例"]
+					"id": "mod-1",
+					"title": "arkdust-tutorials-neoforge",
+					"description": "Arkdust的NeoForge模组教程,包括ModernUI以及Geckolib的教程.",
+					"image": "https://arkdust-tutorials.kituin.fun/icon/neo.svg",
+					"link": "https://arkdust-tutorials.kituin.fun/introduction.html",
+					"tags": ["Mod", "NeoForge", "Code"]
 				},
 				{
-					"id": "code-1",
-					"title": "代码示例",
-					"description": "我是测试字符串二号😭",
-					"image": "/cards-img/home.png",
-					"link": "/code/",
-					"tags": ["开发", "代码", "示例"]
-				}
-			]
-		},
-		{
-			"id": 3,
-			"name": "3333",
-			"cards": [
-				{
-					"id": "code-2",
-					"title": "代码示例",
-					"description": "我是测试字符串三号😭",
-					"image": "/cards-img/home.png",
-					"link": "/code/",
-					"tags": ["开发", "代码", "示例"]
-				},
-				{
-					"id": "code-3",
-					"title": "代码示例",
-					"description": "我是测试字符串四号😭",
-					"image": "/cards-img/home.png",
-					"link": "/code/",
-					"tags": ["开发", "代码", "示例"]
-				},
-				{
-					"id": "code-4",
-					"title": "代码示例",
-					"description": "我是测试字符串五号😭",
-					"image": "/cards-img/home.png",
-					"link": "/code/",
-					"tags": ["开发", "代码", "示例"]
+					"id": "mod-2",
+					"title": "Curios API",
+					"description": "Curios的官方文档,如何使用Curios的API.",
+					"image": "https://docs.illusivesoulworks.com/img/logo.png",
+					"link": "https://docs.illusivesoulworks.com/curios/getting-started",
+					"tags": ["Mod", "Curios", "Code", "API"]
+				},{
+					"id": "mod-3",
+					"title": "Fabric Mixin介绍",
+					"description": "Fabric的Mixin官方介绍/教程文档,教你认识和使用Mixin.",
+					"image": "https://wiki.fabricmc.net/_media/wiki:logo.png",
+					"link": "https://wiki.fabricmc.net/zh_cn:tutorial:mixin_introduction",
+					"tags": ["Mod", "Mixin", "Code", "Fabric"]
+				},{
+					"id": "mod-4",
+					"title": "NeoForge官方文档",
+					"description": "NeoForge的官方文档.",
+					"image": "https://docs.neoforged.net/img/logo.svg",
+					"link": "https://docs.neoforged.net/docs/gettingstarted/",
+					"tags": ["Mod", "NeoForge", "Code"]
+				},{
+					"id": "mod-5",
+					"title": "Flandre923的博客",
+					"description": "涵盖了芙兰大佬的模组开发笔记,以及一些模组开发教程.",
+					"image": "https://fuwari-ald.pages.dev/_astro/demo-avatar.C3ilsHWX_2rMCcz.webp",
+					"link": "https://fuwari-ald.pages.dev/",
+					"tags": ["Mod", "Blogs", "Code"]
+				},{
+					"id": "mod-6",
+					"title": "Fabric官方文档",
+					"description": "Fabric的官方文档,如何使用Fabric开发模组.",
+					"image": "https://docs.fabricmc.net/logo.png",
+					"link": "https://docs.fabricmc.net/develop/",
+					"tags": ["Mod", "Fabric", "Code"]
 				}
 			]
 		}

@@ -43,15 +43,20 @@ onMounted(() => {
   mergedCategories.forEach(category => {
     expandedCategories.value[category.name] = false
   })
-  
-  if (mergedCategories.length > 0) {
-    expandedCategories.value[mergedCategories[0].name] = true
-  }
 })
 
 const toggleCategory = (categoryName) => {
   if (showAllCategories.value) return
   expandedCategories.value[categoryName] = !expandedCategories.value[categoryName]
+  
+  const allExpanded = Object.values(expandedCategories.value).every(value => value === true)
+  const allCollapsed = Object.values(expandedCategories.value).every(value => value === false)
+  
+  if (allExpanded) {
+    showAllCategories.value = true
+  } else if (allCollapsed) {
+    showAllCategories.value = false
+  }
 }
 
 const toggleAllCategories = () => {
