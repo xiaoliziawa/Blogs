@@ -10,7 +10,7 @@
 
 ## 主要作品
 
-根据MC百科个人页面，LirxOwO参与开发的主要模组包括：
+MC百科个人页面，LirxOwO参与开发的模组（部分）：
 
 - [COE] 搬运：拓展 (Carry On Extend) - 所有者/程序/策划
 - [SBP] 告示牌预览 (SignBoard Preview) - 所有者/程序

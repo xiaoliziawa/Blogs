@@ -1,7 +1,5 @@
 # 个人资料链接
 
-这里收录了博主的个人资料链接。
-
 ## LirxOwO (TYXCnJiu / X_CnJiu / xiaoliziawa)
 
 ![作者头像](/modimg/avatar.png){style="width:200px; border-radius:50%; display:block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 0 auto 20px auto;"}
