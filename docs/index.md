@@ -5,7 +5,7 @@ hero:
   text: " "
   tagline: " "
   image:
-    src: /page-icon.png
+    src: https://www.emojiall.com/images/120/microsoft-teams/1f62d.png
     alt: Logo
   actions:
     - theme: brand
