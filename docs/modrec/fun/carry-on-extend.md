@@ -1,6 +1,9 @@
-# [COE] 搬运：拓展 (Carry On Extend)
-
-![模组图标](/modimg/cye.jpg)
+<ModInfo 
+  curseForgeId="carry-on-extend" 
+  modName="搬运：拓展 (Carry On Extend)" 
+  iconUrl="https://media.forgecdn.net/avatars/thumbnails/1229/565/64/64/638806530062161826.png"
+  projectId="1245887"
+/>
 
 ## 基本信息
 

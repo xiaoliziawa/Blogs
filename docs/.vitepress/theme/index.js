@@ -1,3 +1,4 @@
+import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import HomeContent from './components/HomeContent.vue'
 import GitHubChart from './components/GitHubChart.vue'
@@ -14,6 +15,7 @@ import EChartsComponent from './components/EChartsComponent.vue'
 import FeatureBox from './components/FeatureBox.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
+import ModInfo from './components/ModInfo.vue'
 import './custom.css'
 
 export default {
@@ -34,6 +36,7 @@ export default {
     app.component('FeatureBox', FeatureBox)
     app.component('ThemeColorPicker', ThemeColorPicker)
     app.component('AdBanner', AdBanner)
+    app.component('ModInfo', ModInfo)
   },
   layout: {
     'doc-after': () => h(Contributors)

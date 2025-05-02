@@ -178,16 +178,18 @@ html:not(.dark)::view-transition-old(root) {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--vp-c-brand-light);
+  background: var(--vp-c-brand-dimm);
   border-radius: 4px;
-  opacity: 0.8;
+  transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -774,4 +776,41 @@ html {
   width: fit-content !important;
   white-space: nowrap !important;
   margin-right: auto !important;
+}
+
+/* 自定义CSS */
+
+/* 全局滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand-dimm);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-brand);
+}
+
+/* 模组信息卡片 */
+.mod-info-wrapper {
+  margin: 0 0 2rem 0;
+}
+
+/* 禁用外部链接箭头图标 */
+.badge-link.no-external-icon::after,
+.badge-link.no-external-icon .badge + svg,
+.badge-link.no-external-icon:has(.badge) + svg,
+.badge-link.no-external-icon svg[data-v-icon],
+.no-external-icon * + svg[class^="icon"] {
+  display: none !important;
 }
