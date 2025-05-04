@@ -1,9 +1,11 @@
-# EnchantmentLevelBreak
 <ModInfo 
   curseForgeId="enchantlevelbrek" 
   modName="附魔等级上限突破2（EnchantmentLevelBreak）" 
   projectId="1110220"
 />
+
+# EnchantmentLevelBreak
+
 
 ## 基本信息
 

@@ -1,9 +1,10 @@
-# Carry On Extend
 <ModInfo 
   curseForgeId="carry-on-extend" 
   modName="搬运：拓展（Carry On Extend）" 
   projectId="1245887"
 />
+
+# Carry On Extend
 
 ## 基本信息
 
