@@ -25,7 +25,6 @@ const downloadCount = ref(0)
 const isLoading = ref(false)
 const errorMsg = ref('')
 
-// 新增数据字段
 const gameVersions = ref([])
 const dateCreated = ref(null)
 const dateModified = ref(null)

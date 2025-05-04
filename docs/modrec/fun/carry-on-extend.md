@@ -1,7 +1,7 @@
 <ModInfo 
-  curseForgeId="vault-patcher" 
-  modName="Vault Patcher" 
-  projectId="967052"
+  curseForgeId="carry-on-extend" 
+  modName="搬运：拓展（Carry On Extend）" 
+  projectId="1245887"
 />
 
 ## 基本信息
