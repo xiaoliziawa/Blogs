@@ -1,8 +1,7 @@
 <ModInfo 
-  curseForgeId="carry-on-extend" 
-  modName="搬运：拓展 (Carry On Extend)" 
-  iconUrl="https://media.forgecdn.net/avatars/thumbnails/1229/565/64/64/638806530062161826.png"
-  projectId="1245887"
+  curseForgeId="vault-patcher" 
+  modName="Vault Patcher" 
+  projectId="967052"
 />
 
 ## 基本信息

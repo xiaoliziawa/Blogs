@@ -41,6 +41,8 @@ jobs:
 
             - name: Build
               run: npm run docs:build
+              env:
+                VITE_CF_API_KEY: ${{ secrets.CF_API_KEY }}
 
             - name: Create CNAME
               run: echo "prizowo.net" > docs/.vitepress/dist/CNAME
