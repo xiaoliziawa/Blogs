@@ -304,7 +304,6 @@ onMounted(() => {
   display: inline-block;
 }
 
-/* 禁用外部链接图标 */
 .no-external-icon::after {
   display: none !important;
 }
@@ -355,7 +354,6 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-/* 下载量样式 */
 .download-stats {
   display: flex;
   align-items: center;
@@ -404,7 +402,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* 新增样式 - 详情部分 */
 .mod-details {
   margin-top: 16px;
   border-top: 1px dashed rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.2);
