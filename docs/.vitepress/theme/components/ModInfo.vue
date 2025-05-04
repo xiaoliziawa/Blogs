@@ -1,6 +1,32 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+// 类型定义
+interface IAuthor {
+  name: string
+  url: string
+}
+
+interface TModData {
+  downloadCount: number
+  dateCreated: string | null
+  dateModified: string | null
+  gameVersions: string[]
+  authors: IAuthor[]
+  logoUrl: string | null
+}
+
+// 声明环境变量类型
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_CF_API_KEY: string
+      [key: string]: any
+    }
+  }
+}
+
+// 组件属性定义
 const props = defineProps({
   curseForgeId: {
     type: String,
@@ -20,30 +46,31 @@ const props = defineProps({
   }
 })
 
+// 响应式状态
+const modData = ref<TModData>({
+  downloadCount: 0,
+  dateCreated: null,
+  dateModified: null,
+  gameVersions: [],
+  authors: [],
+  logoUrl: null
+})
 const icon = ref(props.iconUrl)
-const downloadCount = ref(0)
 const isLoading = ref(false)
 const errorMsg = ref('')
 
-const gameVersions = ref([])
-const dateCreated = ref(null)
-const dateModified = ref(null)
-const authors = ref([])
-
+// API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
 const CF_API_URL = 'https://api.curseforge.com/v1/mods'
 
-const formattedDownloads = computed(() => {
-  if (downloadCount.value < 1000) {
-    return downloadCount.value
-  } else if (downloadCount.value < 1000000) {
-    return (downloadCount.value / 1000).toFixed(1) + 'K'
-  } else {
-    return (downloadCount.value / 1000000).toFixed(1) + 'M'
-  }
-})
+// 格式化工具函数
+const formatNumber = (num: number): string => {
+  if (num < 1000) return String(num)
+  if (num < 1000000) return (num / 1000).toFixed(1) + 'K'
+  return (num / 1000000).toFixed(1) + 'M'
+}
 
-const formatDate = (dateString) => {
+const formatDate = (dateString: string | null): string => {
   if (!dateString) return '未知'
   const date = new Date(dateString)
   return date.toLocaleDateString('zh-CN', { 
@@ -53,20 +80,14 @@ const formatDate = (dateString) => {
   })
 }
 
-const formattedDateCreated = computed(() => {
-  return formatDate(dateCreated.value)
-})
-
-const formattedDateModified = computed(() => {
-  return formatDate(dateModified.value)
-})
-
-const curseForgeUrl = computed(() => {
-  return `https://www.curseforge.com/minecraft/mc-mods/${props.curseForgeId}`
-})
+// 计算属性
+const formattedDownloads = computed(() => formatNumber(modData.value.downloadCount))
+const formattedDateCreated = computed(() => formatDate(modData.value.dateCreated))
+const formattedDateModified = computed(() => formatDate(modData.value.dateModified))
+const curseForgeUrl = computed(() => `https://www.curseforge.com/minecraft/mc-mods/${props.curseForgeId}`)
 
 // 版本排序
-const compareVersions = (a, b) => {
+const compareVersions = (a: string, b: string): number => {
   const aParts = a.split('.').map(Number)
   const bParts = b.split('.').map(Number)
   
@@ -74,20 +95,19 @@ const compareVersions = (a, b) => {
     const aVal = i < aParts.length ? aParts[i] : 0
     const bVal = i < bParts.length ? bParts[i] : 0
     
-    if (aVal !== bVal) {
-      return bVal - aVal
-    }
+    if (aVal !== bVal) return bVal - aVal
   }
   
   return 0
 }
 
 const sortedVersions = computed(() => {
-  if (!gameVersions.value.length) return []
-  return [...gameVersions.value].sort(compareVersions)
+  if (!modData.value.gameVersions.length) return []
+  return [...modData.value.gameVersions].sort(compareVersions)
 })
 
-const fetchModData = async () => {
+// 数据获取函数
+const fetchModData = async (): Promise<void> => {
   if (!props.projectId) return
   
   isLoading.value = true
@@ -106,33 +126,45 @@ const fetchModData = async () => {
       throw new Error(`API请求失败: ${response.status} ${response.statusText}`)
     }
     
-    const data = await response.json()
+    const { data } = await response.json()
     
-    if (data && data.data) {
-      downloadCount.value = data.data.downloadCount || 0
-      
-      if (data.data.latestFilesIndexes && data.data.latestFilesIndexes.length > 0) {
-        const versions = data.data.latestFilesIndexes.map(file => file.gameVersion).filter(Boolean)
-        gameVersions.value = [...new Set(versions)]
-      } else {
-        gameVersions.value = data.data.gameVersions || []
+    if (data) {
+      // 提取游戏版本
+      let gameVersions: string[] = []
+      if (data.latestFilesIndexes?.length > 0) {
+        const versions = data.latestFilesIndexes
+          .map((file: { gameVersion: string }) => file.gameVersion)
+          .filter(Boolean) as string[]
+        gameVersions = [...new Set(versions)]
+      } else if (data.gameVersions) {
+        gameVersions = data.gameVersions
       }
       
-      dateCreated.value = data.data.dateCreated || null
-      dateModified.value = data.data.dateModified || null
-      authors.value = data.data.authors || []
+      // 更新模组数据
+      modData.value = {
+        downloadCount: data.downloadCount || 0,
+        dateCreated: data.dateCreated || null,
+        dateModified: data.dateModified || null,
+        gameVersions,
+        authors: data.authors || [],
+        logoUrl: data.logo?.thumbnailUrl || null
+      }
       
-      if (!props.iconUrl && data.data.logo && data.data.logo.thumbnailUrl) {
-        icon.value = data.data.logo.thumbnailUrl
+      // 更新图标
+      if (!props.iconUrl && modData.value.logoUrl) {
+        icon.value = modData.value.logoUrl
       }
     }
   } catch (error) {
-    errorMsg.value = `获取模组数据失败: ${error.message}`
+    const errorMessage = error instanceof Error ? error.message : '未知错误'
+    errorMsg.value = `获取模组数据失败: ${errorMessage}`
+    console.error('CurseForge API 错误:', error)
   } finally {
     isLoading.value = false
   }
 }
 
+// 生命周期钩子
 onMounted(() => {
   fetchModData()
 })
@@ -149,7 +181,7 @@ onMounted(() => {
         
         <div class="mod-badges">
           <a :href="curseForgeUrl" target="_blank" rel="noopener noreferrer" class="badge-link no-external-icon">
-            <div v-if="projectId && !isLoading && !errorMsg && downloadCount > 0" class="download-stats">
+            <div v-if="projectId && !isLoading && !errorMsg && modData.downloadCount > 0" class="download-stats">
               <div class="download-count">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="download-icon">
                   <path fill="currentColor" d="M12 16l-4-4h2.5V8h3v4H16l-4 4zm5-12H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H7V6h10v12z"/>
@@ -178,7 +210,7 @@ onMounted(() => {
     </div>
     
     <div v-if="projectId && !isLoading && !errorMsg" class="mod-details">
-      <div v-if="gameVersions.length > 0" class="detail-section">
+      <div v-if="modData.gameVersions.length > 0" class="detail-section">
         <h3 class="detail-title">支持的Minecraft版本</h3>
         <div class="version-tags">
           <span v-for="(version, index) in sortedVersions" :key="index" class="version-tag">
@@ -187,10 +219,10 @@ onMounted(() => {
         </div>
       </div>
       
-      <div v-if="authors.length > 0" class="detail-section">
+      <div v-if="modData.authors.length > 0" class="detail-section">
         <h3 class="detail-title">模组作者</h3>
         <div class="authors-list">
-          <a v-for="(author, index) in authors" :key="index" 
+          <a v-for="(author, index) in modData.authors" :key="index" 
              :href="author.url" 
              target="_blank" 
              rel="noopener noreferrer" 
@@ -202,12 +234,12 @@ onMounted(() => {
       
       <div class="detail-section">
         <div class="dates-row">
-          <div v-if="dateCreated" class="date-item">
+          <div v-if="modData.dateCreated" class="date-item">
             <span class="date-label">创建日期:</span>
             <span class="date-value">{{ formattedDateCreated }}</span>
           </div>
           
-          <div v-if="dateModified" class="date-item">
+          <div v-if="modData.dateModified" class="date-item">
             <span class="date-label">最后更新:</span>
             <span class="date-value">{{ formattedDateModified }}</span>
           </div>
@@ -219,15 +251,15 @@ onMounted(() => {
 
 <style scoped>
 .mod-info {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   background-color: rgba(var(--vp-c-bg-soft-rgb, 245, 245, 245), 0.8);
-  border-radius: 14px;
-  padding: 18px;
+  border-radius: 16px;
+  padding: 22px;
   border: 1px solid rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.15);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   overflow: hidden;
 }
@@ -240,63 +272,76 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, 
-    rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.05) 0%, 
+    rgba(var(--vp-c-brand-rgb), 0.05) 0%, 
     transparent 100%);
   z-index: 0;
   border-radius: 16px;
+  transition: all 0.4s ease;
 }
 
 .mod-info:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-  border-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.25);
-  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(var(--vp-c-brand-rgb), 0.08);
+  border-color: rgba(var(--vp-c-brand-rgb), 0.25);
+  transform: translateY(-4px);
+}
+
+.mod-info:hover::before {
+  opacity: 0.8;
+  background: linear-gradient(135deg, 
+    rgba(var(--vp-c-brand-rgb), 0.08) 0%, 
+    transparent 100%);
 }
 
 .dark .mod-info {
-  background-color: rgba(var(--vp-c-bg-soft-rgb, 36, 36, 36), 0.8);
-  border-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.2);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  background-color: rgba(var(--vp-c-bg-soft-rgb, 36, 36, 36), 0.85);
+  border-color: rgba(var(--vp-c-brand-rgb), 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .dark .mod-info::before {
   background: linear-gradient(135deg, 
-    rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.08) 0%, 
+    rgba(var(--vp-c-brand-rgb), 0.08) 0%, 
     transparent 100%);
 }
 
 .dark .mod-info:hover {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  border-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.35);
+  box-shadow: 0 16px 36px rgba(var(--vp-c-brand-rgb), 0.12);
+  border-color: rgba(var(--vp-c-brand-rgb), 0.35);
 }
 
 .mod-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   position: relative;
   z-index: 1;
 }
 
 .mod-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 10px;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
-  border: 1px solid rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.15);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(var(--vp-c-brand-rgb), 0.15);
+  box-shadow: 0 6px 12px rgba(var(--vp-c-brand-rgb), 0.08);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .mod-icon:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 8px 16px rgba(var(--vp-c-brand-rgb), 0.18);
 }
 
 .mod-icon img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: filter 0.4s ease;
+}
+
+.dark .mod-icon img {
+  filter: brightness(1.05);
 }
 
 .mod-stats {
@@ -304,15 +349,22 @@ onMounted(() => {
 }
 
 .mod-title {
-  margin: 0 0 12px 0;
-  font-size: 1.6rem;
+  margin: 0 0 16px 0;
+  font-size: 1.8rem;
   line-height: 1.2;
+  font-weight: 700;
   background: linear-gradient(90deg, 
     var(--vp-c-brand) 0%, 
     var(--vp-c-brand-light, var(--vp-c-brand)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 10px rgba(var(--vp-c-brand-rgb), 0.2);
+  transition: all 0.4s ease;
+}
+
+.mod-info:hover .mod-title {
+  background-position: right center;
 }
 
 .mod-badges {
@@ -324,213 +376,262 @@ onMounted(() => {
 .badge-link {
   text-decoration: none;
   display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.badge-link:hover {
+  transform: translateY(-2px);
 }
 
 .no-external-icon::after {
   display: none !important;
 }
 
-.badge-container {
-  display: inline-block;
-  padding: 2px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.badge-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.badge {
-  height: 28px;
-  border-radius: 4px;
-  display: block;
-}
-
-.curseforge-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(90deg, #f16436 0%, #e04e1d 100%);
-  color: white;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
+.download-stats,
+.curseforge-link,
+.loading-state,
+.error-state {
+  border-radius: 8px;
+  overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(241, 100, 54, 0.3);
-}
-
-.curseforge-link:hover {
-  background: linear-gradient(90deg, #e04e1d 0%, #f16436 100%);
-  box-shadow: 0 4px 12px rgba(241, 100, 54, 0.4);
-  transform: translateY(-2px);
-}
-
-.curseforge-icon {
-  flex-shrink: 0;
-}
-
-.download-stats {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .download-count {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(90deg, #f16436 0%, #e04e1d 100%);
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, 
+    var(--vp-c-brand) 0%, 
+    var(--vp-c-brand-light, var(--vp-c-brand)) 100%);
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(241, 100, 54, 0.3);
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 12px rgba(var(--vp-c-brand-rgb), 0.25);
 }
 
 .download-count:hover {
-  background: linear-gradient(90deg, #e04e1d 0%, #f16436 100%);
-  box-shadow: 0 4px 12px rgba(241, 100, 54, 0.4);
-  transform: translateY(-2px);
+  background-position: right center;
+  box-shadow: 0 6px 16px rgba(var(--vp-c-brand-rgb), 0.35);
+  transform: translateY(-2px) scale(1.02);
 }
 
-.download-icon {
+.download-icon,
+.curseforge-icon {
   flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.download-count:hover .download-icon,
+.curseforge-link:hover .curseforge-icon {
+  transform: scale(1.1);
+}
+
+.curseforge-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, 
+    var(--vp-c-brand) 0%, 
+    var(--vp-c-brand-light, var(--vp-c-brand)) 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 12px rgba(var(--vp-c-brand-rgb), 0.25);
+}
+
+.curseforge-link:hover {
+  background-position: right center;
+  box-shadow: 0 6px 16px rgba(var(--vp-c-brand-rgb), 0.35);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .loading-state {
-  padding: 8px 16px;
-  background: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.1);
+  padding: 10px 18px;
+  background: rgba(var(--vp-c-brand-rgb), 0.1);
   color: var(--vp-c-brand);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 500;
+  box-shadow: 0 2px 8px rgba(var(--vp-c-brand-rgb), 0.08);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }
 
 .error-state {
-  padding: 8px 16px;
+  padding: 10px 18px;
   background: rgba(var(--vp-c-danger-rgb, 220, 38, 38), 0.1);
   color: var(--vp-c-danger, #dc2626);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 500;
+  box-shadow: 0 2px 8px rgba(var(--vp-c-danger-rgb, 220, 38, 38), 0.08);
 }
 
 .mod-details {
-  margin-top: 16px;
-  border-top: 1px dashed rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.2);
-  padding-top: 14px;
+  margin-top: 20px;
+  border-top: 1px dashed rgba(var(--vp-c-brand-rgb), 0.2);
+  padding-top: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   position: relative;
   z-index: 1;
+  transition: all 0.3s ease;
 }
 
 .detail-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .detail-title {
-  font-size: 0.9rem;
+  font-size: 0.94rem;
   color: var(--vp-c-text-2);
   margin: 0;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(to bottom, 
+    var(--vp-c-brand), 
+    var(--vp-c-brand-light));
+  border-radius: 2px;
 }
 
 .version-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   max-width: 100%;
 }
 
 .version-tag {
-  padding: 3px 8px;
-  background-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.1);
+  padding: 5px 10px;
+  background-color: rgba(var(--vp-c-brand-rgb), 0.08);
   color: var(--vp-c-brand);
-  border-radius: 12px;
-  font-size: 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(var(--vp-c-brand-rgb), 0.05);
+  border: 1px solid rgba(var(--vp-c-brand-rgb), 0.05);
+  backdrop-filter: blur(4px);
 }
 
 .version-tag:hover {
-  background-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.2);
-  transform: translateY(-1px);
+  background-color: rgba(var(--vp-c-brand-rgb), 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(var(--vp-c-brand-rgb), 0.1);
 }
 
 .authors-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   max-width: 100%;
 }
 
 .author-tag {
-  padding: 4px 10px;
-  background-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.1);
+  padding: 6px 12px;
+  background-color: rgba(var(--vp-c-brand-rgb), 0.08);
   color: var(--vp-c-brand);
-  border-radius: 16px;
-  font-size: 0.85rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   text-decoration: none;
+  box-shadow: 0 2px 6px rgba(var(--vp-c-brand-rgb), 0.05);
+  border: 1px solid rgba(var(--vp-c-brand-rgb), 0.05);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .author-tag:hover {
-  background-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.2);
-  transform: translateY(-1px);
+  background-color: rgba(var(--vp-c-brand-rgb), 0.15);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 8px rgba(var(--vp-c-brand-rgb), 0.1);
+}
+
+.author-tag::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--vp-c-brand);
 }
 
 .dates-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
   align-items: center;
 }
 
 .date-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 6px 12px;
+  background-color: rgba(var(--vp-c-brand-rgb), 0.04);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(var(--vp-c-brand-rgb), 0.03);
+  transition: all 0.3s ease;
+}
+
+.date-item:hover {
+  background-color: rgba(var(--vp-c-brand-rgb), 0.08);
+  transform: translateY(-1px);
 }
 
 .date-label {
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--vp-c-text-2);
 }
 
 .date-value {
   font-size: 0.9rem;
-  color: var(--vp-c-text-1);
+  color: var(--vp-c-brand);
+  font-weight: 500;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .mod-badges {
     flex-direction: column;
     align-items: flex-start;
   }
   
   .mod-icon {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
   }
   
   .mod-title {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
+    margin-bottom: 12px;
   }
   
   .mod-info {
@@ -539,7 +640,34 @@ onMounted(() => {
   
   .dates-row {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .mod-header {
+    gap: 12px;
+  }
+  
+  .mod-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .mod-title {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+  
+  .download-count, .curseforge-link, .loading-state, .error-state {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+  
+  .version-tag, .author-tag {
+    font-size: 0.8rem;
+    padding: 4px 8px;
   }
 }
 </style> 
