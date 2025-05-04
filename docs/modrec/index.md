@@ -14,6 +14,8 @@ sidebar:
         items:
           - text: 搬运：拓展
             link: /modrec/fun/carry-on-extend
+          - text: 附魔等级上限突破2
+            link: /modrec/fun/enchantment-level-break
       - text: 实用模组
         link: /modrec/useful/mods
         collapsed: false
@@ -30,6 +32,7 @@ sidebar:
 - [科技辅助模组](/modrec/tech/mods) - 提供自动化、效率提升等功能的辅助模组  
 - [趣味模组](/modrec/fun/mods) - 增加游戏趣味性的模组
   - [搬运：拓展 (Carry On Extend)](/modrec/fun/carry-on-extend) - 允许玩家搬起并投掷方块和实体
+  - [附魔等级上限突破2（EnchantmentLevelBreak）](/modrec/fun/enchantment-level-break)
 - [实用工具模组](/modrec/useful/mods) - 提供各种实用工具和功能的模组
   - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
 
