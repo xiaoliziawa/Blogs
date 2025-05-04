@@ -53,7 +53,7 @@
 
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/enchantlevelbrek)
 - [Modrinth](https://modrinth.com/mod/enchantmentlevelbreak)
-- [GitHub](https://github.com/xiaoliziawa /EnchantmentLevelBreak)
+- [GitHub](https://github.com/xiaoliziawa/EnchantmentLevelBreak)
 
 ## 模组作者/开发团队
 
