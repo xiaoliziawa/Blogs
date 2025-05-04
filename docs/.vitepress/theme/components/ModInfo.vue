@@ -65,6 +65,52 @@ const curseForgeUrl = computed(() => {
   return `https://www.curseforge.com/minecraft/mc-mods/${props.curseForgeId}`
 })
 
+// 版本排序函数
+const compareVersions = (a, b) => {
+  const aParts = a.split('.').map(Number)
+  const bParts = b.split('.').map(Number)
+  
+  for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+    const aVal = i < aParts.length ? aParts[i] : 0
+    const bVal = i < bParts.length ? bParts[i] : 0
+    
+    if (aVal !== bVal) {
+      return bVal - aVal // 降序排列，最新版本在前
+    }
+  }
+  
+  return 0
+}
+
+// 将版本分组并排序
+const organizedVersions = computed(() => {
+  if (!gameVersions.value.length) return []
+  
+  // 按主要版本分组
+  const groupedVersions = {}
+  
+  gameVersions.value.forEach(version => {
+    const majorVersion = version.split('.').slice(0, 2).join('.')
+    if (!groupedVersions[majorVersion]) {
+      groupedVersions[majorVersion] = []
+    }
+    groupedVersions[majorVersion].push(version)
+  })
+  
+  // 对每个组内的版本排序
+  Object.keys(groupedVersions).forEach(majorVersion => {
+    groupedVersions[majorVersion].sort(compareVersions)
+  })
+  
+  // 对主要版本进行排序
+  const sortedMajorVersions = Object.keys(groupedVersions).sort(compareVersions)
+  
+  return sortedMajorVersions.map(majorVersion => ({
+    majorVersion,
+    versions: groupedVersions[majorVersion]
+  }))
+})
+
 const fetchModData = async () => {
   if (!props.projectId) return
   
@@ -158,10 +204,15 @@ onMounted(() => {
     <div v-if="projectId && !isLoading && !errorMsg" class="mod-details">
       <div v-if="gameVersions.length > 0" class="detail-section">
         <h3 class="detail-title">支持的Minecraft版本</h3>
-        <div class="version-tags">
-          <span v-for="(version, index) in gameVersions" :key="index" class="version-tag">
-            {{ version }}
-          </span>
+        <div class="version-container">
+          <div v-for="(group, index) in organizedVersions" :key="'group-' + index" class="version-group">
+            <div class="version-major">{{ group.majorVersion }}</div>
+            <div class="version-tags">
+              <span v-for="(version, vIdx) in group.versions" :key="vIdx" class="version-tag">
+                {{ version }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -424,6 +475,29 @@ onMounted(() => {
   color: var(--vp-c-text-2);
   margin: 0;
   font-weight: 600;
+}
+
+.version-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.version-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.version-major {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--vp-c-brand);
+  background-color: rgba(var(--vp-c-brand-rgb, 0, 150, 136), 0.08);
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 2px;
 }
 
 .version-tags, .authors-list {
