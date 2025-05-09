@@ -1,0 +1,54 @@
+/* 按钮样式 */
+.VPButton {
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transform: translateZ(0) !important;
+  border-radius: 12px !important;
+  padding: 0 20px !important;
+  height: 48px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.VPButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.VPButton.brand {
+  background: linear-gradient(135deg, var(--vp-c-brand), var(--vp-c-brand-dark)) !important;
+  box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3) !important;
+}
+
+.VPButton.brand:hover {
+  box-shadow: 0 6px 16px rgba(0, 150, 136, 0.5) !important;
+  background: linear-gradient(90deg, var(--vp-c-brand-light) 0%, var(--vp-c-brand) 100%) !important;
+}
+
+.VPButton.alt {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.dark .VPButton.alt {
+  background: rgba(30, 30, 30, 0.5) !important;
+}
+
+.VPButton.alt:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark .VPButton.alt:hover {
+  background: rgba(40, 40, 40, 0.7) !important;
+}
+
+.VPButton span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 主页按钮增强 */
+.VPHero .actions {
+  gap: 12px !important;
+  margin-top: 32px !important;
+}

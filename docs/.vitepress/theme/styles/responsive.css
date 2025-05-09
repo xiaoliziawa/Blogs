@@ -1,0 +1,133 @@
+/* 响应式布局样式 */
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .VPHero .image-container {
+    margin-top: 32px !important;
+    margin-bottom: 32px !important;
+  }
+
+  .VPHero .image {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  .VPHero .image-bg {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  .VPHero .image::before {
+    width: 240px !important;
+    height: 240px !important;
+  }
+
+  .VPHero .image::after {
+    width: 320px !important;
+    height: 320px !important;
+  }
+  
+  .VPHomeFeatures .container {
+    padding: 0 16px !important;
+  }
+  
+  .VPHomeFeatures .items {
+    gap: 16px !important;
+  }
+  
+  .VPFeature {
+    margin: 0 !important;
+    padding: 16px !important;
+  }
+  
+  .github-activity-section {
+    padding: 1rem;
+  }
+  
+  .github-chart-container {
+    height: 250px;
+  }
+}
+
+/* 平板/小屏幕设备 */
+@media (max-width: 959px) {
+  .VPHero .name,
+  .VPHero .text {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  .VPHero .image-container {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .VPHero .image {
+    margin: 32px auto !important;
+    width: 280px !important;
+    height: 280px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+}
+
+/* 手机设备 */
+@media (max-width: 639px) {
+  .VPHero .name,
+  .VPHero .text {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .VPHero .image-container {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .VPHero .image {
+    width: 240px !important;
+    height: 240px !important;
+  }
+}
+
+/* 桌面布局 */
+@media (min-width: 960px) {
+  .VPHero .container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 48px !important;
+  }
+
+  .VPHero .image {
+    order: 2 !important;
+    margin: 0 !important;
+    width: 320px !important;
+    height: 320px !important;
+  }
+
+  .VPHero .main {
+    max-width: 592px !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+
+  .VPHero .actions {
+    justify-content: flex-start !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .VPHero .main {
+    padding: 0 48px !important;
+  }
+}
+
+/* 禁用外部链接箭头图标 */
+.badge-link.no-external-icon::after,
+.badge-link.no-external-icon .badge + svg,
+.badge-link.no-external-icon:has(.badge) + svg,
+.badge-link.no-external-icon svg[data-v-icon],
+.no-external-icon * + svg[class^="icon"] {
+  display: none !important;
+}

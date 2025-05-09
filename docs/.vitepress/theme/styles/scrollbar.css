@@ -1,0 +1,49 @@
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand-dimm);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-brand);
+}
+
+/* 暗黑模式滚动条 */
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand);
+  opacity: 0.8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-brand-light);
+}
+
+/* 滚动行为 */
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+/* 滚动条宽度适配 */
+.VPLocalNav {
+  padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
+}
+
+.VPNavBar.has-sidebar .content {
+  padding-right: calc(8px + var(--scrollbar-width, 0px)) !important;
+}

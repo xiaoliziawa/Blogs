@@ -1,0 +1,47 @@
+/* 视图过渡动画 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+  will-change: transform;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 999;
+}
+
+html.dark::view-transition-new(root),
+html:not(.dark)::view-transition-new(root) {
+  animation: ripple-effect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+html.dark::view-transition-old(root),
+html:not(.dark)::view-transition-old(root) {
+  animation: fade-out 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ripple-effect {
+  from {
+    clip-path: circle(0% at 90% 10%);
+  }
+  to {
+    clip-path: circle(150% at 90% 10%);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-group(root) {
+  transform: translateZ(0);
+}

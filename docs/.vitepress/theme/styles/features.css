@@ -1,0 +1,149 @@
+/* 特性卡片样式 */
+.VPFeature {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease !important;
+  border: 1px solid rgba(0, 150, 136, 0.1) !important;
+  background: rgba(0, 150, 136, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.VPFeature::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -50% !important;
+  left: -50% !important;
+  width: 200% !important;
+  height: 200% !important;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 30%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.03) 70%,
+    transparent 100%
+  ) !important;
+  transform: rotate(45deg) !important;
+  transition: transform 0.7s ease !important;
+  opacity: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+.VPFeature:hover {
+  transform: translateY(-5px) scale(1.02) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(0, 150, 136, 0.08) !important;
+}
+
+.VPFeature:hover::before {
+  transform: rotate(45deg) translateY(200%) !important;
+  opacity: 1 !important;
+}
+
+.VPFeature .icon {
+  transition: transform 0.3s ease !important;
+}
+
+.VPFeature .VPFeatureIcon,
+.VPFeature .title,
+.VPFeature .details {
+  padding: 8px 0 !important;
+}
+
+.VPFeature:hover .icon {
+  transform: scale(1.1) !important;
+}
+
+.VPFeature .title,
+.VPFeature .details {
+  transition: color 0.3s ease !important;
+}
+
+.VPFeature:hover .title {
+  color: var(--vp-c-brand) !important;
+}
+
+.dark .VPFeature {
+  background: rgba(0, 150, 136, 0.1) !important;
+  border: 1px solid rgba(0, 150, 136, 0.2) !important;
+}
+
+.dark .VPFeature:hover {
+  background: rgba(0, 150, 136, 0.2) !important;
+  border-color: rgba(0, 150, 136, 0.3) !important;
+}
+
+/* 卡片样式 */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark .card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.card-image img {
+  transition: transform 0.3s ease !important;
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05) !important;
+}
+
+.card-content h3,
+.card-content p {
+  transition: color 0.3s ease !important;
+}
+
+.card:hover .card-content h3 {
+  color: var(--vp-c-brand) !important;
+}
+
+/* 主页特性布局 */
+.VPHomeFeatures {
+  padding: 40px 0 !important;
+  position: relative !important;
+}
+
+/* 分隔线装饰 */
+.VPHomeFeatures::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--vp-c-brand-light),
+    transparent
+  ) !important;
+  opacity: 0.3 !important;
+}
+
+.VPHomeFeatures::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--vp-c-brand-light),
+    transparent
+  ) !important;
+  opacity: 0.3 !important;
+}

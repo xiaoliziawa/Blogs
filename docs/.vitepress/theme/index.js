@@ -16,7 +16,7 @@ import FeatureBox from './components/FeatureBox.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
 import ModInfo from './components/ModInfo.vue'
-import './custom.css'
+import './styles/index.css'
 
 export default {
   extends: DefaultTheme,
