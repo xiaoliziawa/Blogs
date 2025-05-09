@@ -1,72 +1,146 @@
-/* 侧边栏样式 */
+/* 侧边栏基础样式 - 更窄更精致 */
 .VPSidebar {
   background: var(--vp-c-bg) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-right: 1px solid var(--vp-c-divider) !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: auto !important;
+  max-width: 240px !important;
+  backdrop-filter: blur(4px) !important;
 }
 
-/* 侧边栏文本样式 */
 .VPSidebarItem .text {
-  font-size: 0.875rem !important;
-  line-height: 1.4 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.35 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   max-width: 100% !important;
-  font-size: 0.95rem !important;
-  transition: color 0.2s !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
 }
 
 .VPSidebarItem .text:hover {
   color: var(--vp-c-brand) !important;
+  transform: translateX(1px) !important;
+  letter-spacing: 0 !important;
 }
 
 /* 侧边栏项目层级样式 */
 .VPSidebarItem.level-0 > .item {
   padding: 4px 0 !important;
+  margin-bottom: 3px !important;
+  font-weight: 600 !important;
+  position: relative !important;
+}
+
+.VPSidebarItem.level-0 > .item::after {
+  content: '' !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 1px !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  background: linear-gradient(90deg, var(--vp-c-brand), transparent) !important;
+  transition: width 0.3s ease !important;
+  opacity: 0.6 !important;
+}
+
+.VPSidebarItem.level-0 > .item:hover::after {
+  width: 80% !important;
 }
 
 .VPSidebarItem.level-1 {
-  padding-left: 12px !important;
+  padding-left: 8px !important;
+  margin-top: 1px !important;
 }
 
 .VPSidebarItem.level-2 {
-  padding-left: 24px !important;
+  padding-left: 14px !important;
+  margin-top: 0 !important;
 }
 
 .VPSidebarItem.level-3 {
-  padding-left: 36px !important;
+  padding-left: 20px !important;
+  margin-top: 0 !important;
 }
 
 .VPSidebarItem.level-4 {
-  padding-left: 48px !important;
+  padding-left: 26px !important;
+  margin-top: 0 !important;
 }
 
-/* 活动项目样式 */
 .VPSidebarItem .item.is-active {
   color: var(--vp-c-brand) !important;
   border-left: 2px solid var(--vp-c-brand) !important;
-  background: rgba(0, 150, 136, 0.1) !important;
+  background: linear-gradient(90deg, rgba(0, 150, 136, 0.06), transparent 90%) !important;
+  border-radius: 0 3px 3px 0 !important;
+  font-weight: 600 !important;
+  padding-left: 6px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.02) !important;
 }
 
-/* 侧边栏项目宽度控制 */
 .VPSidebarItem .items {
   width: fit-content !important;
   margin-left: 0 !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
 .VPSidebarItem .item {
   width: fit-content !important;
-  min-width: 120px !important;
-  max-width: 200px !important;
-  padding-right: 8px !important;
+  min-width: 80px !important;
+  max-width: 160px !important;
+  padding: 2px 6px 2px 4px !important;
+  margin: 1px 0 !important;
+  border-radius: 3px !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.VPSidebarItem .item::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+  transform: translateX(-100%) !important;
+  transition: transform 0.3s ease-out !important;
+  z-index: -1 !important;
+}
+
+.VPSidebarItem .item:hover::before {
+  transform: translateX(0) !important;
 }
 
 .VPSidebarItem.level-1,
 .VPSidebarItem.level-2,
 .VPSidebarItem.level-3,
 .VPSidebarItem.level-4 {
-  margin-left: 12px !important;
+  margin-left: 6px !important;
   padding-left: 0 !important;
+  position: relative !important;
+}
+
+.VPSidebarItem.level-1::before,
+.VPSidebarItem.level-2::before,
+.VPSidebarItem.level-3::before,
+.VPSidebarItem.level-4::before {
+  content: '' !important;
+  position: absolute !important;
+  left: -4px !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 1px !important;
+  background: linear-gradient(to bottom, var(--vp-c-divider), transparent) !important;
+  opacity: 0.3 !important;
 }
 
 .VPSidebarItem .text {
@@ -75,42 +149,208 @@
   margin-right: auto !important;
 }
 
+/* 添加前置小点标记 */
+.VPSidebarItem.level-2 > .item > .text::before {
+  content: '·' !important;
+  margin-right: 4px !important;
+  opacity: 0.5 !important;
+  font-weight: bold !important;
+}
+
+.VPSidebarItem.level-3 > .item > .text::before {
+  content: '·' !important; 
+  margin-right: 4px !important;
+  opacity: 0.4 !important;
+  font-size: 0.9em !important;
+}
+
 /* 文档侧边导航样式 */
 .VPDocAside .content {
   border-left: none !important;
   margin-left: 0 !important;
-  padding-left: 16px !important;
+  padding-left: 10px !important;
+  position: relative !important;
 }
 
 .VPDocAside .content::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background-color: var(--vp-c-divider);
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 1px !important;
+  background: linear-gradient(to bottom, var(--vp-c-divider), transparent 90%) !important;
+  opacity: 0.5 !important;
+  border-radius: 1px !important;
 }
 
 .VPDocAside .outline-title {
   font-weight: 600 !important;
   margin-bottom: 8px !important;
   padding-left: 0 !important;
+  font-size: 0.85rem !important;
+  color: var(--vp-c-text-1) !important;
+  position: relative !important;
+}
+
+.VPDocAside .outline-title::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -4px !important;
+  left: 0 !important;
+  width: 30px !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, var(--vp-c-brand), transparent) !important;
+  opacity: 0.6 !important;
 }
 
 .VPDocAside .outline-link {
-  padding-left: 0 !important;
+  padding: 2px 0 2px 8px !important;
   color: var(--vp-c-text-2) !important;
-  transition: color 0.2s !important;
+  transition: all 0.2s ease !important;
+  border-radius: 0 3px 3px 0 !important;
+  margin: 1px 0 !important;
+  position: relative !important;
+  font-size: 0.8rem !important;
 }
 
 .VPDocAside .outline-link:hover,
 .VPDocAside .outline-link.active {
   color: var(--vp-c-brand) !important;
+  background-color: rgba(0, 150, 136, 0.03) !important;
+  transform: translateX(1px) !important;
 }
 
 .VPDocAside .outline-marker {
   width: 2px !important;
   left: 0 !important;
   background-color: var(--vp-c-brand) !important;
+  border-radius: 0 1px 1px 0 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  opacity: 0.8 !important;
+}
+
+/* 美化滚动条 */
+.VPSidebar::-webkit-scrollbar {
+  width: 3px !important;
+}
+
+.VPSidebar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.VPSidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+  border-radius: 1.5px !important;
+}
+
+.VPSidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 颜色渐变效果 */
+.VPSidebarItem.level-0 > .item > .text {
+  background: linear-gradient(90deg, var(--vp-c-text-1), var(--vp-c-text-1)) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  transition: background 0.3s ease !important;
+  position: relative !important;
+}
+
+.VPSidebarItem.level-0 > .item:hover > .text {
+  background: linear-gradient(90deg, var(--vp-c-brand), var(--vp-c-brand-dark)) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+}
+
+/* 侧边栏折叠图标美化 */
+.VPSidebarItem .caret {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  opacity: 0.6 !important;
+  width: 12px !important;
+  height: 12px !important;
+  margin-top: 0 !important;
+  display: flex !important;
+  align-items: right !important;
+  justify-content: center !important;
+  position: relative !important;
+  top: 0 !important;
+  right: 0 !important;
+  border-radius: 50% !important;
+  background-color: transparent !important;
+}
+
+.VPSidebarItem .caret:hover {
+  opacity: 0.9 !important;
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.VPSidebarItem .caret svg {
+  width: 10px !important;
+  height: 10px !important;
+  stroke-width: 6 !important;
+  transition: all 0.2s ease !important;
+}
+
+.VPSidebarItem.collapsed .caret {
+  transform: rotate(-90deg) !important;
+}
+
+.VPSidebarItem.collapsed > .items {
+  max-height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  transition: max-height 0.3s ease, opacity 0.3s ease !important;
+}
+
+.VPSidebarItem:not(.collapsed) > .items {
+  max-height: 1000px !important;
+  opacity: 1 !important;
+  transition: max-height 0.3s ease, opacity 0.3s ease !important;
+}
+
+.VPSidebarItem:has(.items) > .item {
+  margin-bottom: 2px !important;
+}
+
+.VPSidebarItem .items .VPSidebarItem:first-child {
+  margin-top: 3px !important;
+}
+
+.VPSidebar .container {
+  padding: 12px 10px !important;
+}
+
+.VPSidebar.scrolled::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 10px !important;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03), transparent) !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+.VPSidebarItem .item:hover .tooltip {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.VPSidebarItem .item .tooltip {
+  position: absolute !important;
+  background: var(--vp-c-bg-soft) !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+  font-size: 0.7rem !important;
+  top: -20px !important;
+  left: 10px !important;
+  opacity: 0 !important;
+  transform: translateY(2px) !important;
+  transition: all 0.2s ease !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  z-index: 100 !important;
 }
