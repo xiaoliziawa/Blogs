@@ -5,7 +5,7 @@ hero:
   text: " "
   tagline: " "
   image:
-    src: https://s1.aigei.com/src/img/gif/20/207945a91631432faf33762ce56672c2.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:3fC3pW18xxHt0omaftqNgFjbm3c=
+    src: https://img.picui.cn/free/2025/05/10/681e2c9a36877.png
     alt: Logo
   actions:
     - theme: brand
