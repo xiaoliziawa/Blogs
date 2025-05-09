@@ -104,18 +104,18 @@ onMounted(() => {
 .typing-text {
   display: inline-block;
   background-image: linear-gradient(
-    120deg,
-    #ff6b6b 0%,
-    #7e57c2 25%,
-    #4a90e2 50%,
-    #66bb6a 75%,
-    #ffa726 100%
+    to right,
+    #4ecdc4 0%,
+    #8ac6d0 25%,
+    #ff8b94 50%,
+    #ffaaa5 75%,
+    #ffd3b6 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradient 8s linear infinite;
-  background-size: 200% auto;
+  background-size: 400% auto;
+  animation: gradient-slide 8s ease infinite;
   line-height: inherit;
 }
 
@@ -135,7 +135,7 @@ onMounted(() => {
   50% { opacity: 0; }
 }
 
-@keyframes gradient {
+@keyframes gradient-slide {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
