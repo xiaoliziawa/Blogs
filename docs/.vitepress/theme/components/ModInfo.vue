@@ -58,6 +58,7 @@ const modData = ref<TModData>({
 const icon = ref(props.iconUrl)
 const isLoading = ref(false)
 const errorMsg = ref('')
+const downloadIncrease = ref<number | null>(null)
 
 // API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
@@ -68,6 +69,12 @@ const formatNumber = (num: number): string => {
   if (num < 1000) return String(num)
   if (num < 1000000) return (num / 1000).toFixed(1) + 'K'
   return (num / 1000000).toFixed(1) + 'M'
+}
+
+// 带符号格式化
+const formatNumberWithSign = (num: number): string => {
+  const sign = num > 0 ? '+' : ''
+  return sign + formatNumber(num)
 }
 
 const formatDate = (dateString: string | null): string => {
@@ -105,6 +112,55 @@ const sortedVersions = computed(() => {
   if (!modData.value.gameVersions.length) return []
   return [...modData.value.gameVersions].sort(compareVersions)
 })
+
+// 存储与获取历史下载数据
+const getStorageKey = (): string => {
+  return `mod_downloads_${props.projectId}`
+}
+
+const getPreviousDownloads = (): { count: number, date: string } | null => {
+  try {
+    const storageData = localStorage.getItem(getStorageKey())
+    return storageData ? JSON.parse(storageData) : null
+  } catch (e) {
+    console.error('获取历史下载数据失败:', e)
+    return null
+  }
+}
+
+const saveCurrentDownloads = (count: number): void => {
+  try {
+    const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD 格式
+    localStorage.setItem(getStorageKey(), JSON.stringify({
+      count,
+      date: today
+    }))
+  } catch (e) {
+    console.error('保存下载数据失败:', e)
+  }
+}
+
+// 计算下载增长量
+const calculateDownloadIncrease = (currentCount: number): void => {
+  const previousData = getPreviousDownloads()
+  
+  if (previousData) {
+    const today = new Date().toISOString().split('T')[0]
+    
+    // 如果存储的数据不是今天的，则计算增量并更新存储
+    if (previousData.date !== today) {
+      downloadIncrease.value = currentCount - previousData.count
+      saveCurrentDownloads(currentCount)
+    } else {
+      // 如果是今天已经存储过的数据，只计算增量但不更新存储
+      downloadIncrease.value = currentCount - previousData.count
+    }
+  } else {
+    // 首次访问，没有历史数据，保存当前数据
+    saveCurrentDownloads(currentCount)
+    downloadIncrease.value = null
+  }
+}
 
 // 数据获取函数
 const fetchModData = async (): Promise<void> => {
@@ -150,6 +206,9 @@ const fetchModData = async (): Promise<void> => {
         logoUrl: data.logo?.thumbnailUrl || null
       }
       
+      // 计算下载增长量
+      calculateDownloadIncrease(modData.value.downloadCount)
+      
       // 更新图标
       if (!props.iconUrl && modData.value.logoUrl) {
         icon.value = modData.value.logoUrl
@@ -187,6 +246,9 @@ onMounted(() => {
                   <path fill="currentColor" d="M12 16l-4-4h2.5V8h3v4H16l-4 4zm5-12H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H7V6h10v12z"/>
                 </svg>
                 <span>{{ formattedDownloads }} 次下载</span>
+                <span v-if="downloadIncrease !== null" class="download-increase" :class="{'increase': downloadIncrease > 0, 'decrease': downloadIncrease < 0}">
+                  ({{ formatNumberWithSign(downloadIncrease) }})
+                </span>
               </div>
             </div>
             
@@ -416,6 +478,24 @@ onMounted(() => {
   background-position: right center;
   box-shadow: 0 6px 16px rgba(var(--vp-c-brand-rgb), 0.35);
   transform: translateY(-2px) scale(1.02);
+}
+
+.download-increase {
+  font-size: 0.8rem;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.download-increase.increase {
+  color: #4caf50;
+}
+
+.download-increase.decrease {
+  color: #f44336;
 }
 
 .download-icon,
