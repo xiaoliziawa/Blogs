@@ -130,11 +130,23 @@ const getPreviousDownloads = (): { count: number, date: string } | null => {
 
 const saveCurrentDownloads = (count: number): void => {
   try {
-    const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD 格式
-    localStorage.setItem(getStorageKey(), JSON.stringify({
-      count,
-      date: today
-    }))
+    fetch('https://worldtimeapi.org/api/ip')
+      .then(response => response.json())
+      .then(data => {
+        const serverDate = new Date(data.datetime).toISOString().split('T')[0]
+        localStorage.setItem(getStorageKey(), JSON.stringify({
+          count,
+          date: serverDate
+        }))
+      })
+      .catch(err => {
+        console.warn('获取服务器时间失败，使用本地时间:', err)
+        const today = new Date().toISOString().split('T')[0]
+        localStorage.setItem(getStorageKey(), JSON.stringify({
+          count,
+          date: today
+        }))
+      })
   } catch (e) {
     console.error('保存下载数据失败:', e)
   }
@@ -145,16 +157,34 @@ const calculateDownloadIncrease = (currentCount: number): void => {
   const previousData = getPreviousDownloads()
   
   if (previousData) {
-    const today = new Date().toISOString().split('T')[0]
-    
-    // 如果存储的数据不是今天的，则计算增量并更新存储
-    if (previousData.date !== today) {
-      downloadIncrease.value = currentCount - previousData.count
-      saveCurrentDownloads(currentCount)
-    } else {
-      // 如果是今天已经存储过的数据，只计算增量但不更新存储
-      downloadIncrease.value = currentCount - previousData.count
-    }
+    // 使用服务器时间而不是本地时间进行比较
+    fetch('https://worldtimeapi.org/api/ip')
+      .then(response => response.json())
+      .then(data => {
+        // 从世界时间API获取当前日期
+        const serverDate = new Date(data.datetime).toISOString().split('T')[0]
+        
+        // 如果存储的数据不是今天的，则计算增量并更新存储
+        if (previousData.date !== serverDate) {
+          downloadIncrease.value = currentCount - previousData.count
+          saveCurrentDownloads(currentCount)
+        } else {
+          // 如果是今天已经存储过的数据，只计算增量但不更新存储
+          downloadIncrease.value = currentCount - previousData.count
+        }
+      })
+      .catch(err => {
+        // 如果API请求失败，回退到本地时间
+        console.warn('获取服务器时间失败，使用本地时间:', err)
+        const today = new Date().toISOString().split('T')[0]
+        
+        if (previousData.date !== today) {
+          downloadIncrease.value = currentCount - previousData.count
+          saveCurrentDownloads(currentCount)
+        } else {
+          downloadIncrease.value = currentCount - previousData.count
+        }
+      })
   } else {
     // 首次访问，没有历史数据，保存当前数据
     saveCurrentDownloads(currentCount)
