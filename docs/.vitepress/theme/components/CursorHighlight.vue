@@ -15,12 +15,10 @@ let giscusObserver = null
 function checkBrowserCompatibility() {
   if (typeof document === 'undefined') return false
   
-  // 检测是否为移动设备或触摸设备
   const isMobileOrTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                           ('ontouchstart' in window) ||
                           (navigator.maxTouchPoints > 0)
   
-  // 移动设备上不启用此效果
   if (isMobileOrTouch) return false
   
   return true
