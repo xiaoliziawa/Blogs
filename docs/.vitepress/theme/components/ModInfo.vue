@@ -1,30 +1,5 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted } from 'vue'
-
-// 类型定义
-interface IAuthor {
-  name: string
-  url: string
-}
-
-interface TModData {
-  downloadCount: number
-  dateCreated: string | null
-  dateModified: string | null
-  gameVersions: string[]
-  authors: IAuthor[]
-  logoUrl: string | null
-}
-
-// 声明环境变量类型
-declare global {
-  interface ImportMeta {
-    env: {
-      VITE_CF_API_KEY: string
-      [key: string]: any
-    }
-  }
-}
 
 // 组件属性定义
 const props = defineProps({
@@ -47,7 +22,7 @@ const props = defineProps({
 })
 
 // 响应式状态
-const modData = ref<TModData>({
+const modData = ref({
   downloadCount: 0,
   dateCreated: null,
   dateModified: null,
@@ -58,26 +33,26 @@ const modData = ref<TModData>({
 const icon = ref(props.iconUrl)
 const isLoading = ref(false)
 const errorMsg = ref('')
-const downloadIncrease = ref<number | null>(null)
+const downloadIncrease = ref(null)
 
 // API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
 const CF_API_URL = 'https://api.curseforge.com/v1/mods'
 
 // 格式化工具函数
-const formatNumber = (num: number): string => {
+const formatNumber = (num) => {
   if (num < 1000) return String(num)
   if (num < 1000000) return (num / 1000).toFixed(1) + 'K'
   return (num / 1000000).toFixed(1) + 'M'
 }
 
 // 带符号格式化
-const formatNumberWithSign = (num: number): string => {
+const formatNumberWithSign = (num) => {
   const sign = num > 0 ? '+' : ''
   return sign + formatNumber(num)
 }
 
-const formatDate = (dateString: string | null): string => {
+const formatDate = (dateString) => {
   if (!dateString) return '未知'
   const date = new Date(dateString)
   return date.toLocaleDateString('zh-CN', { 
@@ -94,7 +69,7 @@ const formattedDateModified = computed(() => formatDate(modData.value.dateModifi
 const curseForgeUrl = computed(() => `https://www.curseforge.com/minecraft/mc-mods/${props.curseForgeId}`)
 
 // 版本排序
-const compareVersions = (a: string, b: string): number => {
+const compareVersions = (a, b) => {
   const aParts = a.split('.').map(Number)
   const bParts = b.split('.').map(Number)
   
@@ -114,11 +89,11 @@ const sortedVersions = computed(() => {
 })
 
 // 存储与获取历史下载数据
-const getStorageKey = (): string => {
+const getStorageKey = () => {
   return `mod_downloads_${props.projectId}`
 }
 
-const getPreviousDownloads = (): { count: number, date: string } | null => {
+const getPreviousDownloads = () => {
   try {
     const storageData = localStorage.getItem(getStorageKey())
     return storageData ? JSON.parse(storageData) : null
@@ -127,9 +102,9 @@ const getPreviousDownloads = (): { count: number, date: string } | null => {
   }
 }
 
-const getServerDate = async (): Promise<string> => {
+const getServerDate = async () => {
   try {
-    const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai', {
+    const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Shanghai', {
       mode: 'cors',
       method: 'GET',
       headers: {
@@ -145,24 +120,11 @@ const getServerDate = async (): Promise<string> => {
     const timestamp = data.unixtime ? parseInt(data.unixtime) * 1000 : Date.now()
     return new Date(timestamp).toISOString().split('T')[0]
   } catch (err) {
-    try {
-      const fallbackResponse = await fetch('https://a.jd.com/ajax/queryServerData.html', {
-        mode: 'cors',
-        method: 'GET'
-      })
-      
-      if (fallbackResponse.ok) {
-        const fallbackData = await fallbackResponse.json()
-        const timestamp = fallbackData.serverTime ? fallbackData.serverTime * 1000 : Date.now()
-        return new Date(timestamp).toISOString().split('T')[0]
-      }
-    } catch (e) {}
-    
     return new Date().toISOString().split('T')[0]
   }
 }
 
-const saveCurrentDownloads = async (count: number): Promise<void> => {
+const saveCurrentDownloads = async (count) => {
   try {
     const serverDate = await getServerDate()
     localStorage.setItem(getStorageKey(), JSON.stringify({
@@ -172,7 +134,7 @@ const saveCurrentDownloads = async (count: number): Promise<void> => {
   } catch (e) {}
 }
 
-const calculateDownloadIncrease = async (currentCount: number): Promise<void> => {
+const calculateDownloadIncrease = async (currentCount) => {
   const previousData = getPreviousDownloads()
   downloadIncrease.value = null
   
@@ -200,7 +162,7 @@ const calculateDownloadIncrease = async (currentCount: number): Promise<void> =>
   }
 }
 
-const fetchModData = async (): Promise<void> => {
+const fetchModData = async () => {
   if (!props.projectId) return
   
   isLoading.value = true
@@ -222,11 +184,11 @@ const fetchModData = async (): Promise<void> => {
     const { data } = await response.json()
     
     if (data) {
-      let gameVersions: string[] = []
+      let gameVersions = []
       if (data.latestFilesIndexes?.length > 0) {
         const versions = data.latestFilesIndexes
-          .map((file: { gameVersion: string }) => file.gameVersion)
-          .filter(Boolean) as string[]
+          .map((file) => file.gameVersion)
+          .filter(Boolean)
         gameVersions = [...new Set(versions)]
       } else if (data.gameVersions) {
         gameVersions = data.gameVersions
