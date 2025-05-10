@@ -123,16 +123,13 @@ const getPreviousDownloads = (): { count: number, date: string } | null => {
     const storageData = localStorage.getItem(getStorageKey())
     return storageData ? JSON.parse(storageData) : null
   } catch (e) {
-    console.error('获取历史下载数据失败:', e)
     return null
   }
 }
 
-// 获取服务器时间（返回Promise）
 const getServerDate = async (): Promise<string> => {
   try {
-    // 使用淘宝时间API - 国内稳定可靠的时间服务
-    const response = await fetch('https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp', {
+    const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai', {
       mode: 'cors',
       method: 'GET',
       headers: {
@@ -141,11 +138,11 @@ const getServerDate = async (): Promise<string> => {
     })
     
     if (!response.ok) {
-      throw new Error(`淘宝时间API请求失败: ${response.status}`)
+      throw new Error()
     }
     
     const data = await response.json()
-    const timestamp = data.data.t ? parseInt(data.data.t) : Date.now()
+    const timestamp = data.unixtime ? parseInt(data.unixtime) * 1000 : Date.now()
     return new Date(timestamp).toISOString().split('T')[0]
   } catch (err) {
     try {
@@ -159,11 +156,8 @@ const getServerDate = async (): Promise<string> => {
         const timestamp = fallbackData.serverTime ? fallbackData.serverTime * 1000 : Date.now()
         return new Date(timestamp).toISOString().split('T')[0]
       }
-    } catch (fallbackErr) {
-      console.warn('备用时间API请求也失败:', fallbackErr)
-    }
+    } catch (e) {}
     
-    console.warn('所有服务器时间API均请求失败，使用本地时间:', err)
     return new Date().toISOString().split('T')[0]
   }
 }
@@ -228,7 +222,6 @@ const fetchModData = async (): Promise<void> => {
     const { data } = await response.json()
     
     if (data) {
-      // 提取游戏版本
       let gameVersions: string[] = []
       if (data.latestFilesIndexes?.length > 0) {
         const versions = data.latestFilesIndexes
@@ -239,7 +232,6 @@ const fetchModData = async (): Promise<void> => {
         gameVersions = data.gameVersions
       }
       
-      // 更新模组数据
       modData.value = {
         downloadCount: data.downloadCount || 0,
         dateCreated: data.dateCreated || null,
@@ -251,7 +243,6 @@ const fetchModData = async (): Promise<void> => {
       
       await calculateDownloadIncrease(modData.value.downloadCount)
       
-      // 更新图标
       if (!props.iconUrl && modData.value.logoUrl) {
         icon.value = modData.value.logoUrl
       }
@@ -259,7 +250,6 @@ const fetchModData = async (): Promise<void> => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '未知错误'
     errorMsg.value = `获取模组数据失败: ${errorMessage}`
-    console.error('CurseForge API 错误:', error)
   } finally {
     isLoading.value = false
   }
