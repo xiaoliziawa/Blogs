@@ -131,38 +131,55 @@ const getPreviousDownloads = (): { count: number, date: string } | null => {
 // 获取服务器时间（返回Promise）
 const getServerDate = async (): Promise<string> => {
   try {
-    const response = await fetch('https://worldtimeapi.org/api/ip')
+    // 使用淘宝时间API - 国内稳定可靠的时间服务
+    const response = await fetch('https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp', {
+      mode: 'cors',
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    
     if (!response.ok) {
-      throw new Error(`服务器时间API请求失败: ${response.status}`)
+      throw new Error(`淘宝时间API请求失败: ${response.status}`)
     }
+    
     const data = await response.json()
-    return new Date(data.datetime).toISOString().split('T')[0]
+    const timestamp = data.data.t ? parseInt(data.data.t) : Date.now()
+    return new Date(timestamp).toISOString().split('T')[0]
   } catch (err) {
-    console.warn('获取服务器时间失败，使用本地时间:', err)
+    try {
+      const fallbackResponse = await fetch('https://a.jd.com/ajax/queryServerData.html', {
+        mode: 'cors',
+        method: 'GET'
+      })
+      
+      if (fallbackResponse.ok) {
+        const fallbackData = await fallbackResponse.json()
+        const timestamp = fallbackData.serverTime ? fallbackData.serverTime * 1000 : Date.now()
+        return new Date(timestamp).toISOString().split('T')[0]
+      }
+    } catch (fallbackErr) {
+      console.warn('备用时间API请求也失败:', fallbackErr)
+    }
+    
+    console.warn('所有服务器时间API均请求失败，使用本地时间:', err)
     return new Date().toISOString().split('T')[0]
   }
 }
 
-// 保存下载数据
 const saveCurrentDownloads = async (count: number): Promise<void> => {
   try {
     const serverDate = await getServerDate()
     localStorage.setItem(getStorageKey(), JSON.stringify({
       count,
-      date: serverDate,
-      timestamp: Date.now() // 添加时间戳用于调试
+      date: serverDate
     }))
-    console.log(`已保存下载数据: ${count} 于 ${serverDate}`)
-  } catch (e) {
-    console.error('保存下载数据失败:', e)
-  }
+  } catch (e) {}
 }
 
-// 计算下载增长量
 const calculateDownloadIncrease = async (currentCount: number): Promise<void> => {
   const previousData = getPreviousDownloads()
-  
-  // 临时设置为加载中状态
   downloadIncrease.value = null
   
   if (previousData && previousData.count !== undefined) {
@@ -170,41 +187,26 @@ const calculateDownloadIncrease = async (currentCount: number): Promise<void> =>
       const serverDate = await getServerDate()
       const diff = currentCount - previousData.count
       
-      // 如果数据不是今天的，或者差异明显（超过10），则更新
-      if (previousData.date !== serverDate || Math.abs(diff) > 10) {
-        console.log(`下载量变化: ${previousData.count} -> ${currentCount}, 差值: ${diff}`)
-        
-        // 只有当差值不为0时才显示
+      if (previousData.date !== serverDate || Math.abs(diff) > 5) {
         if (diff !== 0) {
           downloadIncrease.value = diff
         }
-        
-        // 保存新数据
         await saveCurrentDownloads(currentCount)
       } else {
-        // 如果是今天已经存储过的数据，且差异不大，只计算增量但不保存
-        console.log(`同一天内小幅变化: ${diff}`)
         if (diff !== 0) {
           downloadIncrease.value = diff
         }
       }
     } catch (err) {
-      console.error('计算下载增量失败:', err)
-      // 出错时不显示增量
       downloadIncrease.value = null
     }
   } else {
-    // 首次访问，没有历史数据，保存当前数据
-    console.log('首次访问，保存当前下载量:', currentCount)
     await saveCurrentDownloads(currentCount)
-    // 首次访问不显示增量
     downloadIncrease.value = null
   }
 }
 
-// 数据获取函数
 const fetchModData = async (): Promise<void> => {
-  console.log('开始获取模组数据...')
   if (!props.projectId) return
   
   isLoading.value = true
@@ -247,9 +249,7 @@ const fetchModData = async (): Promise<void> => {
         logoUrl: data.logo?.thumbnailUrl || null
       }
       
-      // 计算下载增长量 - 确保等待异步操作完成
       await calculateDownloadIncrease(modData.value.downloadCount)
-      console.log('下载增长量计算完成:', downloadIncrease.value)
       
       // 更新图标
       if (!props.iconUrl && modData.value.logoUrl) {
@@ -267,7 +267,6 @@ const fetchModData = async (): Promise<void> => {
 
 // 生命周期钩子
 onMounted(async () => {
-  console.log('ModInfo 组件已挂载, 开始获取数据...')
   await fetchModData()
 })
 </script>
