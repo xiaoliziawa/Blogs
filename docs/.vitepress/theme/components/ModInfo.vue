@@ -128,72 +128,83 @@ const getPreviousDownloads = (): { count: number, date: string } | null => {
   }
 }
 
-const saveCurrentDownloads = (count: number): void => {
+// 获取服务器时间（返回Promise）
+const getServerDate = async (): Promise<string> => {
   try {
-    fetch('https://worldtimeapi.org/api/ip')
-      .then(response => response.json())
-      .then(data => {
-        const serverDate = new Date(data.datetime).toISOString().split('T')[0]
-        localStorage.setItem(getStorageKey(), JSON.stringify({
-          count,
-          date: serverDate
-        }))
-      })
-      .catch(err => {
-        console.warn('获取服务器时间失败，使用本地时间:', err)
-        const today = new Date().toISOString().split('T')[0]
-        localStorage.setItem(getStorageKey(), JSON.stringify({
-          count,
-          date: today
-        }))
-      })
+    const response = await fetch('https://worldtimeapi.org/api/ip')
+    if (!response.ok) {
+      throw new Error(`服务器时间API请求失败: ${response.status}`)
+    }
+    const data = await response.json()
+    return new Date(data.datetime).toISOString().split('T')[0]
+  } catch (err) {
+    console.warn('获取服务器时间失败，使用本地时间:', err)
+    return new Date().toISOString().split('T')[0]
+  }
+}
+
+// 保存下载数据
+const saveCurrentDownloads = async (count: number): Promise<void> => {
+  try {
+    const serverDate = await getServerDate()
+    localStorage.setItem(getStorageKey(), JSON.stringify({
+      count,
+      date: serverDate,
+      timestamp: Date.now() // 添加时间戳用于调试
+    }))
+    console.log(`已保存下载数据: ${count} 于 ${serverDate}`)
   } catch (e) {
     console.error('保存下载数据失败:', e)
   }
 }
 
 // 计算下载增长量
-const calculateDownloadIncrease = (currentCount: number): void => {
+const calculateDownloadIncrease = async (currentCount: number): Promise<void> => {
   const previousData = getPreviousDownloads()
   
-  if (previousData) {
-    // 使用服务器时间而不是本地时间进行比较
-    fetch('https://worldtimeapi.org/api/ip')
-      .then(response => response.json())
-      .then(data => {
-        // 从世界时间API获取当前日期
-        const serverDate = new Date(data.datetime).toISOString().split('T')[0]
+  // 临时设置为加载中状态
+  downloadIncrease.value = null
+  
+  if (previousData && previousData.count !== undefined) {
+    try {
+      const serverDate = await getServerDate()
+      const diff = currentCount - previousData.count
+      
+      // 如果数据不是今天的，或者差异明显（超过10），则更新
+      if (previousData.date !== serverDate || Math.abs(diff) > 10) {
+        console.log(`下载量变化: ${previousData.count} -> ${currentCount}, 差值: ${diff}`)
         
-        // 如果存储的数据不是今天的，则计算增量并更新存储
-        if (previousData.date !== serverDate) {
-          downloadIncrease.value = currentCount - previousData.count
-          saveCurrentDownloads(currentCount)
-        } else {
-          // 如果是今天已经存储过的数据，只计算增量但不更新存储
-          downloadIncrease.value = currentCount - previousData.count
+        // 只有当差值不为0时才显示
+        if (diff !== 0) {
+          downloadIncrease.value = diff
         }
-      })
-      .catch(err => {
-        // 如果API请求失败，回退到本地时间
-        console.warn('获取服务器时间失败，使用本地时间:', err)
-        const today = new Date().toISOString().split('T')[0]
         
-        if (previousData.date !== today) {
-          downloadIncrease.value = currentCount - previousData.count
-          saveCurrentDownloads(currentCount)
-        } else {
-          downloadIncrease.value = currentCount - previousData.count
+        // 保存新数据
+        await saveCurrentDownloads(currentCount)
+      } else {
+        // 如果是今天已经存储过的数据，且差异不大，只计算增量但不保存
+        console.log(`同一天内小幅变化: ${diff}`)
+        if (diff !== 0) {
+          downloadIncrease.value = diff
         }
-      })
+      }
+    } catch (err) {
+      console.error('计算下载增量失败:', err)
+      // 出错时不显示增量
+      downloadIncrease.value = null
+    }
   } else {
     // 首次访问，没有历史数据，保存当前数据
-    saveCurrentDownloads(currentCount)
+    console.log('首次访问，保存当前下载量:', currentCount)
+    await saveCurrentDownloads(currentCount)
+    // 首次访问不显示增量
     downloadIncrease.value = null
   }
 }
 
 // 数据获取函数
 const fetchModData = async (): Promise<void> => {
+  console.log('开始获取模组数据...')
   if (!props.projectId) return
   
   isLoading.value = true
@@ -236,8 +247,9 @@ const fetchModData = async (): Promise<void> => {
         logoUrl: data.logo?.thumbnailUrl || null
       }
       
-      // 计算下载增长量
-      calculateDownloadIncrease(modData.value.downloadCount)
+      // 计算下载增长量 - 确保等待异步操作完成
+      await calculateDownloadIncrease(modData.value.downloadCount)
+      console.log('下载增长量计算完成:', downloadIncrease.value)
       
       // 更新图标
       if (!props.iconUrl && modData.value.logoUrl) {
@@ -254,8 +266,9 @@ const fetchModData = async (): Promise<void> => {
 }
 
 // 生命周期钩子
-onMounted(() => {
-  fetchModData()
+onMounted(async () => {
+  console.log('ModInfo 组件已挂载, 开始获取数据...')
+  await fetchModData()
 })
 </script>
 
@@ -276,7 +289,7 @@ onMounted(() => {
                   <path fill="currentColor" d="M12 16l-4-4h2.5V8h3v4H16l-4 4zm5-12H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H7V6h10v12z"/>
                 </svg>
                 <span>{{ formattedDownloads }} 次下载</span>
-                <span v-if="downloadIncrease !== null" class="download-increase" :class="{'increase': downloadIncrease > 0, 'decrease': downloadIncrease < 0}">
+                <span v-if="downloadIncrease !== null && downloadIncrease !== 0" class="download-increase" :class="{'increase': downloadIncrease > 0, 'decrease': downloadIncrease < 0}">
                   ({{ formatNumberWithSign(downloadIncrease) }})
                 </span>
               </div>
