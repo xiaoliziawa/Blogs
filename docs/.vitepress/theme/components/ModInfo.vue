@@ -104,6 +104,7 @@ const getPreviousDownloads = () => {
 
 const getServerDate = async () => {
   try {
+    // 尝试使用主要API获取时间
     const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Shanghai', {
       mode: 'cors',
       method: 'GET',
@@ -113,14 +114,34 @@ const getServerDate = async () => {
     })
     
     if (!response.ok) {
-      throw new Error()
+      throw new Error('主API请求失败')
     }
     
     const data = await response.json()
     const timestamp = data.unixtime ? parseInt(data.unixtime) * 1000 : Date.now()
     return new Date(timestamp).toISOString().split('T')[0]
   } catch (err) {
-    return new Date().toISOString().split('T')[0]
+    try {
+      // 尝试使用备用API获取时间
+      const backupResponse = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=Asia/Shanghai', {
+        mode: 'cors',
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      
+      if (!backupResponse.ok) {
+        throw new Error('备用API请求失败')
+      }
+      
+      const backupData = await backupResponse.json()
+      return backupData.dateTime ? backupData.dateTime.split('T')[0] : new Date().toISOString().split('T')[0]
+    } catch (backupErr) {
+      console.warn('获取服务器时间失败，使用本地时间:', err.message, backupErr.message)
+      // 如果两个API都失败，回退到本地时间
+      return new Date().toISOString().split('T')[0]
+    }
   }
 }
 
@@ -131,7 +152,11 @@ const saveCurrentDownloads = async (count) => {
       count,
       date: serverDate
     }))
-  } catch (e) {}
+    return true
+  } catch (e) {
+    console.error('保存下载数据失败:', e)
+    return false
+  }
 }
 
 const calculateDownloadIncrease = async (currentCount) => {
@@ -154,7 +179,13 @@ const calculateDownloadIncrease = async (currentCount) => {
         }
       }
     } catch (err) {
+      console.error('计算下载增长失败:', err)
       downloadIncrease.value = null
+      
+      // 即使获取时间失败，仍然尝试保存当前下载数据
+      if (currentCount !== previousData.count) {
+        await saveCurrentDownloads(currentCount)
+      }
     }
   } else {
     await saveCurrentDownloads(currentCount)
@@ -203,6 +234,13 @@ const fetchModData = async () => {
         logoUrl: data.logo?.thumbnailUrl || null
       }
       
+      // 保存数据到本地存储以便离线使用
+      try {
+        localStorage.setItem(`mod_data_${props.projectId}`, JSON.stringify(modData.value))
+      } catch (storageErr) {
+        console.warn('无法保存模组数据到本地存储:', storageErr)
+      }
+      
       await calculateDownloadIncrease(modData.value.downloadCount)
       
       if (!props.iconUrl && modData.value.logoUrl) {
@@ -210,6 +248,22 @@ const fetchModData = async () => {
       }
     }
   } catch (error) {
+    // 尝试从本地存储加载缓存数据
+    try {
+      const cachedData = localStorage.getItem(`mod_data_${props.projectId}`)
+      if (cachedData) {
+        modData.value = JSON.parse(cachedData)
+        if (!props.iconUrl && modData.value.logoUrl) {
+          icon.value = modData.value.logoUrl
+        }
+        errorMsg.value = '使用缓存数据显示 (API请求失败)'
+        console.warn('使用缓存的模组数据')
+        return
+      }
+    } catch (cacheError) {
+      console.error('读取缓存数据失败:', cacheError)
+    }
+    
     const errorMessage = error instanceof Error ? error.message : '未知错误'
     errorMsg.value = `获取模组数据失败: ${errorMessage}`
   } finally {
