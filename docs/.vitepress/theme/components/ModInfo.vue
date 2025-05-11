@@ -104,8 +104,8 @@ const getPreviousDownloads = () => {
 
 const getServerDate = async () => {
   try {
-    // 尝试使用主要API获取时间
-    const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Shanghai', {
+    // 使用备用API获取时间
+    const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC', {
       mode: 'cors',
       method: 'GET',
       headers: {
@@ -114,34 +114,15 @@ const getServerDate = async () => {
     })
     
     if (!response.ok) {
-      throw new Error('主API请求失败')
+      throw new Error('API请求失败')
     }
     
     const data = await response.json()
-    const timestamp = data.unixtime ? parseInt(data.unixtime) * 1000 : Date.now()
-    return new Date(timestamp).toISOString().split('T')[0]
+    return data.dateTime ? data.dateTime.split('T')[0] : new Date().toISOString().split('T')[0]
   } catch (err) {
-    try {
-      // 尝试使用备用API获取时间
-      const backupResponse = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=Asia/Shanghai', {
-        mode: 'cors',
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      
-      if (!backupResponse.ok) {
-        throw new Error('备用API请求失败')
-      }
-      
-      const backupData = await backupResponse.json()
-      return backupData.dateTime ? backupData.dateTime.split('T')[0] : new Date().toISOString().split('T')[0]
-    } catch (backupErr) {
-      console.warn('获取服务器时间失败，使用本地时间:', err.message, backupErr.message)
-      // 如果两个API都失败，回退到本地时间
-      return new Date().toISOString().split('T')[0]
-    }
+    console.warn('获取服务器时间失败，使用本地时间:', err.message)
+    // 如果API失败，回退到本地时间
+    return new Date().toISOString().split('T')[0]
   }
 }
 
