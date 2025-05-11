@@ -112,7 +112,7 @@ public void drawScaledCustomSizeModalRect(int x, int y, float u, float v, int uW
 1. 获取缓冲区源和顶点缓冲区
 2. 为每个顶点设置位置、UV坐标和颜色
 3. 使用四边形（QUADS）模式绘制光标
-```
+
 ### 3.4 光标渲染流程
 
 在`NeoForgeCursorMod.java`的`onDrawScreen`方法中，实现了完整的光标渲染流程：
