@@ -20,6 +20,11 @@ sidebar:
                 - text: NeoForge
                   collapsed: false
                   items:
+                      - text: 1.21.5
+                        collapsed: true
+                        items:
+                            - text: CustomCursor模组渲染分析
+                              link: /code/Mod/NeoForge/1.21.5/CustomCursor
                       - text: 1.21.1
                         collapsed: true
                         items:
