@@ -2,6 +2,8 @@
   curseForgeId="vault-patcher" 
   modName="保险库补丁（Vault Patcher）" 
   projectId="967052"
+  modrinthId="NLV0Mnpu"
+  modrinthSlug="vault-patcher"
 />
 
 # Vault Patcher
