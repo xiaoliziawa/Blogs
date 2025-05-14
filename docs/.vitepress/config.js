@@ -11,7 +11,7 @@ const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 const sidebar = generateSidebar()
 
 export default defineConfig({
-  title: 'PrizOwO Blogs-致所有沉默的清醒时刻「冬札」',
+  title: 'PrizOwO Blogs',
   description: '致所有沉默的清醒时刻\n清晨的霜爬上玻璃，像世界结痂的伤口。\n路灯在五点醒来，替未落的雪撑开一片暖黄。\n煮咖啡时，热气在窗上画出岛屿的形状，\n恍惚觉得这座城正漂向更冷的纬度。',
 
   lastUpdated: true,
