@@ -39,15 +39,22 @@ export default {
     app.component('ModInfo', ModInfo)
     
     if (typeof window !== 'undefined') {
-      window.addEventListener('DOMContentLoaded', handleSidebar)
+      window.addEventListener('DOMContentLoaded', () => {
+        handleSidebar()
+        setupCustomTooltip()
+      })
       
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
         handleSidebar()
+        setupCustomTooltip()
       }
       
       if (router) {
         router.onAfterRouteChanged = () => {
-          setTimeout(handleSidebar, 100)
+          setTimeout(() => {
+            handleSidebar()
+            setupCustomTooltip()
+          }, 100)
         }
       }
     }
@@ -73,6 +80,7 @@ function setupMutationObserver() {
   
   window._sidebarObserver = new MutationObserver((mutations) => {
     processLongTexts()
+    setupCustomTooltip()
   })
   
   const sidebar = document.querySelector('.VPSidebar')
@@ -93,9 +101,59 @@ function processLongTexts() {
     }
     
     if (el.scrollWidth > el.clientWidth) {
-      el.setAttribute('title', el.textContent.trim())
+      if (el.hasAttribute('title')) {
+        el.removeAttribute('title')
+      }
+      
+      el.setAttribute('data-tooltip', el.textContent.trim())
       
       el.classList.add('text-overflow')
     }
   })
+}
+
+function setupCustomTooltip() {
+  let tooltip = document.getElementById('custom-sidebar-tooltip')
+  
+  if (!tooltip) {
+    tooltip = document.createElement('div')
+    tooltip.id = 'custom-sidebar-tooltip'
+    tooltip.className = 'custom-tooltip primary'
+    document.body.appendChild(tooltip)
+  }
+  
+  document.querySelectorAll('.VPSidebarItem .text[data-tooltip]').forEach(el => {
+    el.removeEventListener('mouseenter', showTooltip)
+    el.removeEventListener('mouseleave', hideTooltip)
+  })
+  
+  document.querySelectorAll('.VPSidebarItem .text[data-tooltip]').forEach(el => {
+    el.addEventListener('mouseenter', showTooltip)
+    el.addEventListener('mouseleave', hideTooltip)
+  })
+  
+  function showTooltip(e) {
+    const text = this.getAttribute('data-tooltip')
+    if (!text) return
+    
+    const tooltip = document.getElementById('custom-sidebar-tooltip')
+    tooltip.textContent = text
+    tooltip.classList.add('show')
+    
+    const rect = this.getBoundingClientRect()
+    tooltip.style.left = `${rect.left}px`
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`
+    
+    if (rect.top - tooltip.offsetHeight - 10 < 0) {
+      tooltip.style.top = `${rect.bottom + 10}px`
+      tooltip.classList.add('arrow-top')
+    } else {
+      tooltip.classList.remove('arrow-top')
+    }
+  }
+  
+  function hideTooltip() {
+    const tooltip = document.getElementById('custom-sidebar-tooltip')
+    tooltip.classList.remove('show')
+  }
 } 

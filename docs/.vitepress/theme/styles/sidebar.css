@@ -311,3 +311,77 @@
 .VPSidebarItem .item:hover {
   background-color: rgba(var(--vp-c-brand-rgb), 0.05) !important;
 }
+
+.custom-tooltip {
+  position: fixed !important;
+  z-index: 10000 !important;
+  background-color: var(--vp-c-bg-soft) !important;
+  color: var(--vp-c-text-1) !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  max-width: 300px !important;
+  word-wrap: break-word !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border-left: 3px solid var(--vp-c-brand) !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  transition: opacity 0.3s ease, transform 0.3s ease !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.custom-tooltip.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.custom-tooltip.primary {
+  border-left-color: var(--vp-c-brand) !important;
+  background-color: rgba(var(--vp-c-brand-rgb), 0.08) !important;
+}
+
+.custom-tooltip.info {
+  border-left-color: #0288d1 !important;
+  background-color: rgba(2, 136, 209, 0.08) !important;
+}
+
+.dark .custom-tooltip {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  background-color: rgba(36, 36, 36, 0.85) !important;
+}
+
+.custom-tooltip::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 100% !important;
+  left: 10px !important;
+  border-width: 6px !important;
+  border-style: solid !important;
+  border-color: var(--vp-c-bg-soft) transparent transparent transparent !important;
+}
+
+.custom-tooltip.arrow-top::before {
+  top: auto !important;
+  bottom: 100% !important;
+  border-color: transparent transparent var(--vp-c-bg-soft) transparent !important;
+}
+
+.dark .custom-tooltip::before {
+  border-color: rgba(36, 36, 36, 0.85) transparent transparent transparent !important;
+}
+
+.dark .custom-tooltip.arrow-top::before {
+  border-color: transparent transparent rgba(36, 36, 36, 0.85) transparent !important;
+}
+
+.custom-tooltip.primary::before {
+  border-color: rgba(var(--vp-c-brand-rgb), 0.08) transparent transparent transparent !important;
+}
+
+.custom-tooltip.primary.arrow-top::before {
+  border-color: transparent transparent rgba(var(--vp-c-brand-rgb), 0.08) transparent !important;
+}
