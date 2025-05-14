@@ -37,8 +37,39 @@ export default {
     app.component('ThemeColorPicker', ThemeColorPicker)
     app.component('AdBanner', AdBanner)
     app.component('ModInfo', ModInfo)
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('DOMContentLoaded', () => {
+        // 初始处理
+        addTitlesToLongTexts()
+        
+        const observer = new MutationObserver((mutations) => {
+          addTitlesToLongTexts()
+        })
+        
+        setTimeout(() => {
+          const sidebar = document.querySelector('.VPSidebar')
+          if (sidebar) {
+            observer.observe(sidebar, { 
+              childList: true, 
+              subtree: true 
+            })
+          }
+        }, 500)
+      })
+    }
   },
   layout: {
     'doc-after': () => h(Contributors)
   }
+}
+
+function addTitlesToLongTexts() {
+  document.querySelectorAll('.VPSidebarItem .text').forEach(el => {
+    if (el.scrollWidth > el.clientWidth) {
+      if (!el.hasAttribute('title')) {
+        el.setAttribute('title', el.textContent.trim())
+      }
+    }
+  })
 } 

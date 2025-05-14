@@ -4,13 +4,12 @@
 }
 
 .VPSidebarItem .text {
-  font-size: 0.875rem !important;
+  font-size: 0.95rem !important;
   line-height: 1.4 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   max-width: 100% !important;
-  font-size: 0.95rem !important;
   transition: color 0.2s !important;
 }
 
@@ -52,11 +51,15 @@
 .VPSidebarItem .item {
   width: 100% !important;
   min-width: 0 !important;
-  max-width: 260px !important;
+  max-width: 280px !important;
   padding-right: 8px !important;
+  padding-left: 8px !important;
   display: flex !important;
   align-items: center !important;
   position: relative !important;
+  border-radius: 4px !important;
+  margin: 2px 0 !important;
+  transition: background-color 0.2s ease !important;
 }
 
 .VPSidebarItem.level-1,
@@ -70,9 +73,6 @@
 .VPSidebarItem .text {
   width: auto !important;
   flex: 1 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
   margin-right: auto !important;
 }
 
@@ -89,7 +89,6 @@
   opacity: 0.4 !important;
   font-size: 0.9em !important;
 }
-
 
 .VPSidebarItem .item {
   --tooltip-bg: var(--vp-c-bg-soft);
@@ -133,13 +132,15 @@
 }
 
 .VPSidebarItem .caret {
+  margin-left: 4px !important;
+  flex-shrink: 0 !important;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   opacity: 0.6 !important;
   width: 12px !important;
   height: 12px !important;
   margin-top: 0 !important;
   display: flex !important;
-  align-items: right !important;
+  align-items: center !important;
   justify-content: center !important;
   position: relative !important;
   top: 0 !important;
@@ -245,8 +246,8 @@
 }
 
 .VPSidebarItem .text[title] {
-  text-decoration: underline dotted 1px rgba(var(--vp-c-brand-rgb), 0.3) !important;
-  text-underline-offset: 3px !important;
+  cursor: help !important;
+  border-bottom: 1px dotted rgba(var(--vp-c-brand-rgb), 0.3) !important;
 }
 
 .VPSidebarItem .item {
