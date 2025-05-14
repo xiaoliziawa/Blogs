@@ -23,7 +23,7 @@ sidebar:
                       - text: 1.21.5
                         collapsed: true
                         items:
-                            - text: 自定义光标模组渲染分析
+                            - text: 自定义光标模组Pipeline渲染分析
                               link: /code/Mod/NeoForge/1.21.5/CustomCursor
                       - text: 1.21.1
                         collapsed: true

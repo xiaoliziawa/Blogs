@@ -11,8 +11,9 @@ const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 const sidebar = generateSidebar()
 
 export default defineConfig({
-  title: 'PrizOwO Blogs',
-  description: 'PrizOwO Blogs',
+  title: 'PrizOwO Blogs-致所有沉默的清醒时刻「冬札」',
+  description: '致所有沉默的清醒时刻\n清晨的霜爬上玻璃，像世界结痂的伤口。\n路灯在五点醒来，替未落的雪撑开一片暖黄。\n煮咖啡时，热气在窗上画出岛屿的形状，\n恍惚觉得这座城正漂向更冷的纬度。',
+
   lastUpdated: true,
   metaChunk: true,
 
@@ -163,7 +164,6 @@ export default defineConfig({
       lang: 'zh-CN'
     },
     
-    // 添加移动端优化配置
     returnToTopLabel: '返回顶部',
     sidebarMenuLabel: '菜单',
     darkModeSwitchLabel: '外观'
