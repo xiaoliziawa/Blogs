@@ -21,7 +21,7 @@ import './styles/index.css'
 export default {
   extends: DefaultTheme,
   Layout,
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
     app.component('GitHubChart', GitHubChart)
     app.component('Comments', Comments)
     app.component('HomeContent', HomeContent)
@@ -39,24 +39,17 @@ export default {
     app.component('ModInfo', ModInfo)
     
     if (typeof window !== 'undefined') {
-      window.addEventListener('DOMContentLoaded', () => {
-        // 初始处理
-        addTitlesToLongTexts()
-        
-        const observer = new MutationObserver((mutations) => {
-          addTitlesToLongTexts()
-        })
-        
-        setTimeout(() => {
-          const sidebar = document.querySelector('.VPSidebar')
-          if (sidebar) {
-            observer.observe(sidebar, { 
-              childList: true, 
-              subtree: true 
-            })
-          }
-        }, 500)
-      })
+      window.addEventListener('DOMContentLoaded', handleSidebar)
+      
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        handleSidebar()
+      }
+      
+      if (router) {
+        router.onAfterRouteChanged = () => {
+          setTimeout(handleSidebar, 100)
+        }
+      }
     }
   },
   layout: {
@@ -64,12 +57,45 @@ export default {
   }
 }
 
-function addTitlesToLongTexts() {
+function handleSidebar() {
+  processLongTexts()
+  
+  setTimeout(processLongTexts, 300)
+  setTimeout(processLongTexts, 1000)
+  
+  setupMutationObserver()
+}
+
+function setupMutationObserver() {
+  if (window._sidebarObserver) {
+    window._sidebarObserver.disconnect()
+  }
+  
+  window._sidebarObserver = new MutationObserver((mutations) => {
+    processLongTexts()
+  })
+  
+  const sidebar = document.querySelector('.VPSidebar')
+  if (sidebar) {
+    window._sidebarObserver.observe(sidebar, { 
+      childList: true, 
+      subtree: true 
+    })
+  }
+}
+
+function processLongTexts() {
   document.querySelectorAll('.VPSidebarItem .text').forEach(el => {
+    if (!el.style.maxWidth) {
+      el.style.maxWidth = el.parentNode.classList.contains('level-3') || 
+                          el.parentNode.classList.contains('level-4') 
+                          ? '150px' : '200px'
+    }
+    
     if (el.scrollWidth > el.clientWidth) {
-      if (!el.hasAttribute('title')) {
-        el.setAttribute('title', el.textContent.trim())
-      }
+      el.setAttribute('title', el.textContent.trim())
+      
+      el.classList.add('text-overflow')
     }
   })
 } 

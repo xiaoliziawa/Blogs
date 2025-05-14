@@ -274,3 +274,40 @@
   white-space: nowrap !important;
   max-width: 100% !important;
 }
+
+.VPSidebar .VPSidebarItem .text {
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 200px !important;
+  width: 100% !important;
+}
+
+.VPSidebarItem.level-3 .text,
+.VPSidebarItem.level-4 .text {
+  max-width: 150px !important;
+}
+
+.VPSidebarItem .text {
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.VPSidebarItem .text.text-overflow {
+  position: relative !important;
+  border-bottom: 1px dotted rgba(var(--vp-c-brand-rgb), 0.4) !important;
+}
+
+.VPSidebarItem .item {
+  padding: 4px 8px !important;
+  margin: 2px 0 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+}
+
+.VPSidebarItem .item:hover {
+  background-color: rgba(var(--vp-c-brand-rgb), 0.05) !important;
+}
