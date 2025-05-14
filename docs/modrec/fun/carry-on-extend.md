@@ -2,6 +2,8 @@
   curseForgeId="carry-on-extend" 
   modName="搬运：拓展（Carry On Extend）" 
   projectId="1245887"
+  modrinthId="JbqjOoQj"
+  modrinthSlug="carry-on-extend"
 />
 
 # Carry On Extend
