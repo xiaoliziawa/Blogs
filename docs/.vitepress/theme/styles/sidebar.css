@@ -48,15 +48,17 @@
 
 /* 侧边栏项目宽度控制 */
 .VPSidebarItem .items {
-  width: fit-content !important;
+  width: 100% !important;
   margin-left: 0 !important;
 }
 
 .VPSidebarItem .item {
-  width: fit-content !important;
-  min-width: 120px !important;
-  max-width: 200px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 260px !important;
   padding-right: 8px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .VPSidebarItem.level-1,
@@ -68,8 +70,11 @@
 }
 
 .VPSidebarItem .text {
-  width: fit-content !important;
+  width: auto !important;
+  flex: 1 !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   margin-right: auto !important;
 }
 
@@ -87,6 +92,17 @@
   font-size: 0.9em !important;
 }
 
+.VPSidebarItem .item:hover .text {
+  overflow: visible !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background-color: var(--vp-c-bg) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 4px !important;
+  padding: 2px 4px !important;
+}
 
 .VPDocAside .content {
   border-left: none !important;
