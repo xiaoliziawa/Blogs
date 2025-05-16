@@ -39,7 +39,7 @@ Riding Partners: Reforged 是一个允许两名玩家同时骑乘一匹马的模
 
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/riding-partners-reforged)
 - [Modrinth](https://modrinth.com/mod/riding-partnersreforged)
-- [GitHub](https://github.com/xiaoliziawa/RidingPartnersReforged)
+- [GitHub](https://github.com/xiaoliziawa/HorseRider)
 
 ## 模组作者/开发团队
 
