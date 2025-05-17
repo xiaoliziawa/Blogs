@@ -16,6 +16,7 @@ import FeatureBox from './components/FeatureBox.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
 import ModInfo from './components/ModInfo.vue'
+import { initSidebarTooltip } from './utils/sidebarTooltip.js'
 import './styles/index.css'
 
 export default {
@@ -39,121 +40,13 @@ export default {
     app.component('ModInfo', ModInfo)
     
     if (typeof window !== 'undefined') {
-      window.addEventListener('DOMContentLoaded', () => {
-        handleSidebar()
-        setupCustomTooltip()
-      })
-      
-      if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        handleSidebar()
-        setupCustomTooltip()
-      }
-      
-      if (router) {
-        router.onAfterRouteChanged = () => {
-          setTimeout(() => {
-            handleSidebar()
-            setupCustomTooltip()
-          }, 100)
-        }
+      const routerHandler = initSidebarTooltip()
+      if (routerHandler && router) {
+        routerHandler(router)
       }
     }
   },
   layout: {
     'doc-after': () => h(Contributors)
-  }
-}
-
-function handleSidebar() {
-  processLongTexts()
-  
-  setTimeout(processLongTexts, 300)
-  setTimeout(processLongTexts, 1000)
-  
-  setupMutationObserver()
-}
-
-function setupMutationObserver() {
-  if (window._sidebarObserver) {
-    window._sidebarObserver.disconnect()
-  }
-  
-  window._sidebarObserver = new MutationObserver((mutations) => {
-    processLongTexts()
-    setupCustomTooltip()
-  })
-  
-  const sidebar = document.querySelector('.VPSidebar')
-  if (sidebar) {
-    window._sidebarObserver.observe(sidebar, { 
-      childList: true, 
-      subtree: true 
-    })
-  }
-}
-
-function processLongTexts() {
-  document.querySelectorAll('.VPSidebarItem .text').forEach(el => {
-    if (!el.style.maxWidth) {
-      el.style.maxWidth = el.parentNode.classList.contains('level-3') || 
-                          el.parentNode.classList.contains('level-4') 
-                          ? '150px' : '200px'
-    }
-    
-    if (el.scrollWidth > el.clientWidth) {
-      if (el.hasAttribute('title')) {
-        el.removeAttribute('title')
-      }
-      
-      el.setAttribute('data-tooltip', el.textContent.trim())
-      
-      el.classList.add('text-overflow')
-    }
-  })
-}
-
-function setupCustomTooltip() {
-  let tooltip = document.getElementById('custom-sidebar-tooltip')
-  
-  if (!tooltip) {
-    tooltip = document.createElement('div')
-    tooltip.id = 'custom-sidebar-tooltip'
-    tooltip.className = 'custom-tooltip primary'
-    document.body.appendChild(tooltip)
-  }
-  
-  document.querySelectorAll('.VPSidebarItem .text[data-tooltip]').forEach(el => {
-    el.removeEventListener('mouseenter', showTooltip)
-    el.removeEventListener('mouseleave', hideTooltip)
-  })
-  
-  document.querySelectorAll('.VPSidebarItem .text[data-tooltip]').forEach(el => {
-    el.addEventListener('mouseenter', showTooltip)
-    el.addEventListener('mouseleave', hideTooltip)
-  })
-  
-  function showTooltip(e) {
-    const text = this.getAttribute('data-tooltip')
-    if (!text) return
-    
-    const tooltip = document.getElementById('custom-sidebar-tooltip')
-    tooltip.textContent = text
-    tooltip.classList.add('show')
-    
-    const rect = this.getBoundingClientRect()
-    tooltip.style.left = `${rect.left}px`
-    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`
-    
-    if (rect.top - tooltip.offsetHeight - 10 < 0) {
-      tooltip.style.top = `${rect.bottom + 10}px`
-      tooltip.classList.add('arrow-top')
-    } else {
-      tooltip.classList.remove('arrow-top')
-    }
-  }
-  
-  function hideTooltip() {
-    const tooltip = document.getElementById('custom-sidebar-tooltip')
-    tooltip.classList.remove('show')
   }
 } 
