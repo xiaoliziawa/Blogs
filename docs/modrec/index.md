@@ -24,6 +24,8 @@ sidebar:
         items:
           - text: 保险库补丁
             link: /modrec/useful/vp
+          - text: 自定义光标：重生
+            link: /modrec/useful/ccr
 ---
 
 # 模组推荐
@@ -38,5 +40,6 @@ sidebar:
   - [附魔等级上限突破2（EnchantmentLevelBreak）](/modrec/fun/enchantment-level-break)
 - [实用工具模组](/modrec/useful/mods) - 提供各种实用工具和功能的模组
   - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
+  - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
 
 
