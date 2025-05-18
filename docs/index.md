@@ -38,8 +38,11 @@ features:
     title: 模组推荐
     details: 推荐一些常用模组。
     link: /modrec/
+  - icon: 📦
+    title: 整合包推荐
+    details: 精选优质Minecraft整合包推荐。
+    link: /modpacks/
 ---
 
 <TypewriterHero />
 <HomeContent />
-
