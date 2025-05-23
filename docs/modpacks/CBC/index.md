@@ -1,7 +1,3 @@
-<script setup>
-import ModInfo from '@theme/components/ModInfo.vue'
-</script>
-
 <ModInfo 
   curseForgeId="create-the-brass-concerto" 
   modName="机械动力：黄铜协奏曲（Create: The Brass Concerto）" 
