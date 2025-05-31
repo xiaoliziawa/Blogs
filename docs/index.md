@@ -5,7 +5,7 @@ hero:
   text: " "
   tagline: " "
   image:
-    src: https://img.picui.cn/free/2025/05/10/681e2c9a36877.png
+    src: /Vue.png
     alt: Logo
   actions:
     - theme: brand
