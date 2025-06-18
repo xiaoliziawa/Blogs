@@ -28,10 +28,8 @@ sidebar:
                       - text: 1.21.1
                         collapsed: true
                         items:
-                            - text: 模组列表
-                              link: /code/Mod/NeoForge/1.21.1/mods
-                            - text: 开发文档
-                              link: /code/Mod/NeoForge/1.21.1/docs
+                            - text: 暮色森林维度地形生成分析
+                              link: /code/Mod/NeoForge/1.21.1/TWF/TWF
                       - text: 1.20.4
                         collapsed: true
                         items:
