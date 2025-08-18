@@ -45,7 +45,7 @@ jobs:
                 VITE_CF_API_KEY: ${{ secrets.CF_API_KEY }}
 
             - name: Create CNAME
-              run: echo "prizowo.net" > docs/.vitepress/dist/CNAME
+              run: echo "www.lirxowo.com" > docs/.vitepress/dist/CNAME
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3

@@ -10,7 +10,7 @@ npm run docs:build
 cd docs/.vitepress/dist
 
 # 创建 CNAME 文件
-echo 'prizowo.net' > CNAME
+echo 'lirxowo.com' > CNAME
 
 git init
 git add -A

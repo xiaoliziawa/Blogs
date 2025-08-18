@@ -11,7 +11,7 @@ const fileStats = scanMarkdownFiles(resolve(__dirname, '../'))
 const sidebar = generateSidebar()
 
 export default defineConfig({
-  title: 'PrizOwO Blogs',
+  title: 'LirxOwO Blogs',
   description: '致所有沉默的清醒时刻\n清晨的霜爬上玻璃，像世界结痂的伤口。\n路灯在五点醒来，替未落的雪撑开一片暖黄。\n煮咖啡时，热气在窗上画出岛屿的形状，\n恍惚觉得这座城正漂向更冷的纬度。',
 
   lastUpdated: true,
@@ -245,7 +245,7 @@ export default defineConfig({
   },
 
   async buildEnd(siteConfig) {
-    const sitemap = new SitemapStream({ hostname: 'https://www.prizowo.com' }) // 请替换为你的实际网站域名
+    const sitemap = new SitemapStream({ hostname: 'https://www.lirxowo.com' }) // 请替换为你的实际网站域名
     const writeStream = createWriteStream(resolve(siteConfig.outDir, 'sitemap.xml'))
     sitemap.pipe(writeStream)
     

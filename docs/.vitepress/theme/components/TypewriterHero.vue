@@ -20,7 +20,7 @@
 import { onMounted } from 'vue'
 
 const texts = {
-  title: "PrizOwO's Blog",
+  title: "LirxOwO's Blog",
   welcome: "Welcome !",
   tagline: "收录各种网站、Code！"
 }

@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const adTitle = ref('PrizOwO Blogs')
-const adContent = ref('该网站仍然在建设中，专注于代码记录，分享。欢迎访问：https://www.prizowo.net')
+const adTitle = ref('LirxOwO Blogs')
+const adContent = ref('该网站仍然在建设中，专注于代码记录，分享。欢迎访问：https://www.lirxowo.com')
 
 const isVisible = ref(false)
 
@@ -24,7 +24,7 @@ onMounted(() => {
         <button class="ad-close-btn" @click="closeAd" aria-label="关闭广告">×</button>
         <h3 class="ad-title">{{ adTitle }}</h3>
         <p class="ad-text">{{ adContent }}</p>
-        <a href="https://www.prizowo.net/questions/faq" target="_blank" class="ad-link" @click="closeAd">
+        <a href="https://www.lirxowo.com/questions/faq" target="_blank" class="ad-link" @click="closeAd">
           了解更多 →
         </a>
       </div>
