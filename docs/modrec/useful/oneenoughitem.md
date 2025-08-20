@@ -2,8 +2,9 @@
   curseForgeId="one-enough-item"
   modName="One Enough Item"
   projectId="1312660"
-  xyebbsId="oneenoughitem"
 />
+
+<XyebbsInfo xyebbsId="oneenoughitem" />
 
 # [OEI] One Enough Item
 

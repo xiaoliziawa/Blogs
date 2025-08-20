@@ -28,11 +28,7 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  // 添加XyeBBS相关属性
-  xyebbsId: {
-    type: String,
-    default: ''
-  }
+
 })
 
 // 响应式状态
@@ -55,35 +51,19 @@ const modrinthData = ref({
   iconUrl: null
 })
 
-// XyeBBS数据
-const xyebbsData = ref({
-  downloadCount: 0,
-  dateCreated: null,
-  dateModified: null,
-  gameVersions: [],
-  cores: [],
-  tags: [],
-  author: null,
-  logoUrl: null,
-  description: null,
-  text: null
-})
+
 
 const icon = ref(props.iconUrl)
 const isLoading = ref(false)
 const errorMsg = ref('')
 const modrinthLoading = ref(false)
 const modrinthErrorMsg = ref('')
-const xyebbsLoading = ref(false)
-const xyebbsErrorMsg = ref('')
-const xyebbsExpanded = ref(false)
-const xyebbsTextExpanded = ref(false)
+
 
 // API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
 const CF_API_URL = 'https://api.curseforge.com/v1/mods'
 const MODRINTH_API_URL = 'https://api.modrinth.com/v2'
-const XYEBBS_API_URL = 'https://resource-api.xyeidc.com/client/resources/identify'
 
 // 格式化工具函数
 const formatNumber = (num) => {
@@ -120,33 +100,7 @@ const modrinthUrl = computed(() => {
   return null
 })
 
-// XyeBBS计算属性
-const formattedXyebbsDownloads = computed(() => formatNumber(xyebbsData.value.downloadCount))
-const xyebbsUrl = computed(() => {
-  if (props.xyebbsId) {
-    return `https://bbs.xyeidc.com/res-id/${props.xyebbsId}?tab=info`
-  }
-  return null
-})
 
-// 处理 XyeBBS 文本中的图片链接
-const processedXyebbsText = computed(() => {
-  if (!xyebbsData.value.text) return null
-
-  // 处理 ![图片ID](https://resource-api.xyeidc.com/client/pics/图片ID) 格式的图片
-  let processedText = xyebbsData.value.text.replace(
-    /!\[([^\]]*)\]\(https:\/\/resource-api\.xyeidc\.com\/client\/pics\/([^)]+)\)/g,
-    '<img src="https://resource-api.xyeidc.com/client/pics/$2" alt="$1" class="xyebbs-image" loading="lazy" />'
-  )
-
-  // 处理其他可能的图片格式
-  processedText = processedText.replace(
-    /!\[([^\]]*)\]\(([^)]+)\)/g,
-    '<img src="$2" alt="$1" class="xyebbs-image" loading="lazy" />'
-  )
-
-  return processedText
-})
 
 // 版本排序
 const compareVersions = (a, b) => {
@@ -317,93 +271,7 @@ const fetchModrinthData = async () => {
   }
 }
 
-// 获取XyeBBS数据
-const fetchXyebbsData = async () => {
-  // 如果没有提供id，则不进行请求
-  if (!props.xyebbsId) return
 
-  xyebbsLoading.value = true
-  xyebbsErrorMsg.value = ''
-
-  try {
-    const response = await fetch(`${XYEBBS_API_URL}/${props.xyebbsId}?includes=%2A`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
-    })
-
-    if (!response.ok) {
-      throw new Error(`XyeBBS API请求失败: ${response.status} ${response.statusText}`)
-    }
-
-    const result = await response.json()
-
-    if (result.code === 200 && result.data) {
-      const data = result.data
-
-      xyebbsData.value = {
-        downloadCount: data.downloadCount || 0,
-        dateCreated: data.createDate || null,
-        dateModified: data.updateDate || null,
-        gameVersions: data.versions ? data.versions.map(v => v.name) : [],
-        cores: data.cores ? data.cores.map(c => c.name) : [],
-        tags: data.tags ? data.tags.map(t => t.name) : [],
-        author: data.member ? data.member.username : null,
-        logoUrl: data.logoImgUuid ? `https://resource-api.xyeidc.com/client/pics/${data.logoImgUuid}` : null,
-        description: data.description || null,
-        text: data.text || null
-      }
-
-      // 保存数据到本地存储以便离线使用
-      try {
-        localStorage.setItem(`xyebbs_data_${props.xyebbsId}`, JSON.stringify(xyebbsData.value))
-      } catch (storageErr) {
-        console.warn('无法保存XyeBBS模组数据到本地存储:', storageErr)
-      }
-
-      // 如果没有从其他平台设置图标且有XyeBBS图标，则使用XyeBBS图标
-      if (!props.iconUrl && !modData.value.logoUrl && !modrinthData.value.iconUrl && xyebbsData.value.logoUrl) {
-        icon.value = xyebbsData.value.logoUrl
-      }
-    }
-  } catch (error) {
-    // 尝试从本地存储加载缓存数据
-    try {
-      const cachedData = localStorage.getItem(`xyebbs_data_${props.xyebbsId}`)
-      if (cachedData) {
-        xyebbsData.value = JSON.parse(cachedData)
-        if (!props.iconUrl && !modData.value.logoUrl && !modrinthData.value.iconUrl && xyebbsData.value.logoUrl) {
-          icon.value = xyebbsData.value.logoUrl
-        }
-        xyebbsErrorMsg.value = '使用缓存数据显示 (XyeBBS API请求失败)'
-        console.warn('使用缓存的XyeBBS模组数据')
-        return
-      }
-    } catch (cacheError) {
-      console.error('读取XyeBBS缓存数据失败:', cacheError)
-    }
-
-    const errorMessage = error instanceof Error ? error.message : '未知错误'
-    xyebbsErrorMsg.value = `获取XyeBBS模组数据失败: ${errorMessage}`
-  } finally {
-    xyebbsLoading.value = false
-  }
-}
-
-// 切换展开/收缩的方法
-const toggleXyebbsExpanded = async () => {
-  xyebbsExpanded.value = !xyebbsExpanded.value
-
-  // 如果是展开且还没有获取过数据，则获取数据
-  if (xyebbsExpanded.value && props.xyebbsId && xyebbsData.value.downloadCount === 0 && !xyebbsLoading.value) {
-    await fetchXyebbsData()
-  }
-}
-
-const toggleXyebbsTextExpanded = () => {
-  xyebbsTextExpanded.value = !xyebbsTextExpanded.value
-}
 
 // 生命周期钩子
 onMounted(async () => {
@@ -470,32 +338,7 @@ onMounted(async () => {
             </div>
           </a>
 
-          <!-- XyeBBS下载量 -->
-          <a v-if="xyebbsUrl" :href="xyebbsUrl" target="_blank" rel="noopener noreferrer" class="badge-link no-external-icon">
-            <div v-if="!xyebbsLoading && !xyebbsErrorMsg && xyebbsData.downloadCount > 0" class="download-stats xyebbs-stats">
-              <div class="download-count xyebbs-download-count">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="download-icon">
-                  <path fill="currentColor" d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-                </svg>
-                <span>{{ formattedXyebbsDownloads }} 次下载</span>
-              </div>
-            </div>
 
-            <div v-else-if="xyebbsLoading" class="loading-state">
-              <span>加载中...</span>
-            </div>
-
-            <div v-else-if="xyebbsErrorMsg" class="error-state">
-              <span>{{ xyebbsErrorMsg }}</span>
-            </div>
-
-            <div v-else-if="props.xyebbsId && !xyebbsLoading && !xyebbsErrorMsg" class="xyebbs-link">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="xyebbs-icon">
-                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-              <span>查看XyeBBS页面</span>
-            </div>
-          </a>
         </div>
       </div>
     </div>
@@ -539,114 +382,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- XyeBBS 独立信息区域 -->
-    <div v-if="props.xyebbsId" class="xyebbs-info">
-      <div class="xyebbs-header" @click="toggleXyebbsExpanded">
-        <div class="xyebbs-platform-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
-            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <span>XyeBBS 信息</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-toggle-icon" :class="{ 'expanded': xyebbsExpanded }">
-            <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-          </svg>
-        </div>
-      </div>
 
-      <Transition name="xyebbs-slide">
-        <div v-show="xyebbsExpanded" class="xyebbs-content">
-          <!-- 加载状态 -->
-          <div v-if="xyebbsLoading" class="xyebbs-loading">
-            <span>正在加载 XyeBBS 信息...</span>
-          </div>
-
-          <!-- 错误状态 -->
-          <div v-else-if="xyebbsErrorMsg" class="xyebbs-error">
-            <span>{{ xyebbsErrorMsg }}</span>
-          </div>
-
-          <!-- 数据内容 -->
-          <template v-else-if="xyebbsData.downloadCount > 0">
-            <!-- 描述信息 -->
-            <div v-if="xyebbsData.description" class="xyebbs-section">
-              <h4 class="xyebbs-section-title">模组描述</h4>
-              <p class="xyebbs-description">{{ xyebbsData.description }}</p>
-            </div>
-
-            <!-- 详细文档 -->
-            <div v-if="xyebbsData.text" class="xyebbs-section">
-              <div class="xyebbs-text-header" @click="toggleXyebbsTextExpanded">
-                <h4 class="xyebbs-section-title">详细文档</h4>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-text-toggle-icon" :class="{ 'expanded': xyebbsTextExpanded }">
-                  <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                </svg>
-              </div>
-              <Transition name="xyebbs-text-slide">
-                <div v-show="xyebbsTextExpanded" class="xyebbs-text-content" v-html="processedXyebbsText"></div>
-              </Transition>
-            </div>
-
-        <!-- 统计信息 -->
-        <div class="xyebbs-stats-grid">
-          <div class="xyebbs-stat-item">
-            <span class="xyebbs-stat-label">下载量</span>
-            <span class="xyebbs-stat-value">{{ formattedXyebbsDownloads }}</span>
-          </div>
-
-          <div v-if="xyebbsData.author" class="xyebbs-stat-item">
-            <span class="xyebbs-stat-label">作者</span>
-            <span class="xyebbs-stat-value">{{ xyebbsData.author }}</span>
-          </div>
-
-          <div v-if="xyebbsData.dateCreated" class="xyebbs-stat-item">
-            <span class="xyebbs-stat-label">创建日期</span>
-            <span class="xyebbs-stat-value">{{ formatDate(xyebbsData.dateCreated) }}</span>
-          </div>
-
-          <div v-if="xyebbsData.dateModified" class="xyebbs-stat-item">
-            <span class="xyebbs-stat-label">最后更新</span>
-            <span class="xyebbs-stat-value">{{ formatDate(xyebbsData.dateModified) }}</span>
-          </div>
-        </div>
-
-        <!-- 版本信息 -->
-        <div v-if="xyebbsData.gameVersions.length > 0" class="xyebbs-section">
-          <h4 class="xyebbs-section-title">支持版本</h4>
-          <div class="xyebbs-version-tags">
-            <span v-for="(version, index) in xyebbsData.gameVersions" :key="index" class="xyebbs-version-tag">
-              {{ version }}
-            </span>
-          </div>
-        </div>
-
-        <!-- 模组加载器 -->
-        <div v-if="xyebbsData.cores.length > 0" class="xyebbs-section">
-          <h4 class="xyebbs-section-title">模组加载器</h4>
-          <div class="xyebbs-core-tags">
-            <span v-for="(core, index) in xyebbsData.cores" :key="index" class="xyebbs-core-tag">
-              {{ core }}
-            </span>
-          </div>
-        </div>
-
-            <!-- 标签 -->
-            <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
-              <h4 class="xyebbs-section-title">标签</h4>
-              <div class="xyebbs-tag-list">
-                <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
-                  {{ tag }}
-                </span>
-              </div>
-            </div>
-          </template>
-
-          <!-- 无数据状态 -->
-          <div v-else class="xyebbs-no-data">
-            <span>暂无 XyeBBS 数据</span>
-          </div>
-        </div>
-      </Transition>
-    </div>
 
 
   </div>
@@ -837,47 +573,7 @@ onMounted(async () => {
   box-shadow: 0 6px 16px rgba(var(--modrinth-color-rgb), 0.35);
 }
 
-/* XyeBBS样式 */
-.xyebbs-stats {
-  --xyebbs-color-rgb: 255, 107, 107;
-}
 
-.xyebbs-download-count {
-  background: linear-gradient(90deg,
-    rgb(var(--xyebbs-color-rgb)) 0%,
-    rgba(var(--xyebbs-color-rgb), 0.8) 100%);
-  box-shadow: 0 4px 12px rgba(var(--xyebbs-color-rgb), 0.25);
-}
-
-.xyebbs-download-count:hover {
-  box-shadow: 0 6px 16px rgba(var(--xyebbs-color-rgb), 0.35);
-}
-
-.xyebbs-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
-  background: linear-gradient(90deg,
-    rgb(var(--xyebbs-color-rgb)) 0%,
-    rgba(var(--xyebbs-color-rgb), 0.8) 100%);
-  color: white;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(var(--xyebbs-color-rgb), 0.25);
-}
-
-.xyebbs-link:hover {
-  box-shadow: 0 6px 16px rgba(var(--xyebbs-color-rgb), 0.35);
-  transform: translateY(-1px);
-}
-
-.xyebbs-icon {
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
 
 .download-icon,
 .curseforge-icon {
@@ -1106,376 +802,13 @@ onMounted(async () => {
   }
 }
 
-/* XyeBBS 独立信息区域样式 */
-.xyebbs-info {
-  margin-top: 24px;
-  background: linear-gradient(135deg,
-    rgba(255, 107, 107, 0.05) 0%,
-    rgba(238, 90, 36, 0.05) 100%);
-  border: 1px solid rgba(255, 107, 107, 0.2);
-  border-radius: 16px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-}
 
-.xyebbs-info::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
-  border-radius: 16px 16px 0 0;
-}
 
-.xyebbs-header {
-  margin-bottom: 16px;
-  cursor: pointer;
-  user-select: none;
-}
 
-.xyebbs-platform-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-  transition: all 0.3s ease;
-}
 
-.xyebbs-header:hover .xyebbs-platform-badge {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-}
 
-.xyebbs-toggle-icon {
-  margin-left: auto;
-  transition: transform 0.3s ease;
-}
 
-.xyebbs-toggle-icon.expanded {
-  transform: rotate(180deg);
-}
 
-.xyebbs-badge-icon {
-  flex-shrink: 0;
-}
-
-.xyebbs-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.xyebbs-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.xyebbs-section-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--vp-c-text-1);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.xyebbs-section-title::before {
-  content: '';
-  display: inline-block;
-  width: 3px;
-  height: 16px;
-  background: linear-gradient(to bottom, #ff6b6b, #ee5a24);
-  border-radius: 2px;
-}
-
-.xyebbs-description {
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-  margin: 0;
-  padding: 12px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
-  border-radius: 8px;
-  border-left: 3px solid #ff6b6b;
-}
-
-.xyebbs-text-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-  padding: 4px 0;
-  transition: all 0.3s ease;
-}
-
-.xyebbs-text-header:hover {
-  color: #ff6b6b;
-}
-
-.xyebbs-text-toggle-icon {
-  transition: transform 0.3s ease;
-  color: #ff6b6b;
-}
-
-.xyebbs-text-toggle-icon.expanded {
-  transform: rotate(180deg);
-}
-
-.xyebbs-text-content {
-  color: var(--vp-c-text-2);
-  line-height: 1.6;
-  padding: 16px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.3);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.1);
-  margin-top: 8px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.xyebbs-text-content :deep(h1),
-.xyebbs-text-content :deep(h2),
-.xyebbs-text-content :deep(h3),
-.xyebbs-text-content :deep(h4),
-.xyebbs-text-content :deep(h5),
-.xyebbs-text-content :deep(h6) {
-  color: var(--vp-c-text-1);
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-.xyebbs-text-content :deep(p) {
-  margin: 0.8em 0;
-}
-
-.xyebbs-text-content :deep(code) {
-  background: rgba(255, 107, 107, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.xyebbs-text-content :deep(pre) {
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.8);
-  padding: 12px;
-  border-radius: 6px;
-  overflow-x: auto;
-  margin: 1em 0;
-}
-
-.xyebbs-text-content :deep(ul),
-.xyebbs-text-content :deep(ol) {
-  padding-left: 1.5em;
-  margin: 0.8em 0;
-}
-
-.xyebbs-text-content :deep(blockquote) {
-  border-left: 3px solid #ff6b6b;
-  padding-left: 12px;
-  margin: 1em 0;
-  color: var(--vp-c-text-2);
-  font-style: italic;
-}
-
-.xyebbs-text-content :deep(.xyebbs-image) {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin: 1em 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.xyebbs-text-content :deep(.xyebbs-image:hover) {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-/* 图片加载失败时的样式 */
-.xyebbs-text-content :deep(.xyebbs-image[alt]) {
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.8);
-  border: 2px dashed rgba(255, 107, 107, 0.3);
-  padding: 20px;
-  text-align: center;
-  color: var(--vp-c-text-3);
-  font-style: italic;
-}
-
-/* 响应式图片 */
-@media (max-width: 768px) {
-  .xyebbs-text-content :deep(.xyebbs-image) {
-    margin: 0.8em 0;
-  }
-}
-
-.xyebbs-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.xyebbs-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.1);
-  transition: all 0.3s ease;
-}
-
-.xyebbs-stat-item:hover {
-  border-color: rgba(255, 107, 107, 0.3);
-  transform: translateY(-1px);
-}
-
-.xyebbs-stat-label {
-  font-size: 0.85rem;
-  color: var(--vp-c-text-3);
-  font-weight: 500;
-}
-
-.xyebbs-stat-value {
-  font-size: 0.95rem;
-  color: var(--vp-c-text-1);
-  font-weight: 600;
-}
-
-.xyebbs-version-tags,
-.xyebbs-core-tags,
-.xyebbs-tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.xyebbs-version-tag,
-.xyebbs-core-tag,
-.xyebbs-tag {
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.xyebbs-version-tag {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
-  box-shadow: 0 2px 6px rgba(255, 107, 107, 0.2);
-}
-
-.xyebbs-core-tag {
-  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-  color: white;
-  box-shadow: 0 2px 6px rgba(78, 205, 196, 0.2);
-}
-
-.xyebbs-tag {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #333;
-  border: 1px solid rgba(255, 107, 107, 0.2);
-}
-
-.xyebbs-version-tag:hover,
-.xyebbs-core-tag:hover,
-.xyebbs-tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-}
-
-.xyebbs-loading,
-.xyebbs-error,
-.xyebbs-no-data {
-  text-align: center;
-  padding: 20px;
-  color: var(--vp-c-text-2);
-  font-style: italic;
-}
-
-.xyebbs-error {
-  color: #ff6b6b;
-}
-
-/* XyeBBS 展开/收缩动画 */
-.xyebbs-slide-enter-active,
-.xyebbs-slide-leave-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: top;
-}
-
-.xyebbs-slide-enter-from {
-  opacity: 0;
-  transform: scaleY(0.8) translateY(-10px);
-  max-height: 0;
-}
-
-.xyebbs-slide-leave-to {
-  opacity: 0;
-  transform: scaleY(0.8) translateY(-10px);
-  max-height: 0;
-}
-
-.xyebbs-slide-enter-to,
-.xyebbs-slide-leave-from {
-  opacity: 1;
-  transform: scaleY(1) translateY(0);
-  max-height: 2000px;
-}
-
-/* XyeBBS 文本展开/收缩动画 */
-.xyebbs-text-slide-enter-active,
-.xyebbs-text-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.xyebbs-text-slide-enter-from {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-10px);
-}
-
-.xyebbs-text-slide-leave-to {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-10px);
-}
-
-.xyebbs-text-slide-enter-to,
-.xyebbs-text-slide-leave-from {
-  opacity: 1;
-  max-height: 400px;
-  transform: translateY(0);
-}
-
-@media (max-width: 768px) {
-  .xyebbs-stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .xyebbs-info {
-    padding: 16px;
-  }
-
-  .xyebbs-platform-badge {
-    font-size: 0.85rem;
-    padding: 6px 12px;
-  }
-}
 
 @media (max-width: 480px) {
   .mod-header {
@@ -1502,11 +835,5 @@ onMounted(async () => {
     padding: 4px 8px;
   }
 
-  .xyebbs-version-tag,
-  .xyebbs-core-tag,
-  .xyebbs-tag {
-    font-size: 0.8rem;
-    padding: 4px 8px;
-  }
 }
 </style> 
