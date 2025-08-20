@@ -3,7 +3,7 @@
 <ModInfo
   curseForgeId="portaltransform"
   modName="Portal Transform"
-  projectId="1134088"
+  projectId="1271140"
   modrinthId="portaltransform"
   modrinthSlug="portaltransform"
 />
