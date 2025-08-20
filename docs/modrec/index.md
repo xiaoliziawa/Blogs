@@ -28,6 +28,8 @@ sidebar:
             link: /modrec/useful/vp
           - text: 自定义光标：重生
             link: /modrec/useful/ccr
+          - text: One Enough Item
+            link: /modrec/useful/oneenoughitem
       - text: KubeJS模组
         link: /modrec/kubejs/
         collapsed: false
@@ -52,6 +54,7 @@ sidebar:
 - [实用工具模组](/modrec/useful/mods) - 提供各种实用工具和功能的模组
   - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
   - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
+  - [[OEI] One Enough Item](/modrec/useful/oneenoughitem) - 解决整合包中物品重复问题的实用工具模组
 - [KubeJS模组](/modrec/kubejs/) - 基于KubeJS的扩展模组
   - [KeyBindJS](/modrec/kubejs/keybindjs) - 通过KubeJS脚本管理按键绑定的模组
   - [FilesJS](/modrec/kubejs/filesjs) - 通过KubeJS脚本进行文件操作的模组
