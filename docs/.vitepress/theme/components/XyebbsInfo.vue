@@ -121,6 +121,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css'
 
 // Props
 const props = defineProps({
@@ -161,7 +163,25 @@ const processedText = computed(() => {
     const md = new MarkdownIt({
       html: true,
       breaks: true,
-      linkify: true
+      linkify: true,
+      highlight: function (str, lang) {
+        // 代码高亮处理
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            const highlighted = hljs.highlight(str, { language: lang }).value
+            return `<pre class="hljs-code-block"><div class="hljs-header"><span class="hljs-lang">${lang.toUpperCase()}</span><button class="hljs-copy" onclick="copyCode(this)">复制</button></div><code class="hljs language-${lang}">${highlighted}</code></pre>`
+          } catch (__) {}
+        }
+
+        // 自动检测语言
+        try {
+          const result = hljs.highlightAuto(str)
+          const detectedLang = result.language || 'text'
+          return `<pre class="hljs-code-block"><div class="hljs-header"><span class="hljs-lang">${detectedLang.toUpperCase()}</span><button class="hljs-copy" onclick="copyCode(this)">复制</button></div><code class="hljs language-${detectedLang}">${result.value}</code></pre>`
+        } catch (__) {
+          return `<pre class="hljs-code-block"><div class="hljs-header"><span class="hljs-lang">TEXT</span><button class="hljs-copy" onclick="copyCode(this)">复制</button></div><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`
+        }
+      }
     })
 
     // 处理图片链接
@@ -210,19 +230,19 @@ const toggleTextExpanded = () => {
 const fetchData = async () => {
   isLoading.value = true
   errorMsg.value = ''
-  
+
   try {
     const response = await fetch(`${XYEBBS_API_URL}/${props.xyebbsId}?includes=%2A`)
-    
+
     if (!response.ok) {
       throw new Error(`API 请求失败: ${response.status}`)
     }
-    
+
     const result = await response.json()
-    
+
     if (result.code === 200 && result.data) {
       const apiData = result.data
-      
+
       data.value = {
         downloadCount: apiData.downloadCount || 0,
         dateCreated: apiData.createDate || null,
@@ -242,6 +262,39 @@ const fetchData = async () => {
     errorMsg.value = `获取数据失败: ${error.message}`
   } finally {
     isLoading.value = false
+  }
+}
+
+// 全局复制代码函数
+if (typeof window !== 'undefined') {
+  window.copyCode = function(button) {
+    const codeBlock = button.parentElement.nextElementSibling
+    const code = codeBlock.textContent || codeBlock.innerText
+
+    navigator.clipboard.writeText(code).then(() => {
+      const originalText = button.textContent
+      button.textContent = '已复制!'
+      button.style.background = 'var(--vp-c-green)'
+
+      setTimeout(() => {
+        button.textContent = originalText
+        button.style.background = ''
+      }, 2000)
+    }).catch(() => {
+      // 降级方案
+      const textArea = document.createElement('textarea')
+      textArea.value = code
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+
+      const originalText = button.textContent
+      button.textContent = '已复制!'
+      setTimeout(() => {
+        button.textContent = originalText
+      }, 2000)
+    })
   }
 }
 </script>
@@ -515,27 +568,148 @@ const fetchData = async () => {
   margin: 0.8em 0;
 }
 
-.text-content :deep(code) {
+/* 内联代码样式 */
+.text-content :deep(code:not(.hljs)) {
   background: var(--vp-c-bg-mute);
   padding: 2px 4px;
   border-radius: 3px;
   font-size: 0.9em;
   color: var(--vp-c-text-code);
+  font-family: var(--vp-font-family-mono);
 }
 
-.text-content :deep(pre) {
-  background: var(--vp-c-bg-mute);
-  padding: 12px;
-  border-radius: 6px;
-  overflow-x: auto;
+/* 代码块容器 */
+.text-content :deep(.hljs-code-block) {
   margin: 1em 0;
+  border-radius: 8px;
+  overflow: hidden;
   border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
 }
 
-.text-content :deep(pre code) {
+/* 代码块头部 */
+.text-content :deep(.hljs-header) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--vp-c-bg-mute);
+  border-bottom: 1px solid var(--vp-c-divider);
+  font-size: 0.8rem;
+}
+
+/* 语言标签 */
+.text-content :deep(.hljs-lang) {
+  font-weight: 600;
+  color: var(--vp-c-brand);
+  font-family: var(--vp-font-family-mono);
+}
+
+/* 复制按钮 */
+.text-content :deep(.hljs-copy) {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--vp-font-family-base);
+}
+
+.text-content :deep(.hljs-copy:hover) {
+  background: var(--vp-c-brand);
+  color: white;
+}
+
+/* 代码内容 */
+.text-content :deep(.hljs-code-block pre) {
+  margin: 0;
+  padding: 16px;
+  background: var(--vp-c-bg-soft);
+  overflow-x: auto;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.text-content :deep(.hljs-code-block code) {
   background: none;
   padding: 0;
-  color: var(--vp-c-text-1);
+  border-radius: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* 代码高亮主题适配 */
+.text-content :deep(.hljs) {
+  background: var(--vp-c-bg-soft) !important;
+  color: var(--vp-c-text-1) !important;
+}
+
+/* 高亮颜色适配主题 */
+.text-content :deep(.hljs-keyword) {
+  color: var(--vp-c-brand) !important;
+  font-weight: 600;
+}
+
+.text-content :deep(.hljs-string) {
+  color: var(--vp-c-green) !important;
+}
+
+.text-content :deep(.hljs-number) {
+  color: var(--vp-c-yellow) !important;
+}
+
+.text-content :deep(.hljs-comment) {
+  color: var(--vp-c-text-3) !important;
+  font-style: italic;
+}
+
+.text-content :deep(.hljs-function) {
+  color: var(--vp-c-purple) !important;
+}
+
+.text-content :deep(.hljs-variable) {
+  color: var(--vp-c-text-1) !important;
+}
+
+.text-content :deep(.hljs-title) {
+  color: var(--vp-c-brand) !important;
+  font-weight: 600;
+}
+
+.text-content :deep(.hljs-attr) {
+  color: var(--vp-c-orange) !important;
+}
+
+.text-content :deep(.hljs-built_in) {
+  color: var(--vp-c-purple) !important;
+}
+
+.text-content :deep(.hljs-type) {
+  color: var(--vp-c-brand) !important;
+}
+
+.text-content :deep(.hljs-literal) {
+  color: var(--vp-c-yellow) !important;
+}
+
+.text-content :deep(.hljs-meta) {
+  color: var(--vp-c-text-3) !important;
+}
+
+.text-content :deep(.hljs-tag) {
+  color: var(--vp-c-brand) !important;
+}
+
+.text-content :deep(.hljs-name) {
+  color: var(--vp-c-brand) !important;
+}
+
+.text-content :deep(.hljs-attribute) {
+  color: var(--vp-c-orange) !important;
 }
 
 .text-content :deep(ul),
@@ -623,18 +797,34 @@ const fetchData = async () => {
   .xyebbs-info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .xyebbs-header {
     padding: 12px 16px;
   }
-  
+
   .xyebbs-content {
     padding: 16px;
   }
-  
+
   .xyebbs-download-badge {
     font-size: 0.8rem;
     padding: 3px 8px;
+  }
+
+  /* 移动端代码块优化 */
+  .text-content :deep(.hljs-header) {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .text-content :deep(.hljs-copy) {
+    padding: 3px 6px;
+    font-size: 0.7rem;
+  }
+
+  .text-content :deep(.hljs-code-block pre) {
+    padding: 12px;
+    font-size: 0.85em;
   }
 }
 </style>

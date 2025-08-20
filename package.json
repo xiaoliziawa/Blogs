@@ -17,6 +17,7 @@
     "chokidar": "^4.0.1",
     "echarts": "^5.5.1",
     "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "markdown-it-attrs": "^4.2.0",
     "mermaid": "^10.8.0",
