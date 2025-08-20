@@ -5,7 +5,7 @@ import { ref, computed, onMounted } from 'vue'
 const props = defineProps({
   curseForgeId: {
     type: String,
-    required: true
+    default: ''
   },
   modName: {
     type: String,
@@ -387,7 +387,7 @@ onMounted(async () => {
         
         <div class="mod-badges">
           <!-- CurseForge下载量 -->
-          <a :href="curseForgeUrl" target="_blank" rel="noopener noreferrer" class="badge-link no-external-icon">
+          <a v-if="props.curseForgeId" :href="curseForgeUrl" target="_blank" rel="noopener noreferrer" class="badge-link no-external-icon">
             <div v-if="projectId && !isLoading && !errorMsg && modData.downloadCount > 0" class="download-stats">
               <div class="download-count">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="download-icon">
@@ -463,7 +463,8 @@ onMounted(async () => {
       </div>
     </div>
     
-    <div v-if="projectId && !isLoading && !errorMsg" class="mod-details">
+    <!-- CurseForge/Modrinth 详细信息 -->
+    <div v-if="(projectId && !isLoading && !errorMsg) || (modrinthUrl && !modrinthLoading && !modrinthErrorMsg)" class="mod-details">
       <div v-if="modData.gameVersions.length > 0" class="detail-section">
         <h3 class="detail-title">支持的Minecraft版本</h3>
         <div class="version-tags">
@@ -472,31 +473,130 @@ onMounted(async () => {
           </span>
         </div>
       </div>
-      
+
       <div v-if="modData.authors.length > 0" class="detail-section">
         <h3 class="detail-title">模组作者</h3>
         <div class="authors-list">
-          <a v-for="(author, index) in modData.authors" :key="index" 
-             :href="author.url" 
-             target="_blank" 
-             rel="noopener noreferrer" 
+          <a v-for="(author, index) in modData.authors" :key="index"
+             :href="author.url"
+             target="_blank"
+             rel="noopener noreferrer"
              class="author-tag no-external-icon">
             {{ author.name }}
           </a>
         </div>
       </div>
-      
+
       <div class="detail-section">
         <div class="dates-row">
           <div v-if="modData.dateCreated" class="date-item">
             <span class="date-label">创建日期:</span>
             <span class="date-value">{{ formattedDateCreated }}</span>
           </div>
-          
+
           <div v-if="modData.dateModified" class="date-item">
             <span class="date-label">最后更新:</span>
             <span class="date-value">{{ formattedDateModified }}</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XyeBBS 独立信息区域 -->
+    <div v-if="props.xyebbsId && !xyebbsLoading && !xyebbsErrorMsg && xyebbsData.downloadCount > 0" class="xyebbs-info">
+      <div class="xyebbs-header">
+        <div class="xyebbs-platform-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span>XyeBBS 信息</span>
+        </div>
+      </div>
+
+      <div class="xyebbs-content">
+        <!-- 描述信息 -->
+        <div v-if="xyebbsData.description" class="xyebbs-section">
+          <h4 class="xyebbs-section-title">模组描述</h4>
+          <p class="xyebbs-description">{{ xyebbsData.description }}</p>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="xyebbs-stats-grid">
+          <div class="xyebbs-stat-item">
+            <span class="xyebbs-stat-label">下载量</span>
+            <span class="xyebbs-stat-value">{{ formattedXyebbsDownloads }}</span>
+          </div>
+
+          <div v-if="xyebbsData.author" class="xyebbs-stat-item">
+            <span class="xyebbs-stat-label">作者</span>
+            <span class="xyebbs-stat-value">{{ xyebbsData.author }}</span>
+          </div>
+
+          <div v-if="xyebbsData.dateCreated" class="xyebbs-stat-item">
+            <span class="xyebbs-stat-label">创建日期</span>
+            <span class="xyebbs-stat-value">{{ formatDate(xyebbsData.dateCreated) }}</span>
+          </div>
+
+          <div v-if="xyebbsData.dateModified" class="xyebbs-stat-item">
+            <span class="xyebbs-stat-label">最后更新</span>
+            <span class="xyebbs-stat-value">{{ formatDate(xyebbsData.dateModified) }}</span>
+          </div>
+        </div>
+
+        <!-- 版本信息 -->
+        <div v-if="xyebbsData.gameVersions.length > 0" class="xyebbs-section">
+          <h4 class="xyebbs-section-title">支持版本</h4>
+          <div class="xyebbs-version-tags">
+            <span v-for="(version, index) in xyebbsData.gameVersions" :key="index" class="xyebbs-version-tag">
+              {{ version }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 模组加载器 -->
+        <div v-if="xyebbsData.cores.length > 0" class="xyebbs-section">
+          <h4 class="xyebbs-section-title">模组加载器</h4>
+          <div class="xyebbs-core-tags">
+            <span v-for="(core, index) in xyebbsData.cores" :key="index" class="xyebbs-core-tag">
+              {{ core }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 标签 -->
+        <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
+          <h4 class="xyebbs-section-title">标签</h4>
+          <div class="xyebbs-tag-list">
+            <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XyeBBS 加载和错误状态 -->
+    <div v-else-if="props.xyebbsId" class="xyebbs-info">
+      <div class="xyebbs-header">
+        <div class="xyebbs-platform-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span>XyeBBS 信息</span>
+        </div>
+      </div>
+
+      <div class="xyebbs-content">
+        <div v-if="xyebbsLoading" class="xyebbs-loading">
+          <span>正在加载 XyeBBS 信息...</span>
+        </div>
+
+        <div v-else-if="xyebbsErrorMsg" class="xyebbs-error">
+          <span>{{ xyebbsErrorMsg }}</span>
+        </div>
+
+        <div v-else class="xyebbs-no-data">
+          <span>暂无 XyeBBS 数据</span>
         </div>
       </div>
     </div>
@@ -957,27 +1057,225 @@ onMounted(async () => {
   }
 }
 
+/* XyeBBS 独立信息区域样式 */
+.xyebbs-info {
+  margin-top: 24px;
+  background: linear-gradient(135deg,
+    rgba(255, 107, 107, 0.05) 0%,
+    rgba(238, 90, 36, 0.05) 100%);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.xyebbs-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.xyebbs-header {
+  margin-bottom: 16px;
+}
+
+.xyebbs-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.xyebbs-badge-icon {
+  flex-shrink: 0;
+}
+
+.xyebbs-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.xyebbs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xyebbs-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xyebbs-section-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(to bottom, #ff6b6b, #ee5a24);
+  border-radius: 2px;
+}
+
+.xyebbs-description {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin: 0;
+  padding: 12px;
+  background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
+  border-radius: 8px;
+  border-left: 3px solid #ff6b6b;
+}
+
+.xyebbs-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.xyebbs-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.1);
+  transition: all 0.3s ease;
+}
+
+.xyebbs-stat-item:hover {
+  border-color: rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+.xyebbs-stat-label {
+  font-size: 0.85rem;
+  color: var(--vp-c-text-3);
+  font-weight: 500;
+}
+
+.xyebbs-stat-value {
+  font-size: 0.95rem;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+.xyebbs-version-tags,
+.xyebbs-core-tags,
+.xyebbs-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.xyebbs-version-tag,
+.xyebbs-core-tag,
+.xyebbs-tag {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.xyebbs-version-tag {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(255, 107, 107, 0.2);
+}
+
+.xyebbs-core-tag {
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(78, 205, 196, 0.2);
+}
+
+.xyebbs-tag {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.xyebbs-version-tag:hover,
+.xyebbs-core-tag:hover,
+.xyebbs-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.xyebbs-loading,
+.xyebbs-error,
+.xyebbs-no-data {
+  text-align: center;
+  padding: 20px;
+  color: var(--vp-c-text-2);
+  font-style: italic;
+}
+
+.xyebbs-error {
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .xyebbs-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .xyebbs-info {
+    padding: 16px;
+  }
+
+  .xyebbs-platform-badge {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .mod-header {
     gap: 12px;
   }
-  
+
   .mod-icon {
     width: 50px;
     height: 50px;
   }
-  
+
   .mod-title {
     font-size: 1.3rem;
     margin-bottom: 10px;
   }
-  
+
   .download-count, .curseforge-link, .loading-state, .error-state {
     padding: 8px 14px;
     font-size: 0.9rem;
   }
-  
+
   .version-tag, .author-tag {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .xyebbs-version-tag,
+  .xyebbs-core-tag,
+  .xyebbs-tag {
     font-size: 0.8rem;
     padding: 4px 8px;
   }

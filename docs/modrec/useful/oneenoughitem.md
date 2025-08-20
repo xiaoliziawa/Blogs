@@ -2,8 +2,6 @@
   curseForgeId="one-enough-item"
   modName="One Enough Item"
   projectId="1312660"
-  modrinthId=""
-  modrinthSlug=""
   xyebbsId="oneenoughitem"
 />
 
