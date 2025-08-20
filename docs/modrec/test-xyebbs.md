@@ -4,11 +4,9 @@
 
 ## 示例 1: 对话框模组 (ChatBox)
 
-<ModInfo
-  modName="对话框 (ChatBox)"
+<XyebbsInfo 
+  xyebbsId="chatbox" 
 />
-
-<XyebbsInfo xyebbsId="chatbox" />
 
 ## 示例 2: OneEnoughItem 模组
 
@@ -18,7 +16,9 @@
   projectId="1312660"
 />
 
-<XyebbsInfo xyebbsId="oneenoughitem" />
+<XyebbsInfo 
+  xyebbsId="oneenoughitem" 
+/>
 
 ## 🎉 全新的独立 XyebbsInfo 组件
 

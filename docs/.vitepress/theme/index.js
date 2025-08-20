@@ -16,6 +16,7 @@ import FeatureBox from './components/FeatureBox.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
 import ModInfo from './components/ModInfo.vue'
+import XyebbsInfo from './components/XyebbsInfo.vue'
 import { initSidebarTooltip } from './utils/sidebarTooltip.js'
 import './styles/index.css'
 
@@ -38,6 +39,7 @@ export default {
     app.component('ThemeColorPicker', ThemeColorPicker)
     app.component('AdBanner', AdBanner)
     app.component('ModInfo', ModInfo)
+    app.component('XyebbsInfo', XyebbsInfo)
     
     if (typeof window !== 'undefined') {
       const routerHandler = initSidebarTooltip()
