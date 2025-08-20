@@ -105,7 +105,12 @@
               </Transition>
             </div>
 
-
+            <!-- 访问链接 -->
+            <div class="xyebbs-link-section">
+              <a :href="xyebbsUrl" target="_blank" rel="noopener noreferrer" class="xyebbs-visit-link">
+                访问 XyeBBS 页面
+              </a>
+            </div>
           </div>
           
           <!-- 无数据状态 -->
@@ -154,6 +159,9 @@ const data = ref({
 const XYEBBS_API_URL = 'https://resource-api.xyeidc.com/client/resources/identify'
 
 // 计算属性
+const xyebbsUrl = computed(() => {
+  return `https://bbs.xyeidc.com/res-id/${props.xyebbsId}?tab=info`
+})
 
 const processedText = computed(() => {
   if (!data.value.text) return null
@@ -184,7 +192,6 @@ const processedText = computed(() => {
       }
     })
 
-    // 处理图片链接
     let processedMarkdown = data.value.text.replace(
       /!\[([^\]]*)\]\(https:\/\/resource-api\.xyeidc\.com\/client\/pics\/([^)]+)\)/g,
       '![图片](https://resource-api.xyeidc.com/client/pics/$2)'
@@ -710,6 +717,34 @@ if (typeof window !== 'undefined') {
 
 .text-content :deep(.hljs-attribute) {
   color: var(--vp-c-orange) !important;
+}
+
+/* XyeBBS 访问链接 */
+.xyebbs-link-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.xyebbs-visit-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid var(--vp-c-brand-light);
+}
+
+.xyebbs-visit-link:hover {
+  background: var(--vp-c-brand);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(var(--vp-c-brand-rgb), 0.3);
 }
 
 .text-content :deep(ul),
