@@ -129,6 +129,25 @@ const xyebbsUrl = computed(() => {
   return null
 })
 
+// 处理 XyeBBS 文本中的图片链接
+const processedXyebbsText = computed(() => {
+  if (!xyebbsData.value.text) return null
+
+  // 处理 ![图片ID](https://resource-api.xyeidc.com/client/pics/图片ID) 格式的图片
+  let processedText = xyebbsData.value.text.replace(
+    /!\[([^\]]*)\]\(https:\/\/resource-api\.xyeidc\.com\/client\/pics\/([^)]+)\)/g,
+    '<img src="https://resource-api.xyeidc.com/client/pics/$2" alt="$1" class="xyebbs-image" loading="lazy" />'
+  )
+
+  // 处理其他可能的图片格式
+  processedText = processedText.replace(
+    /!\[([^\]]*)\]\(([^)]+)\)/g,
+    '<img src="$2" alt="$1" class="xyebbs-image" loading="lazy" />'
+  )
+
+  return processedText
+})
+
 // 版本排序
 const compareVersions = (a, b) => {
   const aParts = a.split('.').map(Number)
@@ -373,8 +392,13 @@ const fetchXyebbsData = async () => {
 }
 
 // 切换展开/收缩的方法
-const toggleXyebbsExpanded = () => {
+const toggleXyebbsExpanded = async () => {
   xyebbsExpanded.value = !xyebbsExpanded.value
+
+  // 如果是展开且还没有获取过数据，则获取数据
+  if (xyebbsExpanded.value && props.xyebbsId && xyebbsData.value.downloadCount === 0 && !xyebbsLoading.value) {
+    await fetchXyebbsData()
+  }
 }
 
 const toggleXyebbsTextExpanded = () => {
@@ -385,7 +409,7 @@ const toggleXyebbsTextExpanded = () => {
 onMounted(async () => {
   await fetchModData()
   await fetchModrinthData()
-  await fetchXyebbsData()
+  // XyeBBS 数据改为懒加载，在展开时才获取
 })
 </script>
 
@@ -516,7 +540,7 @@ onMounted(async () => {
     </div>
 
     <!-- XyeBBS 独立信息区域 -->
-    <div v-if="props.xyebbsId && !xyebbsLoading && !xyebbsErrorMsg && xyebbsData.downloadCount > 0" class="xyebbs-info">
+    <div v-if="props.xyebbsId" class="xyebbs-info">
       <div class="xyebbs-header" @click="toggleXyebbsExpanded">
         <div class="xyebbs-platform-badge">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
@@ -531,24 +555,36 @@ onMounted(async () => {
 
       <Transition name="xyebbs-slide">
         <div v-show="xyebbsExpanded" class="xyebbs-content">
-          <!-- 描述信息 -->
-          <div v-if="xyebbsData.description" class="xyebbs-section">
-            <h4 class="xyebbs-section-title">模组描述</h4>
-            <p class="xyebbs-description">{{ xyebbsData.description }}</p>
+          <!-- 加载状态 -->
+          <div v-if="xyebbsLoading" class="xyebbs-loading">
+            <span>正在加载 XyeBBS 信息...</span>
           </div>
 
-          <!-- 详细文档 -->
-          <div v-if="xyebbsData.text" class="xyebbs-section">
-            <div class="xyebbs-text-header" @click="toggleXyebbsTextExpanded">
-              <h4 class="xyebbs-section-title">详细文档</h4>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-text-toggle-icon" :class="{ 'expanded': xyebbsTextExpanded }">
-                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-              </svg>
-            </div>
-            <Transition name="xyebbs-text-slide">
-              <div v-show="xyebbsTextExpanded" class="xyebbs-text-content" v-html="xyebbsData.text"></div>
-            </Transition>
+          <!-- 错误状态 -->
+          <div v-else-if="xyebbsErrorMsg" class="xyebbs-error">
+            <span>{{ xyebbsErrorMsg }}</span>
           </div>
+
+          <!-- 数据内容 -->
+          <template v-else-if="xyebbsData.downloadCount > 0">
+            <!-- 描述信息 -->
+            <div v-if="xyebbsData.description" class="xyebbs-section">
+              <h4 class="xyebbs-section-title">模组描述</h4>
+              <p class="xyebbs-description">{{ xyebbsData.description }}</p>
+            </div>
+
+            <!-- 详细文档 -->
+            <div v-if="xyebbsData.text" class="xyebbs-section">
+              <div class="xyebbs-text-header" @click="toggleXyebbsTextExpanded">
+                <h4 class="xyebbs-section-title">详细文档</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-text-toggle-icon" :class="{ 'expanded': xyebbsTextExpanded }">
+                  <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+              </div>
+              <Transition name="xyebbs-text-slide">
+                <div v-show="xyebbsTextExpanded" class="xyebbs-text-content" v-html="processedXyebbsText"></div>
+              </Transition>
+            </div>
 
         <!-- 统计信息 -->
         <div class="xyebbs-stats-grid">
@@ -593,44 +629,26 @@ onMounted(async () => {
           </div>
         </div>
 
-          <!-- 标签 -->
-          <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
-            <h4 class="xyebbs-section-title">标签</h4>
-            <div class="xyebbs-tag-list">
-              <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
-                {{ tag }}
-              </span>
+            <!-- 标签 -->
+            <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
+              <h4 class="xyebbs-section-title">标签</h4>
+              <div class="xyebbs-tag-list">
+                <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
+                  {{ tag }}
+                </span>
+              </div>
             </div>
+          </template>
+
+          <!-- 无数据状态 -->
+          <div v-else class="xyebbs-no-data">
+            <span>暂无 XyeBBS 数据</span>
           </div>
         </div>
       </Transition>
     </div>
 
-    <!-- XyeBBS 加载和错误状态 -->
-    <div v-else-if="props.xyebbsId" class="xyebbs-info">
-      <div class="xyebbs-header">
-        <div class="xyebbs-platform-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
-            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <span>XyeBBS 信息</span>
-        </div>
-      </div>
 
-      <div class="xyebbs-content">
-        <div v-if="xyebbsLoading" class="xyebbs-loading">
-          <span>正在加载 XyeBBS 信息...</span>
-        </div>
-
-        <div v-else-if="xyebbsErrorMsg" class="xyebbs-error">
-          <span>{{ xyebbsErrorMsg }}</span>
-        </div>
-
-        <div v-else class="xyebbs-no-data">
-          <span>暂无 XyeBBS 数据</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -1268,6 +1286,38 @@ onMounted(async () => {
   margin: 1em 0;
   color: var(--vp-c-text-2);
   font-style: italic;
+}
+
+.xyebbs-text-content :deep(.xyebbs-image) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1em 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.xyebbs-text-content :deep(.xyebbs-image:hover) {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 图片加载失败时的样式 */
+.xyebbs-text-content :deep(.xyebbs-image[alt]) {
+  background: rgba(var(--vp-c-bg-soft-rgb), 0.8);
+  border: 2px dashed rgba(255, 107, 107, 0.3);
+  padding: 20px;
+  text-align: center;
+  color: var(--vp-c-text-3);
+  font-style: italic;
+}
+
+/* 响应式图片 */
+@media (max-width: 768px) {
+  .xyebbs-text-content :deep(.xyebbs-image) {
+    margin: 0.8em 0;
+  }
 }
 
 .xyebbs-stats-grid {
