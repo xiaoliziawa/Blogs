@@ -5,15 +5,12 @@
       <!-- 头部 -->
       <div class="xyebbs-header" @click="toggleExpanded">
         <div class="xyebbs-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="xyebbs-icon">
-            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
           <span class="xyebbs-title">XyeBBS</span>
           <div v-if="!isExpanded && data.downloadCount > 0" class="xyebbs-download-badge">
             {{ formatNumber(data.downloadCount) }} 下载
           </div>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" 
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
              class="xyebbs-toggle" :class="{ 'expanded': isExpanded }">
           <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
         </svg>
@@ -108,15 +105,7 @@
               </Transition>
             </div>
 
-            <!-- 链接 -->
-            <div class="xyebbs-link">
-              <a :href="xyebbsUrl" target="_blank" rel="noopener noreferrer" class="visit-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
-                </svg>
-                访问 XyeBBS 页面
-              </a>
-            </div>
+
           </div>
           
           <!-- 无数据状态 -->
@@ -130,7 +119,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import MarkdownIt from 'markdown-it'
 
 // Props
@@ -163,9 +152,6 @@ const data = ref({
 const XYEBBS_API_URL = 'https://resource-api.xyeidc.com/client/resources/identify'
 
 // 计算属性
-const xyebbsUrl = computed(() => {
-  return `https://bbs.xyeidc.com/res-id/${props.xyebbsId}?tab=info`
-})
 
 const processedText = computed(() => {
   if (!data.value.text) return null
@@ -266,27 +252,28 @@ const fetchData = async () => {
 }
 
 .xyebbs-card {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(238, 90, 36, 0.05) 100%);
-  border: 1px solid rgba(255, 107, 107, 0.2);
-  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .xyebbs-card:hover {
-  border-color: rgba(255, 107, 107, 0.4);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+  border-color: var(--vp-c-brand);
+  box-shadow: 0 2px 8px rgba(var(--vp-c-brand-rgb), 0.1);
 }
 
 .xyebbs-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 16px;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
+  background: var(--vp-c-bg-soft);
+  border-bottom: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-1);
 }
 
 .xyebbs-badge {
@@ -296,33 +283,36 @@ const fetchData = async () => {
   flex: 1;
 }
 
-.xyebbs-icon {
-  flex-shrink: 0;
-}
-
 .xyebbs-title {
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
+  color: var(--vp-c-brand);
 }
 
 .xyebbs-download-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.85rem;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
 .xyebbs-toggle {
   transition: transform 0.3s ease;
+  color: var(--vp-c-text-3);
 }
 
 .xyebbs-toggle.expanded {
   transform: rotate(180deg);
 }
 
+.xyebbs-header:hover .xyebbs-toggle {
+  color: var(--vp-c-brand);
+}
+
 .xyebbs-content {
-  padding: 20px;
+  padding: 16px;
 }
 
 .xyebbs-loading {
@@ -330,15 +320,15 @@ const fetchData = async () => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 40px;
+  padding: 32px;
   color: var(--vp-c-text-2);
 }
 
 .loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 107, 107, 0.2);
-  border-top: 2px solid #ff6b6b;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--vp-c-divider);
+  border-top: 2px solid var(--vp-c-brand);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -352,17 +342,17 @@ const fetchData = async () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 20px;
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
-  border-radius: 8px;
+  padding: 16px;
+  color: var(--vp-c-danger);
+  background: var(--vp-c-danger-soft);
+  border-radius: 6px;
 }
 
 .xyebbs-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .info-item {
@@ -370,9 +360,9 @@ const fetchData = async () => {
   flex-direction: column;
   gap: 4px;
   padding: 12px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
-  border-radius: 8px;
-  border-left: 3px solid #ff6b6b;
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
 }
 
 .info-label {
@@ -392,21 +382,21 @@ const fetchData = async () => {
 }
 
 .section-title {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .section-title::before {
   content: '';
-  width: 3px;
-  height: 16px;
-  background: linear-gradient(to bottom, #ff6b6b, #ee5a24);
-  border-radius: 2px;
+  width: 2px;
+  height: 12px;
+  background: var(--vp-c-brand);
+  border-radius: 1px;
 }
 
 .description-text {
@@ -414,8 +404,9 @@ const fetchData = async () => {
   line-height: 1.6;
   margin: 0;
   padding: 12px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.3);
-  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
 }
 
 .xyebbs-tags-section {
@@ -444,32 +435,32 @@ const fetchData = async () => {
 }
 
 .tag {
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .version-tag {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand);
 }
 
 .core-tag {
-  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-  color: white;
+  background: var(--vp-c-green-soft);
+  color: var(--vp-c-green);
 }
 
 .feature-tag {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #333;
-  border: 1px solid rgba(255, 107, 107, 0.2);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  border: 1px solid var(--vp-c-divider);
 }
 
 .tag:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(var(--vp-c-shadow-rgb), 0.1);
 }
 
 .text-header {
@@ -482,24 +473,28 @@ const fetchData = async () => {
 }
 
 .text-header:hover .section-title {
-  color: #ff6b6b;
+  color: var(--vp-c-brand);
 }
 
 .text-toggle {
   transition: transform 0.3s ease;
-  color: #ff6b6b;
+  color: var(--vp-c-text-3);
 }
 
 .text-toggle.expanded {
   transform: rotate(180deg);
 }
 
+.text-header:hover .text-toggle {
+  color: var(--vp-c-brand);
+}
+
 .text-content {
-  margin-top: 12px;
+  margin-top: 8px;
   padding: 16px;
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.3);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.1);
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
   max-height: 400px;
   overflow-y: auto;
   line-height: 1.6;
@@ -521,20 +516,20 @@ const fetchData = async () => {
 }
 
 .text-content :deep(code) {
-  background: rgba(255, 107, 107, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
+  background: var(--vp-c-bg-mute);
+  padding: 2px 4px;
+  border-radius: 3px;
   font-size: 0.9em;
-  color: #ff6b6b;
+  color: var(--vp-c-text-code);
 }
 
 .text-content :deep(pre) {
-  background: rgba(var(--vp-c-bg-soft-rgb), 0.8);
+  background: var(--vp-c-bg-mute);
   padding: 12px;
   border-radius: 6px;
   overflow-x: auto;
   margin: 1em 0;
-  border-left: 3px solid #ff6b6b;
+  border: 1px solid var(--vp-c-divider);
 }
 
 .text-content :deep(pre code) {
@@ -550,25 +545,25 @@ const fetchData = async () => {
 }
 
 .text-content :deep(blockquote) {
-  border-left: 3px solid #ff6b6b;
+  border-left: 3px solid var(--vp-c-brand);
   padding-left: 12px;
   margin: 1em 0;
   color: var(--vp-c-text-2);
   font-style: italic;
-  background: rgba(255, 107, 107, 0.05);
+  background: var(--vp-c-brand-soft);
   padding: 12px;
   border-radius: 4px;
 }
 
 .text-content :deep(a) {
-  color: #ff6b6b;
+  color: var(--vp-c-brand);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.3s ease;
 }
 
 .text-content :deep(a:hover) {
-  border-bottom-color: #ff6b6b;
+  border-bottom-color: var(--vp-c-brand);
 }
 
 .text-content :deep(img) {
@@ -579,33 +574,11 @@ const fetchData = async () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.xyebbs-link {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 107, 107, 0.2);
-}
 
-.visit-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.visit-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-}
 
 .xyebbs-no-data {
   text-align: center;
-  padding: 40px;
+  padding: 32px;
   color: var(--vp-c-text-3);
   font-style: italic;
 }
