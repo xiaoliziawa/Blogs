@@ -345,10 +345,10 @@ if (typeof window !== 'undefined') {
 }
 
 .xyebbs-icon {
-  width: 20px;
-  height: 20px;
+  height: 18px;
+  width: auto;
   border-radius: 4px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .xyebbs-title {
