@@ -747,6 +747,10 @@ if (typeof window !== 'undefined') {
   box-shadow: 0 2px 8px rgba(var(--vp-c-brand-rgb), 0.3);
 }
 
+.xyebbs-visit-link .vp-external-link-icon {
+  display: none;
+}
+
 .text-content :deep(ul),
 .text-content :deep(ol) {
   padding-left: 1.5em;

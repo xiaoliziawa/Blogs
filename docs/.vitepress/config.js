@@ -109,7 +109,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/xiaoliziawa' }
     ],
 
-    externalLinkIcon: true,
+    externalLinkIcon: false,
 
     sidebar: {
       '/cards/': [
