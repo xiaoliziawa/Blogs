@@ -65,7 +65,8 @@ const xyebbsData = ref({
   tags: [],
   author: null,
   logoUrl: null,
-  description: null
+  description: null,
+  text: null
 })
 
 const icon = ref(props.iconUrl)
@@ -75,6 +76,8 @@ const modrinthLoading = ref(false)
 const modrinthErrorMsg = ref('')
 const xyebbsLoading = ref(false)
 const xyebbsErrorMsg = ref('')
+const xyebbsExpanded = ref(false)
+const xyebbsTextExpanded = ref(false)
 
 // API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
@@ -329,7 +332,8 @@ const fetchXyebbsData = async () => {
         tags: data.tags ? data.tags.map(t => t.name) : [],
         author: data.member ? data.member.username : null,
         logoUrl: data.logoImgUuid ? `https://resource-api.xyeidc.com/client/pics/${data.logoImgUuid}` : null,
-        description: data.description || null
+        description: data.description || null,
+        text: data.text || null
       }
 
       // 保存数据到本地存储以便离线使用
@@ -366,6 +370,15 @@ const fetchXyebbsData = async () => {
   } finally {
     xyebbsLoading.value = false
   }
+}
+
+// 切换展开/收缩的方法
+const toggleXyebbsExpanded = () => {
+  xyebbsExpanded.value = !xyebbsExpanded.value
+}
+
+const toggleXyebbsTextExpanded = () => {
+  xyebbsTextExpanded.value = !xyebbsTextExpanded.value
 }
 
 // 生命周期钩子
@@ -504,21 +517,38 @@ onMounted(async () => {
 
     <!-- XyeBBS 独立信息区域 -->
     <div v-if="props.xyebbsId && !xyebbsLoading && !xyebbsErrorMsg && xyebbsData.downloadCount > 0" class="xyebbs-info">
-      <div class="xyebbs-header">
+      <div class="xyebbs-header" @click="toggleXyebbsExpanded">
         <div class="xyebbs-platform-badge">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-badge-icon">
             <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
           <span>XyeBBS 信息</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-toggle-icon" :class="{ 'expanded': xyebbsExpanded }">
+            <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
         </div>
       </div>
 
-      <div class="xyebbs-content">
-        <!-- 描述信息 -->
-        <div v-if="xyebbsData.description" class="xyebbs-section">
-          <h4 class="xyebbs-section-title">模组描述</h4>
-          <p class="xyebbs-description">{{ xyebbsData.description }}</p>
-        </div>
+      <Transition name="xyebbs-slide">
+        <div v-show="xyebbsExpanded" class="xyebbs-content">
+          <!-- 描述信息 -->
+          <div v-if="xyebbsData.description" class="xyebbs-section">
+            <h4 class="xyebbs-section-title">模组描述</h4>
+            <p class="xyebbs-description">{{ xyebbsData.description }}</p>
+          </div>
+
+          <!-- 详细文档 -->
+          <div v-if="xyebbsData.text" class="xyebbs-section">
+            <div class="xyebbs-text-header" @click="toggleXyebbsTextExpanded">
+              <h4 class="xyebbs-section-title">详细文档</h4>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="xyebbs-text-toggle-icon" :class="{ 'expanded': xyebbsTextExpanded }">
+                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </div>
+            <Transition name="xyebbs-text-slide">
+              <div v-show="xyebbsTextExpanded" class="xyebbs-text-content" v-html="xyebbsData.text"></div>
+            </Transition>
+          </div>
 
         <!-- 统计信息 -->
         <div class="xyebbs-stats-grid">
@@ -563,16 +593,17 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- 标签 -->
-        <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
-          <h4 class="xyebbs-section-title">标签</h4>
-          <div class="xyebbs-tag-list">
-            <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
-              {{ tag }}
-            </span>
+          <!-- 标签 -->
+          <div v-if="xyebbsData.tags.length > 0" class="xyebbs-section">
+            <h4 class="xyebbs-section-title">标签</h4>
+            <div class="xyebbs-tag-list">
+              <span v-for="(tag, index) in xyebbsData.tags" :key="index" class="xyebbs-tag">
+                {{ tag }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </div>
 
     <!-- XyeBBS 加载和错误状态 -->
@@ -1083,6 +1114,8 @@ onMounted(async () => {
 
 .xyebbs-header {
   margin-bottom: 16px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .xyebbs-platform-badge {
@@ -1096,6 +1129,21 @@ onMounted(async () => {
   font-size: 0.9rem;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+.xyebbs-header:hover .xyebbs-platform-badge {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.xyebbs-toggle-icon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.xyebbs-toggle-icon.expanded {
+  transform: rotate(180deg);
 }
 
 .xyebbs-badge-icon {
@@ -1141,6 +1189,85 @@ onMounted(async () => {
   background: rgba(var(--vp-c-bg-soft-rgb), 0.5);
   border-radius: 8px;
   border-left: 3px solid #ff6b6b;
+}
+
+.xyebbs-text-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+  transition: all 0.3s ease;
+}
+
+.xyebbs-text-header:hover {
+  color: #ff6b6b;
+}
+
+.xyebbs-text-toggle-icon {
+  transition: transform 0.3s ease;
+  color: #ff6b6b;
+}
+
+.xyebbs-text-toggle-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.xyebbs-text-content {
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  padding: 16px;
+  background: rgba(var(--vp-c-bg-soft-rgb), 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.1);
+  margin-top: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.xyebbs-text-content :deep(h1),
+.xyebbs-text-content :deep(h2),
+.xyebbs-text-content :deep(h3),
+.xyebbs-text-content :deep(h4),
+.xyebbs-text-content :deep(h5),
+.xyebbs-text-content :deep(h6) {
+  color: var(--vp-c-text-1);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.xyebbs-text-content :deep(p) {
+  margin: 0.8em 0;
+}
+
+.xyebbs-text-content :deep(code) {
+  background: rgba(255, 107, 107, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.xyebbs-text-content :deep(pre) {
+  background: rgba(var(--vp-c-bg-soft-rgb), 0.8);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.xyebbs-text-content :deep(ul),
+.xyebbs-text-content :deep(ol) {
+  padding-left: 1.5em;
+  margin: 0.8em 0;
+}
+
+.xyebbs-text-content :deep(blockquote) {
+  border-left: 3px solid #ff6b6b;
+  padding-left: 12px;
+  margin: 1em 0;
+  color: var(--vp-c-text-2);
+  font-style: italic;
 }
 
 .xyebbs-stats-grid {
@@ -1231,6 +1358,58 @@ onMounted(async () => {
 
 .xyebbs-error {
   color: #ff6b6b;
+}
+
+/* XyeBBS 展开/收缩动画 */
+.xyebbs-slide-enter-active,
+.xyebbs-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+.xyebbs-slide-enter-from {
+  opacity: 0;
+  transform: scaleY(0.8) translateY(-10px);
+  max-height: 0;
+}
+
+.xyebbs-slide-leave-to {
+  opacity: 0;
+  transform: scaleY(0.8) translateY(-10px);
+  max-height: 0;
+}
+
+.xyebbs-slide-enter-to,
+.xyebbs-slide-leave-from {
+  opacity: 1;
+  transform: scaleY(1) translateY(0);
+  max-height: 2000px;
+}
+
+/* XyeBBS 文本展开/收缩动画 */
+.xyebbs-text-slide-enter-active,
+.xyebbs-text-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.xyebbs-text-slide-enter-from {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+}
+
+.xyebbs-text-slide-leave-to {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+}
+
+.xyebbs-text-slide-enter-to,
+.xyebbs-text-slide-leave-from {
+  opacity: 1;
+  max-height: 400px;
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
