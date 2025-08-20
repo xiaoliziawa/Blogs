@@ -32,6 +32,8 @@ sidebar:
         items:
           - text: KeyBindJS
             link: /modrec/kubejs/keybindjs
+          - text: FilesJS
+            link: /modrec/kubejs/filesjs
 ---
 
 # 模组推荐
@@ -49,5 +51,6 @@ sidebar:
   - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
 - [KubeJS模组](/modrec/kubejs/) - 基于KubeJS的扩展模组
   - [KeyBindJS](/modrec/kubejs/keybindjs) - 通过KubeJS脚本管理按键绑定的模组
+  - [FilesJS](/modrec/kubejs/filesjs) - 通过KubeJS脚本进行文件操作的模组
 
 
