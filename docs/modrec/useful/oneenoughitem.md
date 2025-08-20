@@ -4,7 +4,7 @@
   projectId="1312660"
   modrinthId=""
   modrinthSlug=""
-  xyebbsId="one-enough-item"
+  xyebbsId="oneenoughitem"
 />
 
 # [OEI] One Enough Item
