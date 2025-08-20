@@ -1,9 +1,10 @@
-<ModInfo 
-  curseForgeId="one-enough-item" 
-  modName="One Enough Item" 
+<ModInfo
+  curseForgeId="one-enough-item"
+  modName="One Enough Item"
   projectId="1312660"
   modrinthId=""
   modrinthSlug=""
+  xyebbsId="one-enough-item"
 />
 
 # [OEI] One Enough Item

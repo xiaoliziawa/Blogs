@@ -27,6 +27,11 @@ const props = defineProps({
   modrinthSlug: {
     type: String,
     default: ''
+  },
+  // 添加XyeBBS相关属性
+  xyebbsId: {
+    type: String,
+    default: ''
   }
 })
 
@@ -50,16 +55,32 @@ const modrinthData = ref({
   iconUrl: null
 })
 
+// XyeBBS数据
+const xyebbsData = ref({
+  downloadCount: 0,
+  dateCreated: null,
+  dateModified: null,
+  gameVersions: [],
+  cores: [],
+  tags: [],
+  author: null,
+  logoUrl: null,
+  description: null
+})
+
 const icon = ref(props.iconUrl)
 const isLoading = ref(false)
 const errorMsg = ref('')
 const modrinthLoading = ref(false)
 const modrinthErrorMsg = ref('')
+const xyebbsLoading = ref(false)
+const xyebbsErrorMsg = ref('')
 
 // API配置
 const CF_API_KEY = import.meta.env.VITE_CF_API_KEY || ''
 const CF_API_URL = 'https://api.curseforge.com/v1/mods'
 const MODRINTH_API_URL = 'https://api.modrinth.com/v2'
+const XYEBBS_API_URL = 'https://resource-api.xyeidc.com/client/resources/identify'
 
 // 格式化工具函数
 const formatNumber = (num) => {
@@ -92,6 +113,15 @@ const modrinthUrl = computed(() => {
     return `https://modrinth.com/mod/${props.modrinthSlug}`
   } else if (props.modrinthId) {
     return `https://modrinth.com/mod/${props.modrinthId}`
+  }
+  return null
+})
+
+// XyeBBS计算属性
+const formattedXyebbsDownloads = computed(() => formatNumber(xyebbsData.value.downloadCount))
+const xyebbsUrl = computed(() => {
+  if (props.xyebbsId) {
+    return `https://bbs.xyeidc.com/res-id/${props.xyebbsId}?tab=info`
   }
   return null
 })
@@ -265,10 +295,84 @@ const fetchModrinthData = async () => {
   }
 }
 
+// 获取XyeBBS数据
+const fetchXyebbsData = async () => {
+  // 如果没有提供id，则不进行请求
+  if (!props.xyebbsId) return
+
+  xyebbsLoading.value = true
+  xyebbsErrorMsg.value = ''
+
+  try {
+    const response = await fetch(`${XYEBBS_API_URL}/${props.xyebbsId}?includes=%2A`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`XyeBBS API请求失败: ${response.status} ${response.statusText}`)
+    }
+
+    const result = await response.json()
+
+    if (result.code === 200 && result.data) {
+      const data = result.data
+
+      xyebbsData.value = {
+        downloadCount: data.downloadCount || 0,
+        dateCreated: data.createDate || null,
+        dateModified: data.updateDate || null,
+        gameVersions: data.versions ? data.versions.map(v => v.name) : [],
+        cores: data.cores ? data.cores.map(c => c.name) : [],
+        tags: data.tags ? data.tags.map(t => t.name) : [],
+        author: data.member ? data.member.username : null,
+        logoUrl: data.logoImgUuid ? `https://resource-api.xyeidc.com/client/pics/${data.logoImgUuid}` : null,
+        description: data.description || null
+      }
+
+      // 保存数据到本地存储以便离线使用
+      try {
+        localStorage.setItem(`xyebbs_data_${props.xyebbsId}`, JSON.stringify(xyebbsData.value))
+      } catch (storageErr) {
+        console.warn('无法保存XyeBBS模组数据到本地存储:', storageErr)
+      }
+
+      // 如果没有从其他平台设置图标且有XyeBBS图标，则使用XyeBBS图标
+      if (!props.iconUrl && !modData.value.logoUrl && !modrinthData.value.iconUrl && xyebbsData.value.logoUrl) {
+        icon.value = xyebbsData.value.logoUrl
+      }
+    }
+  } catch (error) {
+    // 尝试从本地存储加载缓存数据
+    try {
+      const cachedData = localStorage.getItem(`xyebbs_data_${props.xyebbsId}`)
+      if (cachedData) {
+        xyebbsData.value = JSON.parse(cachedData)
+        if (!props.iconUrl && !modData.value.logoUrl && !modrinthData.value.iconUrl && xyebbsData.value.logoUrl) {
+          icon.value = xyebbsData.value.logoUrl
+        }
+        xyebbsErrorMsg.value = '使用缓存数据显示 (XyeBBS API请求失败)'
+        console.warn('使用缓存的XyeBBS模组数据')
+        return
+      }
+    } catch (cacheError) {
+      console.error('读取XyeBBS缓存数据失败:', cacheError)
+    }
+
+    const errorMessage = error instanceof Error ? error.message : '未知错误'
+    xyebbsErrorMsg.value = `获取XyeBBS模组数据失败: ${errorMessage}`
+  } finally {
+    xyebbsLoading.value = false
+  }
+}
+
 // 生命周期钩子
 onMounted(async () => {
   await fetchModData()
   await fetchModrinthData()
+  await fetchXyebbsData()
 })
 </script>
 
@@ -326,6 +430,33 @@ onMounted(async () => {
             
             <div v-else-if="modrinthErrorMsg" class="error-state">
               <span>{{ modrinthErrorMsg }}</span>
+            </div>
+          </a>
+
+          <!-- XyeBBS下载量 -->
+          <a v-if="xyebbsUrl" :href="xyebbsUrl" target="_blank" rel="noopener noreferrer" class="badge-link no-external-icon">
+            <div v-if="!xyebbsLoading && !xyebbsErrorMsg && xyebbsData.downloadCount > 0" class="download-stats xyebbs-stats">
+              <div class="download-count xyebbs-download-count">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="download-icon">
+                  <path fill="currentColor" d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+                </svg>
+                <span>{{ formattedXyebbsDownloads }} 次下载</span>
+              </div>
+            </div>
+
+            <div v-else-if="xyebbsLoading" class="loading-state">
+              <span>加载中...</span>
+            </div>
+
+            <div v-else-if="xyebbsErrorMsg" class="error-state">
+              <span>{{ xyebbsErrorMsg }}</span>
+            </div>
+
+            <div v-else-if="props.xyebbsId && !xyebbsLoading && !xyebbsErrorMsg" class="xyebbs-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="xyebbs-icon">
+                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <span>查看XyeBBS页面</span>
             </div>
           </a>
         </div>
@@ -555,6 +686,48 @@ onMounted(async () => {
 
 .modrinth-download-count:hover {
   box-shadow: 0 6px 16px rgba(var(--modrinth-color-rgb), 0.35);
+}
+
+/* XyeBBS样式 */
+.xyebbs-stats {
+  --xyebbs-color-rgb: 255, 107, 107;
+}
+
+.xyebbs-download-count {
+  background: linear-gradient(90deg,
+    rgb(var(--xyebbs-color-rgb)) 0%,
+    rgba(var(--xyebbs-color-rgb), 0.8) 100%);
+  box-shadow: 0 4px 12px rgba(var(--xyebbs-color-rgb), 0.25);
+}
+
+.xyebbs-download-count:hover {
+  box-shadow: 0 6px 16px rgba(var(--xyebbs-color-rgb), 0.35);
+}
+
+.xyebbs-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg,
+    rgb(var(--xyebbs-color-rgb)) 0%,
+    rgba(var(--xyebbs-color-rgb), 0.8) 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(var(--xyebbs-color-rgb), 0.25);
+}
+
+.xyebbs-link:hover {
+  box-shadow: 0 6px 16px rgba(var(--xyebbs-color-rgb), 0.35);
+  transform: translateY(-1px);
+}
+
+.xyebbs-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
 .download-icon,
