@@ -26,13 +26,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
+    "esbuild": "^0.19.0",
     "sitemap": "^8.0.0",
-    "vite": "npm:rolldown-vite@latest",
+    "vite": "^5.4.0",
     "vite-plugin-vue-devtools": "^7.5.4",
     "vitepress": "^1.0.0-rc.44",
     "vitest": "^3.1.4"
-  },
-  "overrides": {
-    "vite": "npm:rolldown-vite@latest"
   }
 }
