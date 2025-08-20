@@ -1,88 +1,87 @@
 name: Deploy VitePress site to Pages
 
 on:
-    # 在推送到 main 分支时触发
-    push:
-        branches: [main]
-        tags:
-            - 'v*' # 当推送v开头的标签时也触发，例如v1.0.0
-    # 允许手动触发部署
-    workflow_dispatch:
+  # 在推送到 main 分支时触发
+  push:
+    branches: [main]
+    tags:
+      - 'v*' # 当推送 v 开头的标签时也触发，例如 v1.0.0
+  # 允许手动触发部署
+  workflow_dispatch:
 
 # 设置 GITHUB_TOKEN 的权限
 permissions:
-    contents: write # 修改为write以允许创建release
-    pages: write
-    id-token: write
+  contents: write # 允许创建 release
+  pages: write
+  id-token: write
 
 # 只允许同时进行一次部署
 concurrency:
-    group: pages
-    cancel-in-progress: false
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 18
-                  cache: npm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
 
-            - name: Setup Pages
-              uses: actions/configure-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build
-              run: npm run docs:build
-              env:
-                VITE_CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      - name: Build
+        run: npm run docs:build
+        env:
+          VITE_CF_API_KEY: ${{ secrets.CF_API_KEY }}
 
-            - name: Create CNAME
-              run: echo "www.lirxowo.com" > docs/.vitepress/dist/CNAME
+      - name: Create CNAME
+        run: echo "www.lirxowo.com" > docs/.vitepress/dist/CNAME
 
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                  path: docs/.vitepress/dist
+      - name: Create .nojekyll file
+        run: touch docs/.vitepress/dist/.nojekyll
 
-            - name: Create .nojekyll file
-              run: touch .nojekyll
-              
-            # 添加Release相关步骤，仅在推送标签时执行
-            - name: Create ZIP archive
-              if: startsWith(github.ref, 'refs/tags/')
-              run: |
-                cd docs/.vitepress/dist
-                zip -r ../../../site.zip .
-                cd ../../../
-                
-            - name: Create Release
-              if: startsWith(github.ref, 'refs/tags/')
-              uses: softprops/action-gh-release@v1
-              with:
-                files: |
-                  site.zip
-                name: Release ${{ github.ref_name }}
-                draft: false
-                prerelease: false
-                generate_release_notes: true
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
 
-    deploy:
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
+      # 添加 Release 相关步骤，仅在推送标签时执行
+      - name: Create ZIP archive
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd docs/.vitepress/dist
+          zip -r ../../../site.zip .
+          cd ../../../
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: site.zip
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
