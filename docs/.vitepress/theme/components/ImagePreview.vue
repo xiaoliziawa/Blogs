@@ -362,10 +362,17 @@ function initializeImages() {
   background: none;
   border: none;
   color: var(--vp-c-text-2);
-  font-size: 20px;
   cursor: pointer;
   padding: 0 8px;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.close-btn .icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
