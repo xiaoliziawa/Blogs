@@ -40,6 +40,8 @@ sidebar:
             link: /modrec/kubejs/keybindjs
           - text: FilesJS
             link: /modrec/kubejs/filesjs
+          - text: KubeLoader
+            link: /modrec/kubejs/kubeloader
 ---
 
 # 模组推荐
@@ -61,5 +63,6 @@ sidebar:
 - [KubeJS模组](/modrec/kubejs/) - 基于KubeJS的扩展模组
   - [KeyBindJS](/modrec/kubejs/keybindjs) - 通过KubeJS脚本管理按键绑定的模组
   - [FilesJS](/modrec/kubejs/filesjs) - 通过KubeJS脚本进行文件操作的模组
+  - [KubeLoader](/modrec/kubejs/kubeloader) - 下一代KubeJS开发框架，提供ContentPack模块化系统
 
 
