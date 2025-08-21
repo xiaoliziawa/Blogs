@@ -178,35 +178,51 @@ function initializeImages() {
         <div class="toolbar-title">图片预览</div>
         <div class="toolbar-actions">
           <button class="action-btn tooltip" @click="zoomOut" title="缩小">
-            <i class="icon">➖</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13H5v-2h14v2z"/>
+            </svg>
             <span class="tooltip-text">缩小</span>
           </button>
           <button class="action-btn tooltip" @click="zoomIn" title="放大">
-            <i class="icon">➕</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
             <span class="tooltip-text">放大</span>
           </button>
           <button class="action-btn tooltip" @click="rotateLeft" title="向左旋转">
-            <i class="icon">🔄</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13h2.02c.17 1.39.72 2.73 1.62 3.89l-1.41-1.42c-.52-.75-.87-1.59-1.23-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/>
+            </svg>
             <span class="tooltip-text">向左旋转</span>
           </button>
           <button class="action-btn tooltip" @click="rotateRight" title="向右旋转">
-            <i class="icon">🔁</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16.89 15.5l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.91h-2.02c-.14.87-.48 1.72-1.02 2.5zM13 4.07V1l4.55 4.55L13 10V6.09c-2.84.48-5 2.94-5 5.91s2.16 5.43 5 5.91v2.02c-3.95-.49-7-3.85-7-7.93s3.05-7.44 7-7.93zm5.34 3.93c-.48-1.16-1.17-2.13-2.09-2.91l-1.42 1.42c.52.75.87 1.6 1.02 2.47l2.49.02z"/>
+            </svg>
             <span class="tooltip-text">向右旋转</span>
           </button>
           <button class="action-btn tooltip" @click="resetImage" title="重置">
-            <i class="icon">🔃</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
+            </svg>
             <span class="tooltip-text">重置</span>
           </button>
           <button class="action-btn tooltip" @click="downloadImage" title="下载">
-            <i class="icon">⬇️</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
             <span class="tooltip-text">下载</span>
           </button>
           <button class="action-btn tooltip" @click="copyImage" title="复制">
-            <i class="icon">📋</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+            </svg>
             <span class="tooltip-text">复制</span>
           </button>
           <button class="close-btn tooltip" @click.stop="hidePreview" title="关闭">
-            <i class="icon">❌</i>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
             <span class="tooltip-text">关闭</span>
           </button>
         </div>
@@ -335,9 +351,8 @@ function initializeImages() {
 }
 
 .action-btn .icon {
-  font-style: normal;
-  font-size: 16px;
-  line-height: 1;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -495,7 +510,8 @@ function initializeImages() {
   }
   
   .action-btn .icon {
-    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
   
   .close-btn {

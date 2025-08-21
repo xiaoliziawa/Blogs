@@ -5,7 +5,7 @@
       <!-- 头部 -->
       <div class="xyebbs-header" @click="toggleExpanded">
         <div class="xyebbs-badge">
-          <img src="https://pic.xyeidc.com/i/6a59d895-a4fe-4b8d-8450-cdbd814c7ede.png" alt="XyeBBS" class="xyebbs-icon">
+          <img src="https://pic.xyeidc.com/i/6a59d895-a4fe-4b8d-8450-cdbd814c7ede.png" alt="XyeBBS" class="xyebbs-icon no-preview">
           <span class="xyebbs-title">XyeBBS</span>
           <div v-if="!isExpanded && data.downloadCount > 0" class="xyebbs-download-badge">
             {{ formatNumber(data.downloadCount) }} 下载
