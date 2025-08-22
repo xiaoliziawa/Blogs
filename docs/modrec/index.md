@@ -20,6 +20,8 @@ sidebar:
             link: /modrec/fun/enchantment-level-break
           - text: 饺子乐事：重启
             link: /modrec/fun/dumplings-delight-reload
+          - text: Female Plastic Surgery: Bust Limit Tweaker
+            link: /modrec/fun/female-plastic-surgery-bust-limit-tweaker
       - text: 实用模组
         link: /modrec/useful/mods
         collapsed: false
@@ -55,6 +57,7 @@ sidebar:
   - [骑乘伙伴：重制版 (Riding Partners: Reforged)](/modrec/fun/riding-partners-reforged) - 允许两名玩家同时骑乘一匹马
   - [附魔等级上限突破2（EnchantmentLevelBreak）](/modrec/fun/enchantment-level-break)
   - [饺子乐事：重启 (Dumplings Delight Reload)](/modrec/fun/dumplings-delight-reload) - 农夫乐事附属模组，添加丰富的中式饺子食物
+  - [Female Plastic Surgery: Bust Limit Tweaker](/modrec/fun/female-plastic-surgery-bust-limit-tweaker) - Wildfire's Female Gender Mod 的附属拓展模组，允许自定义相关参数
 - [实用工具模组](/modrec/useful/mods) - 提供各种实用工具和功能的模组
   - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
   - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
