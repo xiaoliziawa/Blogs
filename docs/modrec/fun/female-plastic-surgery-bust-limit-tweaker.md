@@ -1,7 +1,7 @@
 <ModInfo 
   curseForgeId="female-plastic-surgery-bust-limit-tweaker" 
   modName="Female Plastic Surgery: Bust Limit Tweaker" 
-  projectId="1157638"
+  projectId="1178067"
   modrinthId=""
   modrinthSlug=""
 />
