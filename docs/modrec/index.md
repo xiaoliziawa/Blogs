@@ -34,6 +34,8 @@ sidebar:
             link: /modrec/useful/oneenoughitem
           - text: 传送门嬗变 (Portal Transform)
             link: /modrec/useful/portaltransform
+          - text: "强力假人 (Powerful Dummy)"
+            link: /modrec/useful/powerful-dummy
       - text: KubeJS模组
         link: /modrec/kubejs/
         collapsed: false
@@ -63,6 +65,7 @@ sidebar:
   - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
   - [[OEI] One Enough Item](/modrec/useful/oneenoughitem) - 解决整合包中物品重复问题的实用工具模组
   - [[PT] 传送门嬗变 (Portal Transform)](/modrec/useful/portaltransform) - 独特的物品转换模组，物品通过传送门时可发生嬗变并产生副产物
+  - [[PD] 强力假人 (Powerful Dummy)](/modrec/useful/powerful-dummy) - 高度可定制的测试假人模组，支持属性自定义和DPS检测
 - [KubeJS模组](/modrec/kubejs/) - 基于KubeJS的扩展模组
   - [KeyBindJS](/modrec/kubejs/keybindjs) - 通过KubeJS脚本管理按键绑定的模组
   - [FilesJS](/modrec/kubejs/filesjs) - 通过KubeJS脚本进行文件操作的模组
