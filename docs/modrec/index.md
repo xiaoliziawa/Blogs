@@ -20,7 +20,7 @@ sidebar:
             link: /modrec/fun/enchantment-level-break
           - text: 饺子乐事：重启
             link: /modrec/fun/dumplings-delight-reload
-          - text: Female Plastic Surgery: Bust Limit Tweaker
+          - text: "Female Plastic Surgery: Bust Limit Tweaker"
             link: /modrec/fun/female-plastic-surgery-bust-limit-tweaker
       - text: 实用模组
         link: /modrec/useful/mods
