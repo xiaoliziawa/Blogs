@@ -1,12 +1,6 @@
 .VPSidebar {
   background: var(--vp-c-bg) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  z-index: 100 !important;
-  height: 100vh !important;
-  transition: width 0.1s ease !important;
 }
 
 .VPSidebarItem .text {
@@ -390,36 +384,4 @@
 
 .custom-tooltip.primary.arrow-top::before {
   border-color: transparent transparent rgba(var(--vp-c-brand-rgb), 0.08) transparent !important;
-}
-
-/* 布局调整 - 确保内容区域正确适应侧边栏宽度变化 */
-@media (min-width: 960px) {
-  .VPContent.has-sidebar,
-  .Layout.has-sidebar .VPContent {
-    padding-left: var(--vp-sidebar-width-small, 272px) !important;
-    transition: padding-left 0.1s ease !important;
-  }
-  
-  .VPDoc.has-sidebar,
-  .Layout.has-sidebar .VPDoc {
-    margin-left: 0 !important;
-    padding-left: var(--vp-sidebar-width-small, 272px) !important;
-    transition: padding-left 0.1s ease !important;
-  }
-  
-  .VPNav.has-sidebar,
-  .Layout.has-sidebar .VPNav {
-    padding-left: var(--vp-sidebar-width-small, 272px) !important;
-    transition: padding-left 0.1s ease !important;
-  }
-}
-
-/* 确保主要内容容器正确响应 */
-.VPApp {
-  display: flex !important;
-}
-
-.VPContent {
-  flex: 1 !important;
-  min-width: 0 !important;
 }

@@ -9,7 +9,6 @@ import CursorHighlight from './components/CursorHighlight.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
-import SidebarResizer from './components/SidebarResizer.vue'
 import { ref, onMounted } from 'vue'
 
 const { Layout } = DefaultTheme
@@ -62,7 +61,6 @@ onMounted(() => {
   <CursorHighlight />
   <AdBanner />
   <ReadingProgress />
-  <SidebarResizer />
 </template>
 
 <style>
