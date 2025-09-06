@@ -17,7 +17,6 @@ import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
 import ModInfo from './components/ModInfo.vue'
 import XyebbsInfo from './components/XyebbsInfo.vue'
-import TableOfContents from './components/TableOfContents.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import { initSidebarTooltip } from './utils/sidebarTooltip.js'
 import './styles/index.css'
@@ -42,7 +41,6 @@ export default {
     app.component('AdBanner', AdBanner)
     app.component('ModInfo', ModInfo)
     app.component('XyebbsInfo', XyebbsInfo)
-    app.component('TableOfContents', TableOfContents)
     app.component('ReadingProgress', ReadingProgress)
     
     if (typeof window !== 'undefined') {

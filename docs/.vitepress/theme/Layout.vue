@@ -8,7 +8,6 @@ import PageHistory from './components/PageHistory.vue'
 import CursorHighlight from './components/CursorHighlight.vue'
 import ThemeColorPicker from './components/ThemeColorPicker.vue'
 import AdBanner from './components/AdBanner.vue'
-import TableOfContents from './components/TableOfContents.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
 import { ref, onMounted } from 'vue'
 
@@ -62,7 +61,6 @@ onMounted(() => {
   <CursorHighlight />
   <AdBanner />
   <ReadingProgress />
-  <TableOfContents v-if="!frontmatter.home" />
 </template>
 
 <style>
