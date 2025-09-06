@@ -18,6 +18,7 @@ import AdBanner from './components/AdBanner.vue'
 import ModInfo from './components/ModInfo.vue'
 import XyebbsInfo from './components/XyebbsInfo.vue'
 import ReadingProgress from './components/ReadingProgress.vue'
+import SidebarResizer from './components/SidebarResizer.vue'
 import { initSidebarTooltip } from './utils/sidebarTooltip.js'
 import './styles/index.css'
 
@@ -42,6 +43,7 @@ export default {
     app.component('ModInfo', ModInfo)
     app.component('XyebbsInfo', XyebbsInfo)
     app.component('ReadingProgress', ReadingProgress)
+    app.component('SidebarResizer', SidebarResizer)
     
     if (typeof window !== 'undefined') {
       const routerHandler = initSidebarTooltip()
