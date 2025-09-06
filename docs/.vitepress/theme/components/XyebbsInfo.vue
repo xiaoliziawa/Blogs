@@ -101,11 +101,9 @@
                   <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                 </svg>
               </div>
-              <Transition name="text-slide">
-                <div v-show="isTextExpanded" class="text-content-wrapper">
-                  <div class="text-content" v-html="processedText"></div>
-                </div>
-              </Transition>
+              <div class="text-content-wrapper" :class="{ 'expanded': isTextExpanded }">
+                <div class="text-content" v-html="processedText"></div>
+              </div>
             </div>
 
             <!-- 访问链接 -->
@@ -382,29 +380,27 @@ if (typeof window !== 'undefined') {
 }
 
 .xyebbs-content-wrapper {
-  max-height: 0;
+  transition: all 0.3s ease-in-out;
+  max-height: 1000px;
+  opacity: 1;
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-top: 1px solid var(--vp-c-divider);
-  border-top-color: transparent;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+  transform: scaleY(1);
 }
 
-.xyebbs-content-wrapper.expanded {
-  max-height: 800px;
-  border-top-color: var(--vp-c-divider);
+.xyebbs-content-wrapper:not(.expanded) {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  transform: scaleY(0);
+  border-top: none;
 }
 
 .xyebbs-content {
   padding: 16px;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
-}
-
-.xyebbs-content-wrapper.expanded .xyebbs-content {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .xyebbs-loading {
@@ -595,7 +591,21 @@ if (typeof window !== 'undefined') {
 }
 
 .text-content-wrapper {
+  transition: all 0.3s ease-in-out;
+  max-height: 500px;
+  opacity: 1;
   overflow: hidden;
+  transform-origin: top;
+  transform: scaleY(1);
+}
+
+.text-content-wrapper:not(.expanded) {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  transform: scaleY(0);
 }
 
 .text-content {
@@ -608,22 +618,6 @@ if (typeof window !== 'undefined') {
   overflow-y: auto;
   line-height: 1.6;
   color: var(--vp-c-text-2);
-}
-
-/* 文本展开动画 */
-.text-slide-enter-active,
-.text-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.text-slide-enter-from {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.text-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
 }
 
 .text-content :deep(h1),
