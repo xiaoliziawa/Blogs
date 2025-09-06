@@ -18,8 +18,8 @@
       </div>
 
       <!-- 展开内容 -->
-      <Transition name="xyebbs-slide">
-        <div v-show="isExpanded" class="xyebbs-content">
+      <div class="xyebbs-content-wrapper" :class="{ 'expanded': isExpanded }">
+        <div class="xyebbs-content">
           <!-- 加载状态 -->
           <div v-if="isLoading" class="xyebbs-loading">
             <div class="loading-spinner"></div>
@@ -102,7 +102,9 @@
                 </svg>
               </div>
               <Transition name="text-slide">
-                <div v-show="isTextExpanded" class="text-content" v-html="processedText"></div>
+                <div v-show="isTextExpanded" class="text-content-wrapper">
+                  <div class="text-content" v-html="processedText"></div>
+                </div>
               </Transition>
             </div>
 
@@ -119,7 +121,7 @@
             <span>暂无 XyeBBS 数据</span>
           </div>
         </div>
-      </Transition>
+      </div>
     </div>
   </div>
 </template>
@@ -379,8 +381,30 @@ if (typeof window !== 'undefined') {
   color: var(--vp-c-brand);
 }
 
+.xyebbs-content-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 1px solid var(--vp-c-divider);
+  border-top-color: transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.xyebbs-content-wrapper.expanded {
+  max-height: 800px;
+  border-top-color: var(--vp-c-divider);
+}
+
 .xyebbs-content {
   padding: 16px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+}
+
+.xyebbs-content-wrapper.expanded .xyebbs-content {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .xyebbs-loading {
@@ -570,6 +594,10 @@ if (typeof window !== 'undefined') {
   color: var(--vp-c-brand);
 }
 
+.text-content-wrapper {
+  overflow: hidden;
+}
+
 .text-content {
   margin-top: 8px;
   padding: 16px;
@@ -580,6 +608,22 @@ if (typeof window !== 'undefined') {
   overflow-y: auto;
   line-height: 1.6;
   color: var(--vp-c-text-2);
+}
+
+/* 文本展开动画 */
+.text-slide-enter-active,
+.text-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.text-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.text-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .text-content :deep(h1),
@@ -815,41 +859,6 @@ if (typeof window !== 'undefined') {
   padding: 32px;
   color: var(--vp-c-text-3);
   font-style: italic;
-}
-
-/* 动画 */
-.xyebbs-slide-enter-active,
-.xyebbs-slide-leave-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.xyebbs-slide-enter-from {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-10px);
-}
-
-.xyebbs-slide-leave-to {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-10px);
-}
-
-.text-slide-enter-active,
-.text-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.text-slide-enter-from {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-5px);
-}
-
-.text-slide-leave-to {
-  opacity: 0;
-  max-height: 0;
-  transform: translateY(-5px);
 }
 
 /* 响应式 */
