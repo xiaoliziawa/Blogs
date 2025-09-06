@@ -6,5 +6,6 @@
 
 - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
 - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
+- [Mob Catcher Unofficial (非官方生物捕捉器)](/modrec/useful/mob-catcher-unofficial) - 实用的生物捕捉和管理工具，支持自动化系统集成
 - [[OEI] One Enough Item](/modrec/useful/oneenoughitem) - 解决整合包中物品重复问题的实用工具模组
 - [[PD] 强力假人 (Powerful Dummy)](/modrec/useful/powerful-dummy) - 高度可定制的测试假人模组，支持属性自定义和DPS检测

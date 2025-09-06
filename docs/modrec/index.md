@@ -34,6 +34,8 @@ sidebar:
             link: /modrec/useful/vp
           - text: 自定义光标：重生
             link: /modrec/useful/ccr
+          - text: Mob Catcher Unofficial
+            link: /modrec/useful/mob-catcher-unofficial
           - text: One Enough Item
             link: /modrec/useful/oneenoughitem
           - text: 传送门嬗变 (Portal Transform)
@@ -69,6 +71,7 @@ sidebar:
 - [实用工具模组](/modrec/useful/mods) - 提供各种实用工具和功能的模组
   - [保险库补丁 (Vault Patcher)](/modrec/useful/vp) - 用于硬编码汉化和模组代码修改的工具
   - [自定义光标：重生 (Custom Cursor: Reload)](/modrec/useful/ccr) - 允许玩家自定义游戏内光标的样式和大小
+  - [Mob Catcher Unofficial (非官方生物捕捉器)](/modrec/useful/mob-catcher-unofficial) - 实用的生物捕捉和管理工具，支持自动化系统集成
   - [[OEI] One Enough Item](/modrec/useful/oneenoughitem) - 解决整合包中物品重复问题的实用工具模组
   - [[PT] 传送门嬗变 (Portal Transform)](/modrec/useful/portaltransform) - 独特的物品转换模组，物品通过传送门时可发生嬗变并产生副产物
   - [[PD] 强力假人 (Powerful Dummy)](/modrec/useful/powerful-dummy) - 高度可定制的测试假人模组，支持属性自定义和DPS检测
