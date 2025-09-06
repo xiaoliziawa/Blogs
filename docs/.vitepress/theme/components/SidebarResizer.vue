@@ -33,12 +33,33 @@ const setSidebarWidth = (width) => {
   if (!sidebarElement) return
   
   const clampedWidth = Math.max(minWidth, Math.min(maxWidth, width))
+  
+  // 直接设置侧边栏宽度
   sidebarElement.style.width = `${clampedWidth}px`
   
-  // 同时调整整体布局
+  // 更新 CSS 变量
   const root = document.documentElement
   root.style.setProperty('--vp-sidebar-width-small', `${clampedWidth}px`)
-  root.style.setProperty('--vp-sidebar-width-mobile', `${clampedWidth}px`)
+  
+  // 直接调整所有可能的内容元素
+  const selectors = [
+    '.VPContent',
+    '.VPDoc', 
+    '.VPNav .content',
+    '.container',
+    '.Layout'
+  ]
+  
+  selectors.forEach(selector => {
+    const elements = document.querySelectorAll(selector)
+    elements.forEach(element => {
+      if (element && !element.classList.contains('VPSidebar')) {
+        element.style.marginLeft = `${clampedWidth}px`
+        element.style.width = `calc(100% - ${clampedWidth}px)`
+        element.style.transition = 'margin-left 0.1s ease, width 0.1s ease'
+      }
+    })
+  })
   
   // 更新调整器位置
   const resizerElement = document.querySelector('.sidebar-resizer')
@@ -154,11 +175,33 @@ onMounted(() => {
   min-width: 200px !important;
   max-width: 500px !important;
   transition: width 0.1s ease !important;
+  position: fixed !important;
+  z-index: 100 !important;
 }
 
 /* 调整内容区域以适应侧边栏宽度变化 */
+:deep(.VPDoc) {
+  transition: padding-left 0.1s ease !important;
+  margin-left: 0 !important;
+}
+
+/* 调整导航栏 */
+:deep(.VPNav) {
+  transition: padding-left 0.1s ease !important;
+}
+
+/* 调整主容器 */
 :deep(.VPContent) {
-  transition: margin-left 0.1s ease !important;
+  transition: padding-left 0.1s ease !important;
+}
+
+/* 确保布局容器正确响应 */
+:deep(.Layout) {
+  display: flex !important;
+}
+
+:deep(.VPContent.has-sidebar) {
+  padding-left: var(--vp-sidebar-width-small, 272px) !important;
 }
 
 /* 当正在调整大小时显示视觉反馈 */
