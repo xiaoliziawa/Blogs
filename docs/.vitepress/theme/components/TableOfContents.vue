@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vitepress'
 
 const route = useRoute()
 const headers = ref([])
