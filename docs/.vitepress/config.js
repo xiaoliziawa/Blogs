@@ -86,6 +86,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '文档', link: '/code/' },
+      { text: 'Wiki', link: '/wiki/' },
       {
         text: '工具',
         items: [
@@ -251,6 +252,7 @@ export default defineConfig({
     
     sitemap.write({ url: '/', changefreq: 'daily', priority: 1.0 })
     sitemap.write({ url: '/code/', changefreq: 'weekly', priority: 0.8 })
+    sitemap.write({ url: '/wiki/', changefreq: 'weekly', priority: 0.8 })
     sitemap.write({ url: '/software/', changefreq: 'monthly', priority: 0.7 })
     sitemap.write({ url: '/websites/', changefreq: 'monthly', priority: 0.7 })
     sitemap.write({ url: '/modrec/', changefreq: 'monthly', priority: 0.7 })

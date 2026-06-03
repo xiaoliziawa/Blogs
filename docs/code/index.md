@@ -8,17 +8,6 @@ sidebar:
             link: /code/Introduction
           - text: KubeJS
             link: /code/KubeJS/KubeJS
-          - text: ArtisanWorktables 配方编写
-            collapsed: false
-            items:
-                - text: 配方编写指南
-                  link: /code/ArtisanWorktables/guide
-                - text: 配方示例脚本
-                  link: /code/ArtisanWorktables/examples
-                - text: Recipe Scripting Guide (EN)
-                  link: /code/ArtisanWorktables/guide-en
-                - text: Recipe Examples (EN)
-                  link: /code/ArtisanWorktables/examples-en
           - text: Vitepress Example Code
             link: /code/Vite/plugins-showcase
           - text: Modding
