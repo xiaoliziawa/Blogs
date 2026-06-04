@@ -1,8 +1,8 @@
 ---
-title: ArtisanWorktables 配方示例脚本
+title: OraculumWorktables 配方示例脚本
 ---
 
-# ArtisanWorktables 配方示例脚本
+# OraculumWorktables 配方示例脚本
 
 本页提供覆盖全部 15 种桌型的完整可用示例脚本，每种桌型各一个示例，并演示工具、流体、副材料、额外产出、经验/等级、等级限制、标签（Tag）与 NBT 匹配等不同可选项。配合[配方编写指南](./guide)阅读。
 
@@ -15,14 +15,14 @@ title: ArtisanWorktables 配方示例脚本
 
 ```zenscript
 // ============================================================================
-// ArtisanWorktables - CraftTweaker (ZenScript) 配方示例
+// OraculumWorktables - CraftTweaker (ZenScript) 配方示例
 // 覆盖全部 15 种桌型，每种各一个示例，并演示不同的可选项。
 // 放置位置：run/scripts/  （或实例的 scripts/ 目录），修改后使用 /reload 重载。
 // ============================================================================
 
-import mods.artisanworktables.Recipe;
-import mods.artisanworktables.Type;
-import mods.artisanworktables.Tier;
+import mods.oraculumworktables.Recipe;
+import mods.oraculumworktables.Type;
+import mods.oraculumworktables.Tier;
 
 // ---------------------------------------------------------------------------
 // 1. TAILOR（裁缝）—— 有序，使用工具（剪刀，消耗 1 点耐久）
@@ -248,7 +248,7 @@ Recipe.type(Type.BLACKSMITH)
         [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>],
         [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>]
     ])
-    .craftSound("artisanworktables:craft.forge_hammer")
+    .craftSound("oraculumworktables:craft.forge_hammer")
     .output(<item:minecraft:iron_block>)
     .register("blacksmith_iron_block_sound");
 
@@ -263,7 +263,7 @@ Recipe.type(Type.JEWELER)
 // 未指定时由配置 enableMemeCraftSound / memeCraftSoundChance 控制是否随机播放）
 Recipe.type(Type.BASIC)
     .shapeless([<item:minecraft:wheat>, <item:minecraft:cocoa_beans>])
-    .craftSound("artisanworktables:craft_meme")
+    .craftSound("oraculumworktables:craft_meme")
     .output(<item:minecraft:cookie>)
     .register("basic_cookie_meme");
 ```
@@ -275,18 +275,18 @@ Recipe.type(Type.BASIC)
 ```js
 // priority: 0
 // ============================================================================
-// ArtisanWorktables - KubeJS (JavaScript) 配方示例
+// OraculumWorktables - KubeJS (JavaScript) 配方示例
 // 覆盖全部 15 种桌型，每种各一个示例，并演示不同的可选项。
 // 放置位置：kubejs/server_scripts/，修改后使用 /reload 重载。
 //
 // 调用形式：
-//   event.recipes.artisanworktables.<桌型>_shaped(result, pattern, key)
-//   event.recipes.artisanworktables.<桌型>_shapeless(result, ingredients)
+//   event.recipes.oraculumworktables.<桌型>_shaped(result, pattern, key)
+//   event.recipes.oraculumworktables.<桌型>_shapeless(result, ingredients)
 // 之后可链式调用 .tools(...) / .fluidIngredient(...) / .extraOutput(...) 等。
 // ============================================================================
 
 ServerEvents.recipes(event => {
-  const art = event.recipes.artisanworktables
+  const art = event.recipes.oraculumworktables
 
   // -------------------------------------------------------------------------
   // 1. TAILOR（裁缝）—— 有序，使用工具（剪刀，消耗 1 点耐久）
@@ -536,7 +536,7 @@ ServerEvents.recipes(event => {
       'III'
     ],
     { I: 'minecraft:iron_ingot' }
-  ).craftSound('artisanworktables:craft.saw')
+  ).craftSound('oraculumworktables:craft.saw')
 
   // 升级音效（无序）
   art.jeweler_shapeless(
@@ -549,6 +549,6 @@ ServerEvents.recipes(event => {
   art.basic_shapeless(
     'minecraft:cookie',
     ['minecraft:wheat', 'minecraft:cocoa_beans']
-  ).craftSound('artisanworktables:craft_meme')
+  ).craftSound('oraculumworktables:craft_meme')
 })
 ```

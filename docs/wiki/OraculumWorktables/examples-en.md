@@ -1,8 +1,8 @@
 ---
-title: ArtisanWorktables Recipe Examples (EN)
+title: OraculumWorktables Recipe Examples (EN)
 ---
 
-# ArtisanWorktables Recipe Example Scripts
+# OraculumWorktables Recipe Example Scripts
 
 This page provides complete, ready-to-use example scripts covering all 15 table types — one example each — demonstrating tools, fluids, secondary ingredients, extra outputs, experience/levels, tier restrictions, tags, and NBT matching. Read it alongside the [Recipe Scripting Guide](./guide-en).
 
@@ -15,14 +15,14 @@ This page provides complete, ready-to-use example scripts covering all 15 table 
 
 ```zenscript
 // ============================================================================
-// ArtisanWorktables - CraftTweaker (ZenScript) recipe examples
+// OraculumWorktables - CraftTweaker (ZenScript) recipe examples
 // Covers all 15 table types, one example each, demonstrating various options.
 // Location: run/scripts/ (or the instance's scripts/ directory); run /reload after editing.
 // ============================================================================
 
-import mods.artisanworktables.Recipe;
-import mods.artisanworktables.Type;
-import mods.artisanworktables.Tier;
+import mods.oraculumworktables.Recipe;
+import mods.oraculumworktables.Type;
+import mods.oraculumworktables.Tier;
 
 // ---------------------------------------------------------------------------
 // 1. TAILOR -- shaped, uses a tool (shears, costs 1 durability)
@@ -248,7 +248,7 @@ Recipe.type(Type.BLACKSMITH)
         [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>],
         [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>]
     ])
-    .craftSound("artisanworktables:craft.forge_hammer")
+    .craftSound("oraculumworktables:craft.forge_hammer")
     .output(<item:minecraft:iron_block>)
     .register("blacksmith_iron_block_sound");
 
@@ -264,7 +264,7 @@ Recipe.type(Type.JEWELER)
 // control whether it randomly plays).
 Recipe.type(Type.BASIC)
     .shapeless([<item:minecraft:wheat>, <item:minecraft:cocoa_beans>])
-    .craftSound("artisanworktables:craft_meme")
+    .craftSound("oraculumworktables:craft_meme")
     .output(<item:minecraft:cookie>)
     .register("basic_cookie_meme");
 ```
@@ -276,18 +276,18 @@ Recipe.type(Type.BASIC)
 ```js
 // priority: 0
 // ============================================================================
-// ArtisanWorktables - KubeJS (JavaScript) recipe examples
+// OraculumWorktables - KubeJS (JavaScript) recipe examples
 // Covers all 15 table types, one example each, demonstrating various options.
 // Location: kubejs/server_scripts/ ; run /reload after editing.
 //
 // Call form:
-//   event.recipes.artisanworktables.<tableType>_shaped(result, pattern, key)
-//   event.recipes.artisanworktables.<tableType>_shapeless(result, ingredients)
+//   event.recipes.oraculumworktables.<tableType>_shaped(result, pattern, key)
+//   event.recipes.oraculumworktables.<tableType>_shapeless(result, ingredients)
 // You can then chain .tools(...) / .fluidIngredient(...) / .extraOutput(...) etc.
 // ============================================================================
 
 ServerEvents.recipes(event => {
-  const art = event.recipes.artisanworktables
+  const art = event.recipes.oraculumworktables
 
   // -------------------------------------------------------------------------
   // 1. TAILOR -- shaped, uses a tool (shears, costs 1 durability)
@@ -537,7 +537,7 @@ ServerEvents.recipes(event => {
       'III'
     ],
     { I: 'minecraft:iron_ingot' }
-  ).craftSound('artisanworktables:craft.forge_hammer')
+  ).craftSound('oraculumworktables:craft.forge_hammer')
 
   // Level-up sound (shapeless)
   art.jeweler_shapeless(
@@ -551,6 +551,6 @@ ServerEvents.recipes(event => {
   art.basic_shapeless(
     'minecraft:cookie',
     ['minecraft:wheat', 'minecraft:cocoa_beans']
-  ).craftSound('artisanworktables:craft_meme')
+  ).craftSound('oraculumworktables:craft_meme')
 })
 ```

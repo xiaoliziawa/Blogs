@@ -1,10 +1,10 @@
 ---
-title: ArtisanWorktables 配方编写指南
+title: OraculumWorktables 配方编写指南
 ---
 
-# ArtisanWorktables 配方编写指南（CraftTweaker & KubeJS）
+# OraculumWorktables 配方编写指南（CraftTweaker & KubeJS）
 
-本文档介绍如何通过 **CraftTweaker（ZenScript）** 和 **KubeJS（JavaScript）** 为 ArtisanWorktables 的工作台添加自定义配方。
+本文档介绍如何通过 **CraftTweaker（ZenScript）** 和 **KubeJS（JavaScript）** 为 OraculumWorktables 的工作台添加自定义配方。
 
 > 模组同时支持两套脚本系统，二选一即可。新项目推荐使用 **KubeJS**；CraftTweaker 仍然完全可用。
 
@@ -64,9 +64,9 @@ title: ArtisanWorktables 配方编写指南
 ### 2.1 入口与链式写法
 
 ```zenscript
-import mods.artisanworktables.Recipe;
-import mods.artisanworktables.Type;
-import mods.artisanworktables.Tier;
+import mods.oraculumworktables.Recipe;
+import mods.oraculumworktables.Type;
+import mods.oraculumworktables.Tier;
 
 // 通过 Recipe.type(桌型) 开始，链式调用各项，最后 register()
 Recipe.type(Type.BLACKSMITH)
@@ -105,9 +105,9 @@ Recipe.type(Type.BLACKSMITH)
 ### 2.3 完整示例
 
 ```zenscript
-import mods.artisanworktables.Recipe;
-import mods.artisanworktables.Type;
-import mods.artisanworktables.Tier;
+import mods.oraculumworktables.Recipe;
+import mods.oraculumworktables.Type;
+import mods.oraculumworktables.Tier;
 
 // 铁匠有序配方：需要钻石镐（消耗 10 耐久），消耗 1000mB 水，
 // 限定工作站及以上等级，需 5 级经验，并有 50% 概率额外产出钻石。
@@ -144,11 +144,11 @@ Recipe.type(Type.CHEF)
 每个桌型有两个配方函数：
 
 ```
-event.recipes.artisanworktables.<桌型>_shaped(result, pattern, key)
-event.recipes.artisanworktables.<桌型>_shapeless(result, ingredients)
+event.recipes.oraculumworktables.<桌型>_shaped(result, pattern, key)
+event.recipes.oraculumworktables.<桌型>_shapeless(result, ingredients)
 ```
 
-例如 `event.recipes.artisanworktables.blacksmith_shaped(...)`、`event.recipes.artisanworktables.chef_shapeless(...)`。
+例如 `event.recipes.oraculumworktables.blacksmith_shaped(...)`、`event.recipes.oraculumworktables.chef_shapeless(...)`。
 
 ### 3.2 构造参数
 
@@ -204,7 +204,7 @@ event.recipes.artisanworktables.<桌型>_shapeless(result, ingredients)
 ServerEvents.recipes(event => {
 
   // 铁匠有序配方
-  event.recipes.artisanworktables.blacksmith_shaped(
+  event.recipes.oraculumworktables.blacksmith_shaped(
     'minecraft:iron_block',
     [
       'III',
@@ -227,7 +227,7 @@ ServerEvents.recipes(event => {
     .mirrored(true)
 
   // 厨师无序配方
-  event.recipes.artisanworktables.chef_shapeless(
+  event.recipes.oraculumworktables.chef_shapeless(
     'minecraft:bread',
     ['minecraft:wheat', 'minecraft:wheat', 'minecraft:wheat']
   )
@@ -241,7 +241,7 @@ KubeJS 可按配方类型移除：
 ```js
 ServerEvents.recipes(event => {
   // 移除某桌型的全部有序配方
-  event.remove({ type: 'artisanworktables:blacksmith_shaped' })
+  event.remove({ type: 'oraculumworktables:blacksmith_shaped' })
   // 按输出移除
   event.remove({ output: 'minecraft:iron_block' })
 })
@@ -284,17 +284,17 @@ ServerEvents.recipes(event => {
 
 | 音效 ID | 说明 |
 |---------|------|
-| `artisanworktables:craft.forge_hammer` | 锻锤 |
-| `artisanworktables:craft.file` | 锉刀 |
-| `artisanworktables:craft.saw` | 锯 |
-| `artisanworktables:craft.chainsaw` | 链锯 |
-| `artisanworktables:craft.macerator` | 研磨机 |
-| `artisanworktables:craft.mortar` | 研钵 |
-| `artisanworktables:craft.screwdriver` | 螺丝刀 |
-| `artisanworktables:craft.wirecutter` | 剪线钳 |
-| `artisanworktables:craft.wrench` | 扳手 |
-| `artisanworktables:craft.portal_opening` | 传送门开启 |
-| `artisanworktables:craft_meme` | 内置彩蛋音效 |
+| `oraculumworktables:craft.forge_hammer` | 锻锤 |
+| `oraculumworktables:craft.file` | 锉刀 |
+| `oraculumworktables:craft.saw` | 锯 |
+| `oraculumworktables:craft.chainsaw` | 链锯 |
+| `oraculumworktables:craft.macerator` | 研磨机 |
+| `oraculumworktables:craft.mortar` | 研钵 |
+| `oraculumworktables:craft.screwdriver` | 螺丝刀 |
+| `oraculumworktables:craft.wirecutter` | 剪线钳 |
+| `oraculumworktables:craft.wrench` | 扳手 |
+| `oraculumworktables:craft.portal_opening` | 传送门开启 |
+| `oraculumworktables:craft_meme` | 内置彩蛋音效 |
 
 CraftTweaker：
 
@@ -302,23 +302,23 @@ CraftTweaker：
 Recipe.type(Type.WORKTABLE)
     .shaped([[<item:minecraft:stick>]])
     .output(<item:minecraft:torch>)
-    .craftSound("artisanworktables:craft.forge_hammer")
+    .craftSound("oraculumworktables:craft.forge_hammer")
     .register();
 ```
 
 KubeJS：
 
 ```js
-event.recipes.artisanworktables.worktable_shaped(
+event.recipes.oraculumworktables.worktable_shaped(
   'minecraft:torch',
   ['S'],
   { S: 'minecraft:stick' }
-).craftSound('artisanworktables:craft.forge_hammer')
+).craftSound('oraculumworktables:craft.forge_hammer')
 ```
 
 ### 5.1 未指定 craftSound 时的彩蛋音效
 
-若配方未指定 `craftSound`，则在合成时有一定概率播放内置的彩蛋音效（meme）。该行为由配置文件 `artisanworktables/artisanworktables-common.toml` 控制：
+若配方未指定 `craftSound`，则在合成时有一定概率播放内置的彩蛋音效（meme）。该行为由配置文件 `oraculumworktables/oraculumworktables-common.toml` 控制：
 
 | 配置项 | 含义 | 默认值 |
 |--------|------|--------|
@@ -365,7 +365,7 @@ Recipe.type(Type.BLACKSMITH)
 `key` / `ingredients` / `secondaryIngredients` 用 `'#命名空间:路径'`；`tools` 因走原生 JSON 透传，用 `{ tag: '命名空间:路径' }`（**不带 `#`**）：
 
 ```js
-event.recipes.artisanworktables.blacksmith_shaped(
+event.recipes.oraculumworktables.blacksmith_shaped(
   'minecraft:anvil',
   ['II', 'II'],
   { I: '#forge:ingots/iron' }                            // key 用 tag
@@ -374,7 +374,7 @@ event.recipes.artisanworktables.blacksmith_shaped(
   .secondaryIngredients(['#forge:gems/diamond'])         // 副材料用 tag
   .consumeSecondaryIngredients(false)
 
-event.recipes.artisanworktables.basic_shapeless(
+event.recipes.oraculumworktables.basic_shapeless(
   Item.of('minecraft:stick', 4),
   ['#minecraft:logs']                                    // ingredients 用 tag
 )
@@ -415,14 +415,14 @@ Recipe.type(Type.MAGE)
 
 ```js
 // 输出一本带锋利 V 的附魔书
-event.recipes.artisanworktables.mage_shaped(
+event.recipes.oraculumworktables.mage_shaped(
   Item.of('minecraft:enchanted_book', '{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}'),
   ['LBL', 'LEL'],
   { L: 'minecraft:lapis_lazuli', B: 'minecraft:book', E: 'minecraft:experience_bottle' }
 ).levelRequired(5)
 
 // 要求“必须放入特定 NBT 物品”作为材料时，须显式 strongNBT（严格）或 weakNBT（部分）
-event.recipes.artisanworktables.basic_shapeless(
+event.recipes.oraculumworktables.basic_shapeless(
   'minecraft:book',
   [Item.of('minecraft:enchanted_book', '{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}').strongNBT()]
 )
