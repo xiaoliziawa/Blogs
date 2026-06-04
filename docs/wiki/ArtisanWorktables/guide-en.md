@@ -53,6 +53,7 @@ Recipes use `minimumTier` / `maximumTier` (0–2) to limit which tiers they can 
 | `consumeExperience` | Whether experience/levels are consumed | `true` |
 | `mirrored` | Whether shaped recipes allow mirrored matching (shaped only) | `true` |
 | `group` | Recipe group (merged display in JEI) | Empty |
+| `craftSound` | Sound played on craft (a registered sound ID string). Plays once per single craft; a shift-click bulk craft also plays it only once instead of per produced item | Empty |
 
 ---
 
@@ -95,6 +96,7 @@ Recipe.type(Type.BLACKSMITH)
 | `.restrict(Tier min, Tier max)` | Tier range restriction |
 | `.experience(int)` / `.experience(int, bool consume)` | Experience points required |
 | `.level(int)` / `.level(int, bool consume)` | Experience level required |
+| `.craftSound(String)` | Craft sound (a registered sound ID, e.g. `"minecraft:block.anvil.use"`); plays once per craft gesture |
 | `.register()` | Register (recipe name generated automatically) |
 | `.register(String name)` | Register with a specified recipe name |
 
@@ -174,6 +176,7 @@ After construction you can chain the following methods (method names match the f
 | `.experienceRequired(int)` | Experience points required |
 | `.levelRequired(int)` | Experience level required |
 | `.consumeExperience(bool)` | Whether experience/levels are consumed |
+| `.craftSound(string)` | Craft sound (a registered sound ID, e.g. `'minecraft:block.anvil.use'`); plays once per craft gesture |
 
 ### 3.4 JSON Format for Special Fields
 
@@ -262,6 +265,11 @@ ServerEvents.recipes(event => {
 | Experience level | `.level(n)` | `.levelRequired(n)` | `levelRequired` |
 | Mirrored | `.mirrored(b)` | `.mirrored(b)` | `mirrored` |
 | Group | — | `.group(s)` | `group` |
+| Craft sound | `.craftSound(s)` | `.craftSound(s)` | `craftSound` |
+
+> **Craft sound:** the value is a registered sound ID string (vanilla or any mod, e.g. `minecraft:block.anvil.use`). It plays once per craft gesture — a shift-click bulk craft plays it only once — and only locally for the crafting player. When `craftSound` is set, each play is given a random higher/lower pitch for a forging feel (the meme fallback is not pitch-shifted). If a recipe does NOT set `craftSound`, an optional built-in "meme" sound may play on craft; this fallback is config-gated (`enableMemeCraftSound`, default `false`; `memeCraftSoundChance`, default `0.03`) and does not affect recipes that set `craftSound` explicitly.
+>
+> **Built-in sounds:** the mod ships a set of forging-style sounds you can reference directly: `artisanworktables:craft.forge_hammer`, `craft.file`, `craft.saw`, `craft.chainsaw`, `craft.macerator`, `craft.mortar`, `craft.screwdriver`, `craft.wirecutter`, `craft.wrench`, `craft.portal_opening`, plus the easter-egg `artisanworktables:craft_meme`.
 
 ---
 

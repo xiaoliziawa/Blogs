@@ -53,6 +53,7 @@ title: ArtisanWorktables 配方编写指南
 | `consumeExperience` | 是否消耗经验/等级 | `true` |
 | `mirrored` | 有序配方是否允许镜像匹配（仅 shaped） | `true` |
 | `group` | 配方分组（JEI 合并显示） | 空 |
+| `craftSound` | 合成时播放的音效（已注册的音效 ID 字符串）。单次合成播放一次；Shift 批量合成也只播放一次，不会按产出数量重复 | 空 |
 
 ---
 
@@ -95,6 +96,7 @@ Recipe.type(Type.BLACKSMITH)
 | `.restrict(Tier min, Tier max)` | 等级范围限制 |
 | `.experience(int)` / `.experience(int, bool consume)` | 所需经验点数 |
 | `.level(int)` / `.level(int, bool consume)` | 所需经验等级 |
+| `.craftSound(String)` | 合成音效（已注册音效 ID，如 `"minecraft:block.anvil.use"`）；每次合成手势仅播放一次 |
 | `.register()` | 注册（自动生成配方名） |
 | `.register(String name)` | 注册并指定配方名 |
 
@@ -174,6 +176,7 @@ event.recipes.artisanworktables.<桌型>_shapeless(result, ingredients)
 | `.experienceRequired(int)` | 所需经验点数 |
 | `.levelRequired(int)` | 所需经验等级 |
 | `.consumeExperience(bool)` | 是否消耗经验/等级 |
+| `.craftSound(string)` | 合成音效（已注册音效 ID，如 `'minecraft:block.anvil.use'`）；每次合成手势仅播放一次 |
 
 ### 3.4 特殊字段的 JSON 格式
 
@@ -262,10 +265,71 @@ ServerEvents.recipes(event => {
 | 经验等级 | `.level(n)` | `.levelRequired(n)` | `levelRequired` |
 | 镜像 | `.mirrored(b)` | `.mirrored(b)` | `mirrored` |
 | 分组 | — | `.group(s)` | `group` |
+| 合成音效 | `.craftSound(s)` | `.craftSound(s)` | `craftSound` |
 
 ---
 
-## 五、标签（Tag）支持
+## 五、合成音效（craftSound）
+
+为配方指定合成时播放的音效。取值为**已注册的音效 ID 字符串**（原版或任意模组的音效，例如 `minecraft:block.anvil.use`、`minecraft:entity.player.levelup`）。
+
+- 鼠标左键单次合成：播放一次。
+- Shift + 左键批量合成：整次操作**只播放一次**，不会按产出数量重复播放，避免变成噪音。
+- 音效仅对执行合成的玩家本地播放。
+- 指定了 `craftSound` 时，每次播放会**随机升调/降调**，营造锻造般的层次感（彩蛋音效不变调）。
+
+#### 模组内置音效
+
+模组自带一组锻造类音效，可直接用以下 ID 引用：
+
+| 音效 ID | 说明 |
+|---------|------|
+| `artisanworktables:craft.forge_hammer` | 锻锤 |
+| `artisanworktables:craft.file` | 锉刀 |
+| `artisanworktables:craft.saw` | 锯 |
+| `artisanworktables:craft.chainsaw` | 链锯 |
+| `artisanworktables:craft.macerator` | 研磨机 |
+| `artisanworktables:craft.mortar` | 研钵 |
+| `artisanworktables:craft.screwdriver` | 螺丝刀 |
+| `artisanworktables:craft.wirecutter` | 剪线钳 |
+| `artisanworktables:craft.wrench` | 扳手 |
+| `artisanworktables:craft.portal_opening` | 传送门开启 |
+| `artisanworktables:craft_meme` | 内置彩蛋音效 |
+
+CraftTweaker：
+
+```zenscript
+Recipe.type(Type.WORKTABLE)
+    .shaped([[<item:minecraft:stick>]])
+    .output(<item:minecraft:torch>)
+    .craftSound("artisanworktables:craft.forge_hammer")
+    .register();
+```
+
+KubeJS：
+
+```js
+event.recipes.artisanworktables.worktable_shaped(
+  'minecraft:torch',
+  ['S'],
+  { S: 'minecraft:stick' }
+).craftSound('artisanworktables:craft.forge_hammer')
+```
+
+### 5.1 未指定 craftSound 时的彩蛋音效
+
+若配方未指定 `craftSound`，则在合成时有一定概率播放内置的彩蛋音效（meme）。该行为由配置文件 `artisanworktables/artisanworktables-common.toml` 控制：
+
+| 配置项 | 含义 | 默认值 |
+|--------|------|--------|
+| `enableMemeCraftSound` | 是否启用未指定音效配方的彩蛋音效 | `false` |
+| `memeCraftSoundChance` | 触发彩蛋音效的概率（0.0~1.0） | `0.03` |
+
+> 已显式指定 `craftSound` 的配方不受上述配置影响，始终播放指定音效。
+
+---
+
+## 六、标签（Tag）支持
 
 **输入类**字段支持物品标签（tag），**输出类与流体不支持**。
 
@@ -280,7 +344,7 @@ ServerEvents.recipes(event => {
 
 > 本模组运行于 **1.20.1 Forge**，物品标签命名空间用 `forge:`（如 `forge:ingots/iron`），不是 1.21+ 的 `c:`。
 
-### 5.1 CraftTweaker
+### 6.1 CraftTweaker
 
 CrT 使用 `<tag:items:...>`，可直接作为材料/工具，并支持 `* 数量`：
 
@@ -296,7 +360,7 @@ Recipe.type(Type.BLACKSMITH)
     .register("blacksmith_anvil_tag");
 ```
 
-### 5.2 KubeJS
+### 6.2 KubeJS
 
 `key` / `ingredients` / `secondaryIngredients` 用 `'#命名空间:路径'`；`tools` 因走原生 JSON 透传，用 `{ tag: '命名空间:路径' }`（**不带 `#`**）：
 
@@ -320,7 +384,7 @@ event.recipes.artisanworktables.basic_shapeless(
 
 ---
 
-## 六、NBT 支持
+## 七、NBT 支持
 
 输入与输出都支持 NBT，但两套脚本的**输入**默认行为相反。
 
@@ -334,7 +398,7 @@ event.recipes.artisanworktables.basic_shapeless(
 
 > ⚠️ 输入 NBT 默认行为相反：**CrT 默认严格，KubeJS 默认忽略**。这是最易踩的坑。
 
-### 6.1 CraftTweaker（输出一本带锋利 V 的书）
+### 7.1 CraftTweaker（输出一本带锋利 V 的书）
 
 ```zenscript
 Recipe.type(Type.MAGE)
@@ -347,7 +411,7 @@ Recipe.type(Type.MAGE)
     .register("mage_sharpness_book");
 ```
 
-### 6.2 KubeJS（输出带附魔的书 / 要求特定 NBT 输入）
+### 7.2 KubeJS（输出带附魔的书 / 要求特定 NBT 输入）
 
 ```js
 // 输出一本带锋利 V 的附魔书
@@ -367,7 +431,7 @@ event.recipes.artisanworktables.basic_shapeless(
 > - SNBT 里附魔等级 `lvl` 必须是 **short**：KubeJS 写 `5s`、CrT 写 `5 as short`；写成普通整数会匹配/写入失败。
 > - 输出 NBT 用 `nbt`（KubeJS 自动处理，CrT 用 `.withTag`），**不要用 `data`**（模组会直接报错）。
 
-### 6.3 工具按 NBT 匹配（`matchNbt` 开关）
+### 7.3 工具按 NBT 匹配（`matchNbt` 开关）
 
 默认情况下，配方工具只按**物品类型**匹配、忽略 NBT（任意同种镐都能用）。给工具加 `matchNbt` 开关后，会额外要求工具的 NBT 一致——并**自动忽略耐久（`Damage`）**，所以磨损的工具仍可用。常用于要求「特定名字的锤子」等。
 
@@ -397,7 +461,7 @@ Recipe.type(Type.BASIC)
 
 ---
 
-## 七、常见问题
+## 八、常见问题
 
 - **配方不生效？** 确认桌型名拼写正确（全小写），且物品/流体 id 存在。可在 JEI 中查看对应桌型分类核对。
 - **工具不被识别？** `tools` 中的 `item`/`tag` 必须是合法材料，`damage` 是单次合成消耗的耐久；并确认该工具在对应工具处理器支持范围内。

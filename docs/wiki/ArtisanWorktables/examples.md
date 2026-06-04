@@ -233,6 +233,39 @@ Recipe.type(Type.MASON)
     .tool(hammer, 10, true)
     .output(<item:minecraft:cobblestone>)
     .register("mason_hammer_cobble");
+
+// ===========================================================================
+// craftSound 合成音效示例
+// 取值为已注册的音效 ID 字符串（原版或任意模组的音效）。
+// 单次左键合成播放一次；Shift 批量合成整次只播放一次，不会按产出数量重复。
+// 音效仅对执行合成的玩家本地播放。
+// ===========================================================================
+
+// 内置锻锤音效（每次合成随机升/降调，锻造感）
+Recipe.type(Type.BLACKSMITH)
+    .shaped([
+        [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>],
+        [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>],
+        [<item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>, <item:minecraft:iron_ingot>]
+    ])
+    .craftSound("artisanworktables:craft.forge_hammer")
+    .output(<item:minecraft:iron_block>)
+    .register("blacksmith_iron_block_sound");
+
+// 升级音效（无序）
+Recipe.type(Type.JEWELER)
+    .shapeless([<item:minecraft:diamond_block>])
+    .craftSound("minecraft:entity.player.levelup")
+    .output(<item:minecraft:diamond>)
+    .register("jeweler_diamond_sound");
+
+// 使用本模组内置的彩蛋音效（也可不指定 craftSound：
+// 未指定时由配置 enableMemeCraftSound / memeCraftSoundChance 控制是否随机播放）
+Recipe.type(Type.BASIC)
+    .shapeless([<item:minecraft:wheat>, <item:minecraft:cocoa_beans>])
+    .craftSound("artisanworktables:craft_meme")
+    .output(<item:minecraft:cookie>)
+    .register("basic_cookie_meme");
 ```
 
 ---
@@ -486,5 +519,36 @@ ServerEvents.recipes(event => {
   ).tools([
     { item: 'minecraft:iron_pickaxe', damage: 10, matchNbt: true, nbt: '{display:{Name:\'{"text":"Hammer"}\'}}' }
   ])
+
+  // ===========================================================================
+  // craftSound 合成音效示例
+  // 取值为已注册的音效 ID 字符串（原版或任意模组的音效）。
+  // 单次左键合成播放一次；Shift 批量合成整次只播放一次，不会按产出数量重复。
+  // 音效仅对执行合成的玩家本地播放。
+  // ===========================================================================
+
+  // 内置锻锤音效（每次合成随机升/降调，锻造感）
+  art.blacksmith_shaped(
+    'minecraft:iron_block',
+    [
+      'III',
+      'III',
+      'III'
+    ],
+    { I: 'minecraft:iron_ingot' }
+  ).craftSound('artisanworktables:craft.saw')
+
+  // 升级音效（无序）
+  art.jeweler_shapeless(
+    'minecraft:diamond',
+    ['minecraft:diamond_block']
+  ).craftSound('minecraft:entity.player.levelup')
+
+  // 使用本模组内置的彩蛋音效（也可不指定 craftSound：
+  // 未指定时由配置 enableMemeCraftSound / memeCraftSoundChance 控制是否随机播放）
+  art.basic_shapeless(
+    'minecraft:cookie',
+    ['minecraft:wheat', 'minecraft:cocoa_beans']
+  ).craftSound('artisanworktables:craft_meme')
 })
 ```
