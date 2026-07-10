@@ -15,6 +15,11 @@ sidebar:
                   link: /wiki/OraculumWorktables/guide-en
                 - text: Recipe Examples (EN)
                   link: /wiki/OraculumWorktables/examples-en
+          - text: KeyboardJS
+            collapsed: false
+            items:
+                - text: Server-Side Key Event Guide (EN)
+                  link: /wiki/KeyboardJS/guide-en
 ---
 
 # Wiki
@@ -29,3 +34,9 @@ sidebar:
 - [配方示例脚本](/wiki/OraculumWorktables/examples) - 覆盖全部 15 种桌型的完整示例
 - [Recipe Scripting Guide (EN)](/wiki/OraculumWorktables/guide-en)
 - [Recipe Examples (EN)](/wiki/OraculumWorktables/examples-en)
+
+## KeyboardJS
+
+KeyboardJS 服务端按键事件、组合键、冷却、长按检测、鼠标监听与安全注意事项的英文指南。
+
+- [Server-Side Key Event Guide (EN)](/wiki/KeyboardJS/guide-en)

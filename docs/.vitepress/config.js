@@ -256,9 +256,10 @@ export default defineConfig({
     sitemap.write({ url: '/software/', changefreq: 'monthly', priority: 0.7 })
     sitemap.write({ url: '/websites/', changefreq: 'monthly', priority: 0.7 })
     sitemap.write({ url: '/modrec/', changefreq: 'monthly', priority: 0.7 })
+    sitemap.write({ url: '/wiki/KeyboardJS/guide-en', changefreq: 'monthly', priority: 0.7 })
     sitemap.write({ url: '/cards/', changefreq: 'monthly', priority: 0.7 })
     
     sitemap.end()
     
   }
-}) 
+})
