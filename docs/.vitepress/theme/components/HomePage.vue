@@ -14,7 +14,7 @@ const routes = [
     index: '01',
     icon: '</>',
     title: '代码实验室',
-    description: 'KubeJS、Minecraft Modding 与前端开发实践。',
+    description: 'KubeJS、Modding 与前端。',
     link: '/code/',
     accent: 'mint'
   },
@@ -22,7 +22,7 @@ const routes = [
     index: '02',
     icon: 'MC',
     title: '模组推荐',
-    description: '发现实用、有趣，以及值得长期游玩的模组。',
+    description: '实用、有趣的模组精选。',
     link: '/modrec/',
     accent: 'violet'
   },
@@ -30,7 +30,7 @@ const routes = [
     index: '03',
     icon: 'PK',
     title: '整合包',
-    description: '围绕机制、体验与完成度挑选优质整合包。',
+    description: '值得体验的优质整合包。',
     link: '/modpacks/',
     accent: 'orange'
   },
@@ -38,7 +38,7 @@ const routes = [
     index: '04',
     icon: 'APP',
     title: '软件工具',
-    description: '整理开发、创作和日常使用的软件清单。',
+    description: '开发与日常工具清单。',
     link: '/software/',
     accent: 'blue'
   },
@@ -46,7 +46,7 @@ const routes = [
     index: '05',
     icon: 'WWW',
     title: '网址导航',
-    description: '把常用资源和高质量站点集中在一个入口。',
+    description: '常用资源快速入口。',
     link: '/websites/',
     accent: 'rose'
   }
@@ -172,18 +172,17 @@ onUnmounted(() => {
       <div class="home-hero-copy">
         <div class="home-eyebrow">
           <span class="home-status-dot"></span>
-          Minecraft · Code · Creative Notes
+          Minecraft · Code · Notes
         </div>
 
         <h1 id="home-title" class="home-title">
-          <span class="home-title-line">Build ideas.</span>
-          <span class="home-title-line home-title-accent">Explore worlds.</span>
-          <span class="home-title-line">Share the process.</span>
+          <span class="home-title-line">Build.</span>
+          <span class="home-title-line home-title-accent">Explore.</span>
+          <span class="home-title-line">Share.</span>
         </h1>
 
         <p class="home-summary">
-          这里是 LirxOwO 的个人知识库。记录模组开发、KubeJS、前端实验，
-          也收藏真正值得再次打开的工具与内容。
+          记录 Minecraft 模组开发、KubeJS 与前端实践。
         </p>
 
         <div class="home-actions">
@@ -200,15 +199,15 @@ onUnmounted(() => {
         <div class="home-metrics" aria-label="站点内容概览">
           <div class="home-metric">
             <strong>05</strong>
-            <span>内容入口</span>
+            <span>分类</span>
           </div>
           <div class="home-metric">
             <strong>∞</strong>
-            <span>持续更新</span>
+            <span>更新</span>
           </div>
           <div class="home-metric">
             <strong>01</strong>
-            <span>个人世界</span>
+            <span>博客</span>
           </div>
         </div>
       </div>
@@ -240,10 +239,10 @@ onUnmounted(() => {
     <section class="home-section home-routes" aria-labelledby="routes-title">
       <div class="home-section-heading">
         <div>
-          <span class="home-section-kicker">Explore the archive</span>
-          <h2 id="routes-title">从感兴趣的方向开始</h2>
+          <span class="home-section-kicker">Categories</span>
+          <h2 id="routes-title">内容导航</h2>
         </div>
-        <p>没有复杂的目录树，先进入一个主题，再沿着内容继续探索。</p>
+        <p>选择一个分类。</p>
       </div>
 
       <div class="home-routes-grid">
@@ -268,10 +267,10 @@ onUnmounted(() => {
     <section class="home-section home-insights" aria-labelledby="insights-title">
       <div class="home-section-heading">
         <div>
-          <span class="home-section-kicker">Behind the pages</span>
-          <h2 id="insights-title">持续构建，也持续记录</h2>
+          <span class="home-section-kicker">Activity</span>
+          <h2 id="insights-title">开发动态</h2>
         </div>
-        <p>代码提交只是轨迹，真正留下的是解决问题的方法和不断迭代的思路。</p>
+        <p>最近关注与提交记录。</p>
       </div>
 
       <div class="home-insights-grid">
@@ -304,11 +303,11 @@ onUnmounted(() => {
 
     <section class="home-cta home-insight-card" aria-label="继续探索">
       <div>
-        <span class="home-section-kicker">Keep exploring</span>
-        <h2>下一篇内容，也许正好解决你的问题。</h2>
+        <span class="home-section-kicker">More</span>
+        <h2>继续浏览</h2>
       </div>
       <a class="home-button home-button-primary" href="/cards/">
-        浏览全部导航
+        查看导航
         <span aria-hidden="true">→</span>
       </a>
     </section>
