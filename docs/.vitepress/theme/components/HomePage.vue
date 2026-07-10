@@ -139,7 +139,7 @@ onMounted(async () => {
         })
 
         gsap.to('.home-orb-one', {
-          x: 90,
+          x: -36,
           y: 60,
           ease: 'none',
           scrollTrigger: {
@@ -356,8 +356,8 @@ onUnmounted(() => {
 }
 
 .home-orb-one {
-  top: 4%;
-  right: -8%;
+  top: 7%;
+  right: 8vw;
   width: 420px;
   height: 420px;
   background: radial-gradient(circle, color-mix(in srgb, var(--home-accent) 58%, transparent), transparent 68%);
