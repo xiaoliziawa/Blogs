@@ -1,9 +1,8 @@
 import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
-import HomeContent from './components/HomeContent.vue'
+import HomePage from './components/HomePage.vue'
 import GitHubChart from './components/GitHubChart.vue'
 import Comments from './components/Comments.vue'
-import TypewriterHero from './components/TypewriterHero.vue'
 import Layout from './Layout.vue'
 import Contributors from './components/Contributors.vue'
 import CursorHighlight from './components/CursorHighlight.vue'
@@ -27,8 +26,7 @@ export default {
   enhanceApp({ app, router }) {
     app.component('GitHubChart', GitHubChart)
     app.component('Comments', Comments)
-    app.component('HomeContent', HomeContent)
-    app.component('TypewriterHero', TypewriterHero)
+    app.component('HomePage', HomePage)
     app.component('Contributors', Contributors)
     app.component('CursorHighlight', CursorHighlight)
     app.component('CollapsibleCodeBlock', CollapsibleCodeBlock)
@@ -53,4 +51,4 @@ export default {
   layout: {
     'doc-after': () => h(Contributors)
   }
-} 
+}
